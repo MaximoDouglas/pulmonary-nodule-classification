@@ -1,2 +1,3 @@
-# pulmonary-nodule-classify
-Repository to save models and notes about the pulmonary nodules dataset
+# Pulmonary nodule classify
+
+Automatic classification on Pulmonary Nodules of Computed Tomography Image.
