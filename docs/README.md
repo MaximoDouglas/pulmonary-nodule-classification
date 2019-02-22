@@ -4,6 +4,10 @@ Automatic classification on Pulmonary Nodules of Computed Tomography Image.
 
 # Initial ideas
 1. Create a classifier just for the features;
+  
+  - Features of the 3mm-10mm nodules;
+  - Features of the 5mm-30mm nodules;
+
 2. Execute some Data cleaning and/or transformation on the Features dataset (if it shows up as a good thing).
 3. Create a classifier that uses the pixels on the images;
 4. Create a classifier (CNN) using the images as inputs;
