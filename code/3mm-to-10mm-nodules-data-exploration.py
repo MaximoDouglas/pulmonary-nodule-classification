@@ -19,8 +19,8 @@ numpy.random.seed(seed)
 # ------- Begin data preprocessing
 
 # load dataset
-df = pandas.read_csv("../data/nodulesFeatures-3mm-30mm.csv") #3132 entries
-print(df)
+df = pandas.read_csv("../data/nodulesFeatures-3mm-30mm.csv")
+print(df.shape)
 
 '''
 # encode sex values as integers
