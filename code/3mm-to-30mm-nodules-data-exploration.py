@@ -13,6 +13,7 @@ df = pandas.read_csv("../data/nodulesFeatures-3mm-30mm.csv")
 
 # Shows shape (rows, columns)
 def getShape():
+    print("Shape: ", end="")
     print(df.shape)
 
 # Check for nan fields
@@ -20,6 +21,7 @@ def getNaN():
     count = 0
     for v in df.isna().sum():
         if v != 0: count+=1
+    print("NaN fields: ", end="")
     print(count)
 
 def main():
