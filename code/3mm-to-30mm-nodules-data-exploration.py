@@ -44,9 +44,20 @@ def getStats():
         print('     .Standard deviation: ' + str(df[column].std()))
         print()
 
+def getCorrelation():
+    # methods: 'pearson', 'kendall', 'spearman'
+
+    corr = df.corr(method='pearson')
+
+    print(corr)
+    '''for col in df.columns[:-1]:
+        c = corr[col][df.columns[-1]]
+        print(col +": "+ c)'''
+
 def main():
     getShape()
     getNaN()
     getStats()
+    getCorrelation()
 
 main()
