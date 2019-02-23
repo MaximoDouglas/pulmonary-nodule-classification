@@ -12,8 +12,8 @@ df = pandas.DataFrame()
 # Load dataset - uncomment just the one that you want to work with
 def loadData():
     global df
-    #df = pandas.read_csv("../data/nodulesFeatures-3mm-30mm.csv")
-    df = pandas.read_csv("../data/nodulesFeatures-5-10mm.csv")
+    df = pandas.read_csv("../data/nodulesFeatures-3mm-30mm.csv")
+    #df = pandas.read_csv("../data/nodulesFeatures-5-10mm.csv")
 
 # Shows shape (rows, columns)
 def getShape():
@@ -43,12 +43,14 @@ def getStats():
 
     for column in numericFields:
         print(" ." + column + ": ")
+        print('     .max: ' + str(df[column].max()))
+        print('     .min: ' + str(df[column].min()))
         print('     .median: ' + str(df[column].median()))
         print('     .mean: ' + str(df[column].mean()))
         print('     .Standard deviation: ' + str(df[column].std()))
         print()
 
-def getCorrelation():
+def getCorrelations():
     # methods: 'pearson', 'kendall', 'spearman'
     encoder = LabelEncoder()
     df_aux = df.drop('id', axis=1)
@@ -66,7 +68,8 @@ def getCorrelation():
 def main():
     loadData()
     getShape()
+    getStats()
     getNaN()
-    getCorrelation()
+    getCorrelations()
 
 main()
