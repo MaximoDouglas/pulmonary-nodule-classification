@@ -19,23 +19,23 @@ def getShape():
 # Check for nan fields
 def getNaN():
     count = 0
-    for v in df.isna().sum():
+    for v in df.drop('id', axis=1).isna().sum():
         if (v != 0): count+=1
     print("Missing values: ", end="")
     print(count)
 
-def getNumericFields():
+def getNumericFeatures():
     numericFields = []
-    for column in df.columns:
+    for column in df.drop('id', axis=1).columns:
         if (numpy.issubdtype(df[column].dtype, numpy.number)):
             numericFields.append(column)
 
     return numericFields
 
 def getStats():
-    numericFields = getNumericFields()
+    numericFields = getNumericFeatures()
     print("There are "+ str(len(numericFields)) +
-    " numéric fields. The stats for each one are presented bellow: ")
+    " numéric features. The stats for each one are presented bellow: ")
 
     for column in numericFields:
         print(" ." + column + ": ")
@@ -46,18 +46,22 @@ def getStats():
 
 def getCorrelation():
     # methods: 'pearson', 'kendall', 'spearman'
+    encoder = LabelEncoder()
+    df_aux = df.drop('id', axis=1)
 
-    corr = df.corr(method='pearson')
+    encoder.fit(df_aux[df_aux.columns[-1]])
+    df_aux[df_aux.columns[-1]] = encoder.transform(df_aux[df_aux.columns[-1]])
 
-    print(corr)
-    '''for col in df.columns[:-1]:
-        c = corr[col][df.columns[-1]]
-        print(col +": "+ c)'''
+    corr = df_aux.corr(method='pearson')
+
+    print("Correlations between features and the class are listed bellow: ")
+    for col in df_aux.columns[:-1]:
+        c = corr[col][df_aux.columns[-1]]
+        print(" ." + col +": "+ str(c))
 
 def main():
     getShape()
     getNaN()
-    getStats()
     getCorrelation()
 
 main()
