@@ -31,36 +31,47 @@ encoder.fit(y)
 y = encoder.transform(y) # 0 - BENIGN | 1 - MALIGNANT
 # ------- End data preprocessing
 
-
 # ------- Model archtecture
-epochs = 100
-
 # define baseline model
-def baseline_model(units_x=1, units_y=1):
+def baseline_model(optimizer="rmsprop", init="glorot_uniform", units_x=1, units_y=1):
   # create model
   model = Sequential()
-  model.add(Dense(1, input_dim=X.shape[1], activation="relu", kernel_initializer="glorot_uniform"))
-  model.add(Dense(1, activation="relu", kernel_initializer="glorot_uniform"))
-  model.add(Dense(1, activation="sigmoid", kernel_initializer="glorot_uniform"))
+  model.add(Dense(units_x, input_dim=X.shape[1], activation="relu", kernel_initializer=init))
+  model.add(Dense(units_y, activation="relu", kernel_initializer=init))
+  model.add(Dense(1, activation="sigmoid", kernel_initializer=init))
 
   # Compile model
-  learning_rate = 0.1
-  decay_rate = learning_rate / epochs
-  momentum = 0.8
-
-  # Compile model
-  sgd = SGD(lr=learning_rate, momentum=momentum, decay=decay_rate)
-  model.compile(loss="binary_crossentropy", optimizer=sgd, metrics=['accuracy'])
+  model.compile(loss="binary_crossentropy", optimizer=optimizer, metrics=['accuracy'])
   return model
 
-estimator = KerasClassifier(build_fn=baseline_model, epochs=epochs, batch_size=250)
-# ------- End model archtecture
+estimator = KerasClassifier(build_fn=baseline_model, batch_size=X.shape[0])
 
-# ------- Model validation
-kfold = KFold(n_splits=X.shape[0], shuffle=True, random_state=seed)
-results = cross_val_score(estimator, X, y, cv=kfold, verbose=10)
+# grid search epochs, batch size and optimizer
+optimizers = ['rmsprop', 'adam']
+eps = numpy.array([50, 100, 150])
+init = ['glorot_uniform', 'normal', 'uniform']
+units_x = [1, 3, 5, 10, 30, 50]
+units_y = units_x
 
-# Summarize
-print("Accuracy: %.2f%%"%(results.mean()*100))
-print("Standard deviation: %.2f%%"%(results.std()*100))
-# ------- End model validation
+param_grid = dict(optimizer=optimizers, epochs=eps, init=init, units_x=units_x, units_y=units_y)
+kfold = KFold(n_splits=10, shuffle=True, random_state=seed)
+grid = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=kfold, verbose=10)
+
+grid_result = grid.fit(X, y, verbose=0)
+
+# summarize results
+print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+
+# Result dict of all metrics Cross-Validation
+result = grid_result.cv_results_
+
+# List with all the params combinations
+params = result['params']
+# For each param combination, there are a mean_test_score and a std_test_score, as
+#   the result of the Cross-validation made on the model configured with this combination
+mean_test_scores = result['mean_test_score']
+std_test_scores = result['std_test_score']
+
+# For each params combination, print the respective results
+for i in range(len(params)):
+    print("%f (%f) with: %r" % (mean_test_scores[i], std_test_scores[i], params[i]))
