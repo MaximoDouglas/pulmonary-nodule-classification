@@ -40,9 +40,9 @@ epochs = 100
 def baseline_model():
   # create model
   model = Sequential()
-  model.add(Dense(73, input_dim=X.shape[1], activation="relu", kernel_initializer="glorot_uniform"))
-  model.add(Dense(32, activation="relu", kernel_initializer="glorot_uniform"))
-  model.add(Dense(3, kernel_initializer="glorot_uniform", activation="sigmoid"))
+  model.add(Dense(1, input_dim=X.shape[1], activation="relu", kernel_initializer="glorot_uniform"))
+  model.add(Dense(1, activation="relu", kernel_initializer="glorot_uniform"))
+  model.add(Dense(2, kernel_initializer="glorot_uniform", activation="sigmoid"))
 
   # Compile model
   learning_rate = 0.1
