@@ -63,7 +63,7 @@ public class LungImagesDB{
 
 			for(int i = 0; i < FeaturesNames.textureAttributesNames_nodule.length; ++i)
 				header += FeaturesNames.textureAttributesNames_nodule[i] + ",";
-			
+
 			for(int i = 0; i < FeaturesNames.marginSharpnessNames.length; ++i)
 				header += FeaturesNames.marginSharpnessNames[i] + ",";
 
@@ -93,19 +93,19 @@ public class LungImagesDB{
 					String texture = (String) nodule.get("texture");
 
 					double d = (double) nodule.get("diameter");
-					
+
 					if(nodule.containsField("marginAttributes3D") && nodule.containsField("textureAttributes") 
 							&& (d >= 3) && (d <= 30) && texture.equals("5") && !nodule.get("malignancy").equals("3")){
-						
+
 						String line = new String();
-						
+
 						line = exam_id + "," + nodule_id + ",";
 
 						attributeList = (BasicDBList) nodule.get("noduleIntensityAttributes3D");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
 							line += Double.toString((double) attributeList.get(i_attribute)) + ",";
 						}
-						
+
 						attributeList = (BasicDBList) nodule.get("noduleShapeAttributes");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
 							line += Double.toString((double) attributeList.get(i_attribute)) + ",";
@@ -133,7 +133,7 @@ public class LungImagesDB{
 							_class = "BENIGN";
 						else if(malignancy.equals("4") || malignancy.equals("5")) 
 							_class = "MALIGNANT";
-						
+
 						line += _class;
 
 						bw.write(line.toString());
@@ -141,7 +141,7 @@ public class LungImagesDB{
 					}
 				}
 			}
-			
+
 			bw.close();
 			fw.close();
 		} catch (IOException e){
@@ -206,12 +206,12 @@ public class LungImagesDB{
 					String texture = (String) nodule.get("texture");
 
 					double d = (double) nodule.get("diameter");
-					
+
 					if(nodule.containsField("marginAttributes3D") && nodule.containsField("textureAttributes") 
 							&& (d >= 3) && (d <= 30) && texture.equals("5") && !nodule.get("malignancy").equals("3")){
-						
+
 						String line = new String();
-						
+
 						line = exam_id + "," + nodule_id + ",";
 
 						attributeList = (BasicDBList) nodule.get("noduleIntensityAttributes3D");
@@ -258,7 +258,7 @@ public class LungImagesDB{
 							_class = "BENIGN";
 						else if(malignancy.equals("4") || malignancy.equals("5")) 
 							_class = "MALIGNANT";
-						
+
 						line += _class;
 
 						bw.write(line.toString());
@@ -266,7 +266,7 @@ public class LungImagesDB{
 					}
 				}
 			}
-			
+
 			bw.close();
 			fw.close();
 		} catch (IOException e){
