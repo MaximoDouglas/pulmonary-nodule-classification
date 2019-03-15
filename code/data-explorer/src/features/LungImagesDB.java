@@ -53,7 +53,7 @@ public class LungImagesDB{
 
 			String header = new String();
 
-			header = "id,";
+			header = "exam_id,nodule_id,";
 
 			for(int i = 0; i < FeaturesNames.intensityAttributesNames_nodule.length; ++i)
 				header += FeaturesNames.intensityAttributesNames_nodule[i] + ",";
@@ -97,9 +97,10 @@ public class LungImagesDB{
 						
 						header = new String();
 						
-						String id = exam.getObjectId("_id").toString() + "#";
+						String exam_id = exam.getObjectId("_id").toString();
+						String nodule_id = nodule.get("noduleID").toString();
 						
-						header = id + ",";
+						header = exam_id + "," + nodule_id + ",";
 
 						attributeList = (BasicDBList) nodule.get("noduleIntensityAttributes3D");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
@@ -167,7 +168,6 @@ public class LungImagesDB{
 
 			for(int i = 0; i < FeaturesNames.intensityAttributesNames_parenchyma.length; ++i)
 				header += FeaturesNames.intensityAttributesNames_parenchyma[i] + ",";
-
 
 			for(int i = 0; i < FeaturesNames.shapeAttributesNames.length; ++i)
 				header += FeaturesNames.shapeAttributesNames[i] + ",";
