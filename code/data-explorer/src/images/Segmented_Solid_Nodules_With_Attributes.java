@@ -33,14 +33,9 @@ public class Segmented_Solid_Nodules_With_Attributes {
 			BasicDBList bignoduleList;
 			BasicDBList roiList = null;
 			
-			//Exam's id (may I use it later)
-			//Object id;
-			
-			// Connects with the exams collection
 			DBCollection collection = db.getCollection("exams");
 			DBCursor cursor = collection.find();
 
-			//Counters
 			int examCount = 0, nodulesCount = 0, notUsedNodulesCount = 0, 
 					benignNodulesCount = 0, malignantNodulesCount = 0;
 
@@ -48,20 +43,18 @@ public class Segmented_Solid_Nodules_With_Attributes {
 
 				examCount++;
 				exam = (BasicDBObject) cursor.next();
-
-				//Gets the exam's id (may I use it later)
-				//id = exam.getObjectId("_id");
-
-				//Creates a reading session
+				String exam_id = exam.getObjectId("_id").toString();
+				System.out.println(exam_id);
+				
 				reading = (BasicDBObject) exam.get("readingSession");
 
-				//Gets the big nodule list
 				bignoduleList = (BasicDBList) reading.get("bignodule");
 
-				//For each big nodule:
 				for (int i_nodule = 0; i_nodule < bignoduleList.size(); i_nodule++){
 
 					bignodule = (BasicDBObject) bignoduleList.get(i_nodule);
+					String nodule_id = bignodule.get("noduleID").toString();
+					System.out.println(nodule_id);					
 
 					nodulesCount++;
 
