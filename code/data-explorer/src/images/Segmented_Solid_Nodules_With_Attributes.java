@@ -44,7 +44,7 @@ public class Segmented_Solid_Nodules_With_Attributes {
 				examCount++;
 				exam = (BasicDBObject) cursor.next();
 				String exam_id = exam.getObjectId("_id").toString();
-				System.out.println(exam_id);
+				System.out.println("Exam id: " + exam_id);
 				
 				reading = (BasicDBObject) exam.get("readingSession");
 
@@ -54,7 +54,7 @@ public class Segmented_Solid_Nodules_With_Attributes {
 
 					bignodule = (BasicDBObject) bignoduleList.get(i_nodule);
 					String nodule_id = bignodule.get("noduleID").toString();
-					System.out.println(nodule_id);					
+					System.out.println("Nodule id: " + nodule_id);					
 
 					nodulesCount++;
 
@@ -74,8 +74,9 @@ public class Segmented_Solid_Nodules_With_Attributes {
 
 							benignNodulesCount++;
 
-							File diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules-with-attributes/benigno/" 
-														+ benignNodulesCount + "/");
+							File diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules-with-attributes/benigno/" + exam_id + "/");
+							diretorio.mkdir();
+							diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules-with-attributes/benigno/" + exam_id + "/" + nodule_id + "/");
 							diretorio.mkdir();
 
 						} else if(malignancyNumber.equals("4") || malignancyNumber.equals("5")){
@@ -83,8 +84,9 @@ public class Segmented_Solid_Nodules_With_Attributes {
 
 							malignantNodulesCount++;
 
-							File diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules-with-attributes/maligno/" 
-														+ malignantNodulesCount + "/");
+							File diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules-with-attributes/maligno/" + exam_id + "/");
+							diretorio.mkdir();
+							diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules-with-attributes/maligno/" + exam_id + "/" + nodule_id + "/");
 							diretorio.mkdir();
 
 						}
@@ -96,18 +98,16 @@ public class Segmented_Solid_Nodules_With_Attributes {
 
 							if(malignancyName.equals("benigno") ){
 								
-								fileNameP1 = "/home/douglas/dev/tcc/images/solid-nodules-with-attributes/benigno/" 
-											+ benignNodulesCount + "/"; 
-								fileNameP2 = malignancyName + benignNodulesCount + "-" + i_roi;		
+								fileNameP1 = "/home/douglas/dev/tcc/images/solid-nodules-with-attributes/benigno/" + exam_id + "/" + nodule_id + "/"; 
+								fileNameP2 = String.valueOf(i_roi);		
 
 								//Generate image and saves it in a directory as specified
 								getImage.generateImage(roi.getObjectId("noduleImage"), fileNameP1 + fileNameP2, ".png");
 
 							} else if(malignancyName.equals("maligno") ){
 
-								fileNameP1 = "/home/douglas/dev/tcc/images/solid-nodules-with-attributes/maligno/" 
-											+ malignantNodulesCount + "/"; 
-								fileNameP2 = malignancyName +  malignantNodulesCount + "-" + i_roi;		
+								fileNameP1 = "/home/douglas/dev/tcc/images/solid-nodules-with-attributes/maligno/" + exam_id + "/" + nodule_id + "/"; 
+								fileNameP2 = String.valueOf(i_roi);		
 
 								//Generate image and saves it in a directory as specified
 								getImage.generateImage(roi.getObjectId("noduleImage"), fileNameP1 + fileNameP2, ".png");
