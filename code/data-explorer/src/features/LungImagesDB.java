@@ -148,8 +148,11 @@ public class LungImagesDB{
 						header += malignancy + ",";
 
 						String _class = new String();
-						if(malignancy.equals("1") || malignancy.equals("2")) 			_class = "BENIGN";
-						else if(malignancy.equals("4") || malignancy.equals("5")) _class = "MALIGNANT";
+						if(malignancy.equals("1") || malignancy.equals("2"))
+							_class = "BENIGN";
+						else if(malignancy.equals("4") || malignancy.equals("5")) 
+							_class = "MALIGNANT";
+						
 						header += _class;
 
 						bw.write(header.toString());
@@ -160,8 +163,7 @@ public class LungImagesDB{
 			
 			bw.close();
 			fw.close();
-		} catch (IOException e)
-		{
+		} catch (IOException e){
 			System.err.println("Erro! Não foi possível criar o arquivo " + pathName);
 			e.printStackTrace();
 		}
