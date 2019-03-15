@@ -83,11 +83,13 @@ public class LungImagesDB{
 
 			while(cursor.hasNext()){
 				exam = (BasicDBObject) cursor.next();
+				String exam_id = exam.getObjectId("_id").toString();
 				reading = (BasicDBObject) exam.get("readingSession");
 				noduleList = (BasicDBList) reading.get("bignodule");				
 
 				for (int i_nodule = 0; i_nodule < noduleList.size(); i_nodule++) {
 					nodule = (BasicDBObject) noduleList.get(i_nodule);
+					String nodule_id = nodule.get("noduleID").toString();
 					String texture = (String) nodule.get("texture");
 
 					double d = (double) nodule.get("diameter");
@@ -95,39 +97,36 @@ public class LungImagesDB{
 					if(nodule.containsField("marginAttributes3D") && nodule.containsField("textureAttributes") 
 							&& (d >= 3) && (d <= 30) && texture.equals("5") && !nodule.get("malignancy").equals("3")){
 						
-						header = new String();
+						String line = new String();
 						
-						String exam_id = exam.getObjectId("_id").toString();
-						String nodule_id = nodule.get("noduleID").toString();
-						
-						header = exam_id + "," + nodule_id + ",";
+						line = exam_id + "," + nodule_id + ",";
 
 						attributeList = (BasicDBList) nodule.get("noduleIntensityAttributes3D");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
-							header += Double.toString((double) attributeList.get(i_attribute)) + ",";
+							line += Double.toString((double) attributeList.get(i_attribute)) + ",";
 						}
 						
 						attributeList = (BasicDBList) nodule.get("noduleShapeAttributes");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
-							header += Double.toString((double) attributeList.get(i_attribute)) + ",";
+							line += Double.toString((double) attributeList.get(i_attribute)) + ",";
 						}
 
 						attributeList = (BasicDBList) nodule.get("textureAttributes");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
-							header += (String) attributeList.get(i_attribute) + ",";
+							line += (String) attributeList.get(i_attribute) + ",";
 						}
 
 						attributeList = (BasicDBList) nodule.get("marginAttributes3D");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
-							if(i_attribute != 0) header += Double.toString((double) attributeList.get(i_attribute)) + ",";
-							else 								 header += Integer.toString((int) attributeList.get(i_attribute)) + ",";
+							if(i_attribute != 0) line += Double.toString((double) attributeList.get(i_attribute)) + ",";
+							else 								 line += Integer.toString((int) attributeList.get(i_attribute)) + ",";
 						}
 
 						double diameter = (double) nodule.get("diameter");
-						header += Double.toString(diameter) + ",";
+						line += Double.toString(diameter) + ",";
 
 						String malignancy = (String) nodule.get("malignancy");
-						header += malignancy + ",";
+						line += malignancy + ",";
 
 						String _class = new String();
 						if(malignancy.equals("1") || malignancy.equals("2"))
@@ -135,9 +134,9 @@ public class LungImagesDB{
 						else if(malignancy.equals("4") || malignancy.equals("5")) 
 							_class = "MALIGNANT";
 						
-						header += _class;
+						line += _class;
 
-						bw.write(header.toString());
+						bw.write(line.toString());
 						bw.newLine();
 					}
 				}
@@ -161,7 +160,7 @@ public class LungImagesDB{
 
 			String header = new String();
 
-			header = "id,";
+			header = "exam_id,nodule_id,";
 
 			for(int i = 0; i < FeaturesNames.intensityAttributesNames_nodule.length; ++i)
 				header += FeaturesNames.intensityAttributesNames_nodule[i] + ",";
@@ -197,11 +196,13 @@ public class LungImagesDB{
 
 			while(cursor.hasNext()){
 				exam = (BasicDBObject) cursor.next();
+				String exam_id = exam.getObjectId("_id").toString();
 				reading = (BasicDBObject) exam.get("readingSession");
 				noduleList = (BasicDBList) reading.get("bignodule");				
 
 				for (int i_nodule = 0; i_nodule < noduleList.size(); i_nodule++) {
 					nodule = (BasicDBObject) noduleList.get(i_nodule);
+					String nodule_id = nodule.get("noduleID").toString();
 					String texture = (String) nodule.get("texture");
 
 					double d = (double) nodule.get("diameter");
@@ -209,50 +210,48 @@ public class LungImagesDB{
 					if(nodule.containsField("marginAttributes3D") && nodule.containsField("textureAttributes") 
 							&& (d >= 3) && (d <= 30) && texture.equals("5") && !nodule.get("malignancy").equals("3")){
 						
-						header = new String();
+						String line = new String();
 						
-						String id = exam.getObjectId("_id").toString() + "#";
-						
-						header = id + ",";
+						line = exam_id + "," + nodule_id + ",";
 
 						attributeList = (BasicDBList) nodule.get("noduleIntensityAttributes3D");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
-							header += Double.toString((double) attributeList.get(i_attribute)) + ",";
+							line += Double.toString((double) attributeList.get(i_attribute)) + ",";
 						}
 
 						attributeList = (BasicDBList) nodule.get("parenchymaIntensityAttributes3D");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++) 
 						{
-							header += Double.toString((double) attributeList.get(i_attribute)) + ",";
+							line += Double.toString((double) attributeList.get(i_attribute)) + ",";
 						}
 
 						attributeList = (BasicDBList) nodule.get("noduleShapeAttributes");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
-							header += Double.toString((double) attributeList.get(i_attribute)) + ",";
+							line += Double.toString((double) attributeList.get(i_attribute)) + ",";
 						}
 
 						attributeList = (BasicDBList) nodule.get("textureAttributes");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
-							header += (String) attributeList.get(i_attribute) + ",";
+							line += (String) attributeList.get(i_attribute) + ",";
 						}
 
 						attributeList = (BasicDBList) nodule.get("parenchymaTextureAttributes3D");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++)
 						{
-							header += (String) attributeList.get(i_attribute) + ",";
+							line += (String) attributeList.get(i_attribute) + ",";
 						}
 
 						attributeList = (BasicDBList) nodule.get("marginAttributes3D");
 						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++){
-							if(i_attribute != 0) header += Double.toString((double) attributeList.get(i_attribute)) + ",";
-							else 								 header += Integer.toString((int) attributeList.get(i_attribute)) + ",";
+							if(i_attribute != 0) line += Double.toString((double) attributeList.get(i_attribute)) + ",";
+							else 								 line += Integer.toString((int) attributeList.get(i_attribute)) + ",";
 						}
 
 						double diameter = (double) nodule.get("diameter");
-						header += Double.toString(diameter) + ",";
+						line += Double.toString(diameter) + ",";
 
 						String malignancy = (String) nodule.get("malignancy");
-						header += malignancy + ",";
+						line += malignancy + ",";
 
 						String _class = new String();
 						if(malignancy.equals("1") || malignancy.equals("2"))
@@ -260,9 +259,9 @@ public class LungImagesDB{
 						else if(malignancy.equals("4") || malignancy.equals("5")) 
 							_class = "MALIGNANT";
 						
-						header += _class;
+						line += _class;
 
-						bw.write(header.toString());
+						bw.write(line.toString());
 						bw.newLine();
 					}
 				}
