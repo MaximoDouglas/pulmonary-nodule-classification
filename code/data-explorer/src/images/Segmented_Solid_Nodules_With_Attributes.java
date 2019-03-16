@@ -44,7 +44,6 @@ public class Segmented_Solid_Nodules_With_Attributes {
 				examCount++;
 				exam = (BasicDBObject) cursor.next();
 				String exam_id = exam.getObjectId("_id").toString();
-				System.out.println("Exam id: " + exam_id);
 				
 				reading = (BasicDBObject) exam.get("readingSession");
 
@@ -54,7 +53,6 @@ public class Segmented_Solid_Nodules_With_Attributes {
 
 					bignodule = (BasicDBObject) bignoduleList.get(i_nodule);
 					String nodule_id = bignodule.get("noduleID").toString();
-					System.out.println("Nodule id: " + nodule_id);					
 
 					nodulesCount++;
 
