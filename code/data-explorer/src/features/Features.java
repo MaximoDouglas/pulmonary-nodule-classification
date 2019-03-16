@@ -12,7 +12,7 @@ import com.mongodb.DBCursor;
 
 import features.FeaturesNames;
 
-public class LungImagesDB{
+public class Features{
 
 	private DB db;
 	private DBCollection col;
@@ -21,7 +21,7 @@ public class LungImagesDB{
 	public static final String PARENCHYMA_IMAGE = "parenchymaImage";
 	public static final String ORIGINAL_IMAGE = "originalImage";
 
-	public LungImagesDB(DB db){
+	public Features(DB db){
 		this.db = db;
 		this.col = db.getCollection("exams");
 	}
