@@ -1,7 +1,6 @@
 package images;
 
 import com.mongodb.BasicDBList;
-import com.mongodb.MongoClient;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.BasicDBObject;
@@ -10,17 +9,16 @@ import java.io.File;
 import java.io.IOException;
 
 public class Segmented_Solid_Nodules_With_Attributes {
-
-	public static void main( String args[] ) throws IOException {
+	
+	private DB db;
+	
+	public Segmented_Solid_Nodules_With_Attributes(DB db) {
+		this.db = db;
+	}
+	
+	public void downloadImages(String rootPath) throws IOException {
 
 		try{
-
-			// Connect to mongodb server
-			MongoClient mongoClient = new MongoClient("127.0.0.1", 27017);
-
-			// Connect to the dataBases/NodulosSolidos, name of the database, in this case, is db_tcc
-			DB db = mongoClient.getDB( "db_tcc" );
-			System.out.println("Connect to database successfully");
 
 			//GenerateImages object will store the Dicom images from the database
 			GenerateImages getImage = new GenerateImages(db);
@@ -72,7 +70,7 @@ public class Segmented_Solid_Nodules_With_Attributes {
 
 							benignNodulesCount++;
 							
-							String examFolder = "/home/douglas/dev/tcc/images/solid-nodules-with-attributes/benigno/" + exam_id + "/";
+							String examFolder = rootPath + malignancyName + "/" + exam_id + "/";
 							
 							File directory = new File(examFolder);
 							directory.mkdir();
@@ -85,7 +83,7 @@ public class Segmented_Solid_Nodules_With_Attributes {
 
 							malignantNodulesCount++;
 							
-							String examFolder = "/home/douglas/dev/tcc/images/solid-nodules-with-attributes/maligno/" + exam_id + "/";
+							String examFolder = rootPath + malignancyName + "/" + exam_id + "/";
 							
 							File directory = new File(examFolder);
 							directory.mkdir();
@@ -95,25 +93,22 @@ public class Segmented_Solid_Nodules_With_Attributes {
 
 						}
 
-						//For each roi of the nodule
 						for (int i_roi = 0; i_roi < roiList.size(); ++i_roi) {
 							roi = (BasicDBObject) roiList.get(i_roi);
 							String fileNameP1 = "", fileNameP2 = "";
 
 							if(malignancyName.equals("benigno") ){
 								
-								fileNameP1 = "/home/douglas/dev/tcc/images/solid-nodules-with-attributes/benigno/" + exam_id + "/" + nodule_id + "/"; 
+								fileNameP1 = rootPath + malignancyName + "/" + exam_id + "/" + nodule_id + "/"; 
 								fileNameP2 = String.valueOf(i_roi);		
 
-								//Generate image and saves it in a directory as specified
 								getImage.generateImage(roi.getObjectId("noduleImage"), fileNameP1 + fileNameP2, ".png");
 
 							} else if(malignancyName.equals("maligno") ){
 
-								fileNameP1 = "/home/douglas/dev/tcc/images/solid-nodules-with-attributes/maligno/" + exam_id + "/" + nodule_id + "/"; 
+								fileNameP1 = rootPath + malignancyName + "/" + exam_id + "/" + nodule_id + "/"; 
 								fileNameP2 = String.valueOf(i_roi);		
 
-								//Generate image and saves it in a directory as specified
 								getImage.generateImage(roi.getObjectId("noduleImage"), fileNameP1 + fileNameP2, ".png");
 
 							}

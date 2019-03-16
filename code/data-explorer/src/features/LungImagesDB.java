@@ -4,13 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.MongoClient;
 
 import features.FeaturesNames;
 
@@ -23,20 +21,9 @@ public class LungImagesDB{
 	public static final String PARENCHYMA_IMAGE = "parenchymaImage";
 	public static final String ORIGINAL_IMAGE = "originalImage";
 
-	private void connectDB(String databaseName){
-		try{
-			MongoClient mongoClient = new MongoClient("127.0.0.1", 27017);
-			db = mongoClient.getDB(databaseName);
-			col = db.getCollection("exams");
-
-		} catch (UnknownHostException e){
-			System.err.println("Erro ao tentar se conectar ao banco " + databaseName);
-			e.printStackTrace();
-		} 
-	}
-
-	public LungImagesDB(String databaseName){
-		this.connectDB(databaseName);
+	public LungImagesDB(DB db){
+		this.db = db;
+		this.col = db.getCollection("exams");
 	}
 
 	public void loadCollection(String collection){
@@ -45,7 +32,7 @@ public class LungImagesDB{
 
 	public void makeCSVfile_solidNodules(String pathName){
 		try {
-			pathName += ".csv";
+			pathName += "solidNodules.csv";
 			File f = new File(pathName);
 			FileWriter fw;
 			fw = new FileWriter(f);
@@ -152,7 +139,7 @@ public class LungImagesDB{
 
 	public void makeCSVfile_solidNodules_withParenchyma(String pathName){
 		try {
-			pathName += ".csv";
+			pathName += "solidNodules_withParenchyma.csv";
 			File f = new File(pathName);
 			FileWriter fw;
 			fw = new FileWriter(f);

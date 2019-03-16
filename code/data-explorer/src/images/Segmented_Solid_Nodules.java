@@ -1,7 +1,6 @@
 package images;
 
 import com.mongodb.BasicDBList;
-import com.mongodb.MongoClient;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.BasicDBObject;
@@ -10,18 +9,17 @@ import java.io.File;
 import java.io.IOException;
 
 public class Segmented_Solid_Nodules {
-
-	public static void main( String args[] ) throws IOException {
+	
+	private DB db;
+	
+	public Segmented_Solid_Nodules(DB db) {
+		this.db = db;
+	}
+	
+	public void downloadImages(String rootPath) throws IOException {
 
 		try{
-
-			// Connect to mongodb server
-			MongoClient mongoClient = new MongoClient("127.0.0.1", 27017);
-
-			// Connect to the dataBases/NodulosSolidos, name of the database, in this case, is db_tcc
-			DB db = mongoClient.getDB( "db_tcc" );
-			System.out.println("Connect to database successfully");
-
+			
 			//GenerateImages object will store the Dicom images from the database
 			GenerateImages getImage = new GenerateImages(db);
 
@@ -33,11 +31,9 @@ public class Segmented_Solid_Nodules {
 			BasicDBList bignoduleList;
 			BasicDBList roiList = null;
 			
-			// Connects with the exams collection
 			DBCollection collection = db.getCollection("exams");
 			DBCursor cursor = collection.find();
 
-			//Counters
 			int examCount = 0, nodulesCount = 0, notUsedNodulesCount = 0, 
 					benignNodulesCount = 0, malignantNodulesCount = 0;
 
@@ -46,16 +42,10 @@ public class Segmented_Solid_Nodules {
 				examCount++;
 				exam = (BasicDBObject) cursor.next();
 
-				//Gets the exam's id (may I use it later)
-				//id = exam.getObjectId("_id");
-
-				//Creates a reading session
 				reading = (BasicDBObject) exam.get("readingSession");
 
-				//Gets the big nodule list
 				bignoduleList = (BasicDBList) reading.get("bignodule");
 
-				//For each big nodule:
 				for (int i_nodule = 0; i_nodule < bignoduleList.size(); i_nodule++){
 
 					bignodule = (BasicDBObject) bignoduleList.get(i_nodule);
@@ -77,7 +67,7 @@ public class Segmented_Solid_Nodules {
 
 							benignNodulesCount++;
 
-							File diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules/benigno/" + benignNodulesCount + "/");
+							File diretorio = new File(rootPath + malignancyName + "/" + benignNodulesCount + "/");
 							diretorio.mkdir();
 
 						} else if(malignancyNumber.equals("4") || malignancyNumber.equals("5")){
@@ -85,30 +75,27 @@ public class Segmented_Solid_Nodules {
 
 							malignantNodulesCount++;
 
-							File diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules/maligno/" + malignantNodulesCount + "/");
+							File diretorio = new File(rootPath + malignancyName + "/" + malignantNodulesCount + "/");
 							diretorio.mkdir();
 
 						}
 
-						//For each roi of the nodule
 						for (int i_roi = 0; i_roi < roiList.size(); ++i_roi) {
 							roi = (BasicDBObject) roiList.get(i_roi);
 							String fileNameP1 = "", fileNameP2 = "";
 
 							if(malignancyName.equals("benigno") ){
 								
-								fileNameP1 = "/home/douglas/dev/tcc/images/solid-nodules/benigno/" + benignNodulesCount + "/"; 
+								fileNameP1 = rootPath + malignancyName + "/" + benignNodulesCount + "/"; 
 								fileNameP2 = malignancyName + benignNodulesCount + "-" + i_roi;		
 
-								//Generate image and saves it in a directory as specified
 								getImage.generateImage(roi.getObjectId("noduleImage"), fileNameP1 + fileNameP2, ".png");
 
 							} else if(malignancyName.equals("maligno") ){
 
-								fileNameP1 = "/home/douglas/dev/tcc/images/solid-nodules/maligno/" + malignantNodulesCount + "/"; 
+								fileNameP1 = rootPath + malignancyName + "/" + malignantNodulesCount + "/"; 
 								fileNameP2 = malignancyName +  malignantNodulesCount + "-" + i_roi;		
 
-								//Generate image and saves it in a directory as specified
 								getImage.generateImage(roi.getObjectId("noduleImage"), fileNameP1 + fileNameP2, ".png");
 
 							}
