@@ -71,21 +71,27 @@ public class Segmented_Solid_Nodules_With_Attributes {
 							malignancyName = "benigno";
 
 							benignNodulesCount++;
-
-							File diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules-with-attributes/benigno/" + exam_id + "/");
-							diretorio.mkdir();
-							diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules-with-attributes/benigno/" + exam_id + "/" + nodule_id + "/");
-							diretorio.mkdir();
+							
+							String examFolder = "/home/douglas/dev/tcc/images/solid-nodules-with-attributes/benigno/" + exam_id + "/";
+							
+							File directory = new File(examFolder);
+							directory.mkdir();
+							
+							directory = new File(examFolder + nodule_id + "/");
+							directory.mkdir();
 
 						} else if(malignancyNumber.equals("4") || malignancyNumber.equals("5")){
 							malignancyName = "maligno";
 
 							malignantNodulesCount++;
-
-							File diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules-with-attributes/maligno/" + exam_id + "/");
-							diretorio.mkdir();
-							diretorio = new File("/home/douglas/dev/tcc/images/solid-nodules-with-attributes/maligno/" + exam_id + "/" + nodule_id + "/");
-							diretorio.mkdir();
+							
+							String examFolder = "/home/douglas/dev/tcc/images/solid-nodules-with-attributes/maligno/" + exam_id + "/";
+							
+							File directory = new File(examFolder);
+							directory.mkdir();
+							
+							directory = new File(examFolder + nodule_id + "/");
+							directory.mkdir();
 
 						}
 
