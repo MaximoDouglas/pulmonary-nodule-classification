@@ -6,8 +6,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.DB;
 
 import features.Features;
-import images.Segmented_Solid_Nodules;
-import images.Segmented_Solid_Nodules_With_Attributes;
+import images.Images;
 
 public class Main{
 
@@ -25,11 +24,9 @@ public class Main{
 		features.makeCSVfile_solidNodules(featuresPath);
 		features.makeCSVfile_solidNodules_withParenchyma(featuresPath);
 		
-		Segmented_Solid_Nodules ssn_images = new Segmented_Solid_Nodules(db);
-		ssn_images.downloadImages(imagesPath + "solid-nodules/");
-		
-		Segmented_Solid_Nodules_With_Attributes ssnwa_images = new Segmented_Solid_Nodules_With_Attributes(db);
-		ssnwa_images.downloadImages(imagesPath + "solid-nodules-with-attributes/");
+		Images images = new Images(db);
+		images.downloadImages_solidNodules(imagesPath);
+		images.downloadImages_solidNodules_withAttributes(imagesPath);
 		
 		System.out.println("FINISHED");
 	}
