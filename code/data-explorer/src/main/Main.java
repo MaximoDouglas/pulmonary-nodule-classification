@@ -19,14 +19,15 @@ public class Main{
 		String rootPath = "/home/douglas/dev/tcc/data/";
 		String featuresPath = rootPath + "features" + "/";
 		String imagesPath = rootPath + "images" + "/";
+		String windowTag	= "noduleImageJT";
 		
 		Features features = new Features(db);
 		features.makeCSVfile_solidNodules(featuresPath);
 		features.makeCSVfile_solidNodules_withParenchyma(featuresPath);
 		
 		Images images = new Images(db);
-		images.downloadImages_solidNodules(imagesPath);
-		images.downloadImages_solidNodules_withAttributes(imagesPath);
+		images.downloadImages_solidNodules(imagesPath, windowTag);
+		images.downloadImages_solidNodules_withAttributes(imagesPath, windowTag);
 		
 		System.out.println("FINISHED");
 	}

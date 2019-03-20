@@ -16,7 +16,7 @@ public class Images {
 		this.db = db;
 	}
 	
-	public void downloadImages_solidNodules(String rootPath) throws IOException {
+	public void downloadImages_solidNodules(String rootPath, String tag) throws IOException {
 		
 		rootPath += "solid-nodules" + "/";
 
@@ -91,14 +91,14 @@ public class Images {
 								fileNameP1 = rootPath + malignancyName + "/" + benignNodulesCount + "/"; 
 								fileNameP2 = malignancyName + benignNodulesCount + "-" + i_roi;		
 
-								getImage.generateImage(roi.getObjectId("noduleImage"), fileNameP1 + fileNameP2, ".png");
+								getImage.generateImage(roi.getObjectId(tag), fileNameP1 + fileNameP2, ".png");
 
 							} else if(malignancyName.equals("maligno") ){
 
 								fileNameP1 = rootPath + malignancyName + "/" + malignantNodulesCount + "/"; 
 								fileNameP2 = malignancyName +  malignantNodulesCount + "-" + i_roi;		
 
-								getImage.generateImage(roi.getObjectId("noduleImage"), fileNameP1 + fileNameP2, ".png");
+								getImage.generateImage(roi.getObjectId(tag), fileNameP1 + fileNameP2, ".png");
 
 							}
 						}
@@ -121,7 +121,7 @@ public class Images {
 		}
 	}
 	
-	public void downloadImages_solidNodules_withAttributes(String rootPath) throws IOException {
+	public void downloadImages_solidNodules_withAttributes(String rootPath, String tag) throws IOException {
 		
 		rootPath += "solid-nodules-with-attributes" + "/";
 
@@ -209,14 +209,14 @@ public class Images {
 								fileNameP1 = rootPath + malignancyName + "/" + exam_id + "/" + nodule_id + "/"; 
 								fileNameP2 = String.valueOf(i_roi);		
 
-								getImage.generateImage(roi.getObjectId("noduleImage"), fileNameP1 + fileNameP2, ".png");
+								getImage.generateImage(roi.getObjectId(tag), fileNameP1 + fileNameP2, ".png");
 
 							} else if(malignancyName.equals("maligno") ){
 
 								fileNameP1 = rootPath + malignancyName + "/" + exam_id + "/" + nodule_id + "/"; 
 								fileNameP2 = String.valueOf(i_roi);		
 
-								getImage.generateImage(roi.getObjectId("noduleImage"), fileNameP1 + fileNameP2, ".png");
+								getImage.generateImage(roi.getObjectId(tag), fileNameP1 + fileNameP2, ".png");
 
 							}
 						}
