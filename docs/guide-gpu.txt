@@ -1,0 +1,4 @@
+Acesso: ssh -p 2222 oliveiramc@acesso.nbcgib.uesc.br
+Senha: vdcRy5KtTjrXNYTy
+
+
