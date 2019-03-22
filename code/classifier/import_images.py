@@ -6,7 +6,7 @@ import math
 import itertools
 import re
 import os
-import imageio
+#import imageio
 from scipy import misc
 import numpy as np
 import matplotlib.pyplot as plt

@@ -6,7 +6,6 @@ import os
 import time
 import gc
 import shutil
-import imageio
 
 import numpy as np
 import tensorflow as tf
