@@ -1,6 +1,6 @@
 # Pulmonary nodule classification
 
-Automatic classification on Pulmonary Nodules of Computed Tomography Image.
+Automatic classification on Pulmonary Nodules of Computed Tomography Image - Dicom.
 
 # Initial ideas
 1. Data exploration (initialy, just visualizations) on the Features dataset;
