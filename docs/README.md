@@ -2,6 +2,14 @@
 
 Automatic classification on Pulmonary Nodules of Computed Tomography Image - Dicom.
 
+# Necessary libraries
+1. hyperopt
+2. hyperas
+3. sklearn
+4. keras_metrics
+5. IPython
+6. tqdm
+
 # Initial ideas
 1. Data exploration (initialy, just visualizations) on the Features dataset;
 2. Create a classifier (CNN) using the images as inputs;
