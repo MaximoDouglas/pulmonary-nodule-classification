@@ -1,15 +1,11 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Módulo responsável pela importação e processamento das imagens dos nódulos.
-"""
+'''Módulo responsável pela importação e processamento das imagens dos nódulos.'''
 import math
 import itertools
 import re
 import os
-#import imageio
 from scipy import misc
 import numpy as np
-import matplotlib.pyplot as plt
+
 from scipy.ndimage import rotate
 from sklearn.model_selection import KFold
 from keras.utils import to_categorical
@@ -69,15 +65,6 @@ def normalize_first(nodules, n_slices, repeat=False):
                 new_nodule.append(nodule[i])
         normalized_slices.append(new_nodule)
     return normalized_slices
-
-def plot_nodule(nod, rows, cols):
-    '''Shows the slices of a nodule in a single plot'''
-    plt.figure(1)
-    for i in range(nod.shape[2]):
-        position = rows * 100 + cols * 10 + i + 1
-        plt.subplot(position)
-        plt.imshow(nod[:, :, i, 0], cmap='gray')
-    plt.show()
 
 def read_images(path, category):
     '''Reads the images files in our file structure and mounts an array
