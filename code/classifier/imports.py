@@ -31,7 +31,6 @@ from keras.backend.tensorflow_backend import set_session
 from keras.utils import to_categorical
 import keras_metrics as km
 
-from IPython.display import SVG
 from tqdm import tqdm
 
 from import_images import get_folds
