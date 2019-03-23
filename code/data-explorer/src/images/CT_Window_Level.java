@@ -63,7 +63,6 @@ ActionListener, AdjustmentListener, ItemListener {
 	Font sanFont = new Font("SansSerif", Font.PLAIN, 12);
 	Choice choice;
 	private int windowRange, levelMax=5000, levelMin=-1000, windowMax=10000;
-	//	static Vector<WinLevel> winlevelList = new Vector<WinLevel>();
 	Vector<WinLevel> winlevelList = new Vector<WinLevel>();
 
 
@@ -109,7 +108,6 @@ ActionListener, AdjustmentListener, ItemListener {
 
 		addLabel("Level (Center) (HU): ", levelLabel=new TrimmedLabel("        "));
 
-		// window slider
 		windowSlider = new Scrollbar(Scrollbar.HORIZONTAL, window, 1, 0, windowMax);
 		c.gridy = y++;
 		c.insets = new Insets(2, 10, 0, 10);
@@ -132,7 +130,6 @@ ActionListener, AdjustmentListener, ItemListener {
 		choice.addItemListener(this);
 		add(choice);
 
-		// buttons
 		int trim = IJ.isMacOSX()?20:0;
 		panel = new Panel();
 		panel.setLayout(new GridLayout(0,3, 3, 0));
@@ -154,8 +151,8 @@ ActionListener, AdjustmentListener, ItemListener {
 		gridbag.setConstraints(panel, c);
 		add(panel);
 
-		addKeyListener(ij);  // ImageJ handles keyboard shortcuts
-
+		addKeyListener(ij);
+		
 		pack();
 
 		Point loc = Prefs.getLocation(LOC_KEY);
@@ -177,8 +174,6 @@ ActionListener, AdjustmentListener, ItemListener {
 	 */
 	void run(ImagePlus imp) 
 	{
-		//		Roi roi = imp.getRoi();
-		//		if (roi!=null) roi.endPaste();
 		ImageProcessor ip = imp.getProcessor();
 		if(imgProcessed(imp)<0) setupNewImage(imp, ip);
 	}
@@ -336,7 +331,7 @@ ActionListener, AdjustmentListener, ItemListener {
 		if (dicomtag!=-99999) pixelrep=(int)dicomtag;
 		else pixelrep=0;
 
-		offSigned = (32768 + (int)intercept)*pixelrep;          //bug fix to give correct offset
+		offSigned = (32768 + (int)intercept)*pixelrep;
 
 		defaultMax-=offSigned;
 		defaultMin-=offSigned;
@@ -346,12 +341,10 @@ ActionListener, AdjustmentListener, ItemListener {
 		if(imgWindow!=-99999 && imgLevel!=-99999) {
 			window = imgWindow;
 			level = imgLevel;
-			//			choice.select("Image");
 			preset=2;
 		} else {
 			window = fullWindow;
 			level = fullLevel;
-			//			choice.select("Full range");
 			preset=1;
 		}
 		if(imgProcessed(imp)<0) {
@@ -404,7 +397,6 @@ ActionListener, AdjustmentListener, ItemListener {
 		double max = scrLevel + scrWindow / 2;
 		setMinAndMax(imp, min, max);
 		saveWinLevel(imp);
-		//		updateScrollBars(levelSlider, false);
 	}
 
 	void adjustWindow(ImagePlus imp, ImageProcessor ip, int wvalue) {
@@ -415,7 +407,6 @@ ActionListener, AdjustmentListener, ItemListener {
 		double max=scrLevel+scrWindow/2;
 		setMinAndMax(imp, min, max);
 		saveWinLevel(imp);
-		//		updateScrollBars(windowSlider, false);
 	}
 
 	void reset(ImagePlus imp, ImageProcessor ip) {
