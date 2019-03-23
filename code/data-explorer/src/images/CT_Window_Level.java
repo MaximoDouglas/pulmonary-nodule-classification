@@ -8,23 +8,14 @@ import ij.gui.*;
 import ij.plugin.frame.*;
 import java.util.Vector;
 
-/* 	Author: Julian Cooper
-	Contact: Julian.Cooper [at] uhb.nhs.uk
-	First version: 2009/06/24
-	Second version: 2014/03/14 Fix for signed image values
-	Licence: Public Domain	*/
- 
-/**
- * Adapted by Ailton Felix
- */
-
 
 /** This plugin allows the window and level of a 16-bit grayscale image or stack
- * (typical CT scan data) to be set or selected from presets. */
+ * (typical CT scan data) to be set or selected from presets. 
+ */
 
-
+@SuppressWarnings("serial")
 public class CT_Window_Level extends PlugInFrame implements Runnable,
-	ActionListener, AdjustmentListener, ItemListener {
+ActionListener, AdjustmentListener, ItemListener {
 
 	public static final int BONE_W=2000, BONE_L=300;
 	public static final int ABDO_W=350, ABDO_L=50;
@@ -72,7 +63,7 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 	Font sanFont = new Font("SansSerif", Font.PLAIN, 12);
 	Choice choice;
 	private int windowRange, levelMax=5000, levelMin=-1000, windowMax=10000;
-//	static Vector<WinLevel> winlevelList = new Vector<WinLevel>();
+	//	static Vector<WinLevel> winlevelList = new Vector<WinLevel>();
 	Vector<WinLevel> winlevelList = new Vector<WinLevel>();
 
 
@@ -83,7 +74,7 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 
 	public void run(String arg) {
 		setTitle("CT W&L");
-		
+
 
 		if (instance!=null) {
 			if (!instance.getTitle().equals(getTitle())) {
@@ -115,9 +106,9 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		levelSlider.addKeyListener(ij);
 		levelSlider.setUnitIncrement(1);
 		levelSlider.setFocusable(false);
-		
+
 		addLabel("Level (Center) (HU): ", levelLabel=new TrimmedLabel("        "));
-		
+
 		// window slider
 		windowSlider = new Scrollbar(Scrollbar.HORIZONTAL, window, 1, 0, windowMax);
 		c.gridy = y++;
@@ -129,14 +120,14 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		windowSlider.addKeyListener(ij);
 		windowSlider.setUnitIncrement(1);
 		windowSlider.setFocusable(false);
-		
+
 		addLabel("Window (HU):            ", windowLabel=new TrimmedLabel("        "));
 
 		c.gridy = y++;
 		c.insets = new Insets(5, 10, 5, 10);
 		choice = new Choice();
 		for (int i=0; i<presetLabels.length; i++)
-		choice.addItem(presetLabels[i]);
+			choice.addItem(presetLabels[i]);
 		gridbag.setConstraints(choice, c);
 		choice.addItemListener(this);
 		add(choice);
@@ -145,28 +136,28 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		int trim = IJ.isMacOSX()?20:0;
 		panel = new Panel();
 		panel.setLayout(new GridLayout(0,3, 3, 0));
-		
+
 		resetB = new TrimmedButton("Reset",trim);
 		resetB.addActionListener(this);
 		panel.add(resetB);
-		
+
 		setB = new TrimmedButton("Set",trim);
 		setB.addActionListener(this);
 		panel.add(setB);
-		
+
 		writeB = new TrimmedButton("Write",trim);
 		writeB.addActionListener(this);
 		panel.add(writeB);
-		
+
 		c.gridy = y++;
 		c.insets = new Insets(8, 5, 10, 5);
 		gridbag.setConstraints(panel, c);
 		add(panel);
 
- 		addKeyListener(ij);  // ImageJ handles keyboard shortcuts
-		
+		addKeyListener(ij);  // ImageJ handles keyboard shortcuts
+
 		pack();
-		
+
 		Point loc = Prefs.getLocation(LOC_KEY);
 		if (loc!=null)
 			setLocation(loc);
@@ -180,18 +171,18 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		setup();
 	}
 
-	
+
 	/**
 	 * by Ailton
 	 */
 	void run(ImagePlus imp) 
 	{
-//		Roi roi = imp.getRoi();
-//		if (roi!=null) roi.endPaste();
+		//		Roi roi = imp.getRoi();
+		//		if (roi!=null) roi.endPaste();
 		ImageProcessor ip = imp.getProcessor();
 		if(imgProcessed(imp)<0) setupNewImage(imp, ip);
 	}
-	
+
 	void addLabel(String text, Label label2) {
 		if (label2==null&&IJ.isMacOSX()) text += "    ";
 		panel = new Panel();
@@ -200,7 +191,7 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		int bottomInset = IJ.isMacOSX()?4:0;
 		c.insets = new Insets(0, 8, bottomInset+4, 8);
 		gridbag.setConstraints(panel, c);
-        panel.setLayout(new FlowLayout(label2==null?FlowLayout.CENTER:FlowLayout.LEFT, 0, 0));
+		panel.setLayout(new FlowLayout(label2==null?FlowLayout.CENTER:FlowLayout.LEFT, 0, 0));
 		Label label= new TrimmedLabel(text);
 		label.setFont(sanFont);
 		panel.add(label);
@@ -210,7 +201,7 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 			label2.setMinimumSize(new Dimension(60,20));
 			panel.add(label2);
 		}
-		
+
 		add(panel);
 	}
 
@@ -282,10 +273,10 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		if (roi!=null) roi.endPaste();
 		ImageProcessor ip = imp.getProcessor();
 		if(imgProcessed(imp)<0) setupNewImage(imp, ip);
-		
+
 		imp.updateAndDraw();
-		
-	 	return ip;
+
+		return ip;
 	}
 
 	int imgProcessed(ImagePlus imp){
@@ -307,7 +298,7 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		double dicomtag;
 		short[] pixels;
 		ImageProcessor sp;
-                
+
 		defaultMin = 65535;
 		defaultMax = 0;
 		for (int slice=1; slice<=size; slice++) {
@@ -346,21 +337,21 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		else pixelrep=0;
 
 		offSigned = (32768 + (int)intercept)*pixelrep;          //bug fix to give correct offset
-                
+
 		defaultMax-=offSigned;
 		defaultMin-=offSigned;
-		
+
 		fullWindow = (int)((defaultMax-defaultMin)*slope);
 		fullLevel = (int) (ScrtoHU(defaultMin) + fullWindow / 2);
 		if(imgWindow!=-99999 && imgLevel!=-99999) {
 			window = imgWindow;
 			level = imgLevel;
-//			choice.select("Image");
+			//			choice.select("Image");
 			preset=2;
 		} else {
 			window = fullWindow;
 			level = fullLevel;
-//			choice.select("Full range");
+			//			choice.select("Full range");
 			preset=1;
 		}
 		if(imgProcessed(imp)<0) {
@@ -379,12 +370,12 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		imp.setDisplayRange(min, max);
 	}
 
-	
+
 
 	void updateLabels(ImagePlus imp) {
 		windowLabel.setText(""+window);
 		levelLabel.setText(""+level);
-		
+
 	}
 
 	void updateScrollBars(Scrollbar sb, boolean newRange) {
@@ -402,7 +393,7 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 			else
 				levelSlider.setValue(level);
 		}
-		
+
 	}
 
 
@@ -413,7 +404,7 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		double max = scrLevel + scrWindow / 2;
 		setMinAndMax(imp, min, max);
 		saveWinLevel(imp);
-//		updateScrollBars(levelSlider, false);
+		//		updateScrollBars(levelSlider, false);
 	}
 
 	void adjustWindow(ImagePlus imp, ImageProcessor ip, int wvalue) {
@@ -424,7 +415,7 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		double max=scrLevel+scrWindow/2;
 		setMinAndMax(imp, min, max);
 		saveWinLevel(imp);
-//		updateScrollBars(windowSlider, false);
+		//		updateScrollBars(windowSlider, false);
 	}
 
 	void reset(ImagePlus imp, ImageProcessor ip) {
@@ -439,20 +430,20 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		}
 		adjustLevel(imp, ip, level);
 		adjustWindow(imp, ip, window);
-		
+
 	}
 
 	void setWindowLevel(ImagePlus imp, ImageProcessor ip) {		
 		GenericDialog gd = new GenericDialog("Set W&L");
 		gd.addNumericField("Window Center (Level): ", level, 0);
 		gd.addNumericField("Window Width: ", window, 0);
-		
+
 		gd.showDialog();
 		if (gd.wasCanceled())
 			return;
 		level = (int) gd.getNextNumber();
 		window = (int) gd.getNextNumber();
-		
+
 		adjustLevel(imp, ip, level);
 		adjustWindow(imp, ip, window);
 		choice.select("None");
@@ -477,7 +468,7 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		ImagePlus imp;
 		ImageProcessor ip;
 		int action;
-		
+
 		if (doReset) action = RESET;
 		else if (doSet) action = SET;
 		else if (doWrite) action = WRITE;
@@ -493,31 +484,31 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 			return;
 		}
 		ip = imp.getProcessor();
-		
+
 		switch (action) {
-			case RESET: reset(imp, ip); break;
-			case SET: setWindowLevel(imp, ip); break;
-			case LEVEL: adjustLevel(imp, ip, level); break;
-			case WINDOW: adjustWindow(imp, ip, window); break;
-			case WRITE: writeHeader(imp); break;
+		case RESET: reset(imp, ip); break;
+		case SET: setWindowLevel(imp, ip); break;
+		case LEVEL: adjustLevel(imp, ip, level); break;
+		case WINDOW: adjustWindow(imp, ip, window); break;
+		case WRITE: writeHeader(imp); break;
 		}
-		
+
 		updateLabels(imp);
-		
+
 		imp.updateChannelAndDraw();
-		
+
 	}
 
-	
+
 	public void windowClosing(WindowEvent e) {
-	 	close();
+		close();
 		Prefs.saveLocation(LOC_KEY, getLocation());
 	}
 
-    /** Overrides close() in PlugInFrame. */
-	
-    public void close() {
-    	super.close();
+	/** Overrides close() in PlugInFrame. */
+
+	public void close() {
+		super.close();
 		instance = null;
 		done = true;
 		synchronized(this) {
@@ -525,7 +516,8 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		}
 	}
 
-	
+
+	@SuppressWarnings("unlikely-arg-type")
 	public void windowActivated(WindowEvent e) {
 		super.windowActivated(e);
 		Vector<Integer> closedList = new Vector<Integer>(); //list of closed windows
@@ -534,9 +526,11 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 				closedList.add(winlevelList.indexOf(wl));
 			}
 		}
+		
 		for(Integer i: closedList) {
-			winlevelList.remove(i);		//remove the closed windows
+			winlevelList.remove(i);
 		}
+		
 		closedList.clear();
 
 		ImagePlus imp = WindowManager.getCurrentImage();
@@ -546,62 +540,63 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 			IJ.error("Image type no longer valid", "16-bit grayscale image or stack required");
 			winlevelList.remove(getWinLevel(imp));
 		}
+		
 		WindowManager.setWindow(this);
 	}
 
 	public synchronized  void itemStateChanged(ItemEvent e) {
 		int index = choice.getSelectedIndex();
-		
+
 		switch(index) {
-			case 0:
-				break;
-			case 1:
-				level=levelValue=fullLevel;
-				window=windowValue=fullWindow;
-				break;
-			case 2:
-				if(imgWindow!=-99999 && imgLevel!=-99999) {
-					window = windowValue = imgWindow;
-					level = levelValue = imgLevel;
-					choice.select("Image");
-					preset=2;
-				} else {
-					window = levelValue = fullWindow;
-					level = windowValue = fullLevel;
-					choice.select("Full range");
-					preset=1;
-				}
-				break;
-			default:
-				preset=index;
-				level=levelValue=presetLevels[preset-3];
-				window=windowValue=presetWindows[preset-3];
-				break;
+		case 0:
+			break;
+		case 1:
+			level=levelValue=fullLevel;
+			window=windowValue=fullWindow;
+			break;
+		case 2:
+			if(imgWindow!=-99999 && imgLevel!=-99999) {
+				window = windowValue = imgWindow;
+				level = levelValue = imgLevel;
+				choice.select("Image");
+				preset=2;
+			} else {
+				window = levelValue = fullWindow;
+				level = windowValue = fullLevel;
+				choice.select("Full range");
+				preset=1;
+			}
+			break;
+		default:
+			preset=index;
+			level=levelValue=presetLevels[preset-3];
+			window=windowValue=presetWindows[preset-3];
+			break;
 		}
 		notify();
 	}
 
-    /** Resets this and brings it to the front. */
-    public void updateAndDraw() {
-        toFront();
-    }
+	/** Resets this and brings it to the front. */
+	public void updateAndDraw() {
+		toFront();
+	}
 
-	
+
 	double getDicomNumTag(ImagePlus imp, String tag) {
 		double tagval=-99999;
 		String str_tagval, header;
-        ImageStack stack = imp.getStack();
+		ImageStack stack = imp.getStack();
 		int stk_size=stack.getSize();
-        if(stk_size>1) header = stack.getSliceLabel(imp.getCurrentSlice());
+		if(stk_size>1) header = stack.getSliceLabel(imp.getCurrentSlice());
 		else header = (String)imp.getProperty("Info");
-        if(header!=null){
-            int iTag = header.indexOf(tag);
-            int iColon = header.indexOf(":",iTag);
-            int iNewline = header.indexOf("\n",iColon);
-            if(iTag>=0 && iColon>=0 && iNewline>=0){
+		if(header!=null){
+			int iTag = header.indexOf(tag);
+			int iColon = header.indexOf(":",iTag);
+			int iNewline = header.indexOf("\n",iColon);
+			if(iTag>=0 && iColon>=0 && iNewline>=0){
 				str_tagval = header.substring(iColon+1,iNewline).trim();
 				tagval=Double.parseDouble(str_tagval);
-            }
+			}
 		}
 		return tagval;
 	}
@@ -629,7 +624,7 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 		imgLevel=level;
 		saveWinLevel(imp);
 	}
-	
+
 	private boolean isDicomWL(ImagePlus imp) {
 		String header;
 		ImageStack stack = imp.getStack();
@@ -642,27 +637,27 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 
 	StringBuffer writeinttoTag(StringBuffer hdrBuff, String tag, int value) {
 		int iTag = hdrBuff.indexOf(tag);
-        int iColon = hdrBuff.indexOf(":",iTag);
-        int iNewline = hdrBuff.indexOf("\n",iColon);
+		int iColon = hdrBuff.indexOf(":",iTag);
+		int iNewline = hdrBuff.indexOf("\n",iColon);
 		String valtext = new String(" "+value);
-        if(iTag>=0 && iColon>=0 && iNewline>=0){
+		if(iTag>=0 && iColon>=0 && iNewline>=0){
 			hdrBuff.replace(iColon+1, iNewline, valtext);
 		}
-        return hdrBuff;
+		return hdrBuff;
 	}
-	
+
 	double HUtoScr (double HUValue) {
 		return (HUValue-intercept)/slope;
 	}
-	 
+
 	double HUtoScr (int HUValue) {
 		return (HUValue-intercept)/slope;
 	}
-	
+
 	double ScrtoHU (double ScrValue) {
 		return ScrValue*slope+intercept;
 	}
-	
+
 	double ScrtoHU (int ScrValue) {
 		return ScrValue*slope+intercept;
 	}
@@ -687,30 +682,31 @@ public class CT_Window_Level extends PlugInFrame implements Runnable,
 	}
 
 }
+@SuppressWarnings("serial")
 class TrimmedLabel extends Label {
 	int trim = IJ.isMacOSX()?0:6;
 
-    public TrimmedLabel(String title) {
-        super(title);
-    }
+	public TrimmedLabel(String title) {
+		super(title);
+	}
 
-	
-    public Dimension getMinimumSize() {
-        return new Dimension(super.getMinimumSize().width, super.getMinimumSize().height-trim);
-    }
 
-	
-    public Dimension getPreferredSize() {
-        return getMinimumSize();
-    }
+	public Dimension getMinimumSize() {
+		return new Dimension(super.getMinimumSize().width, super.getMinimumSize().height-trim);
+	}
 
-} // TrimmedLabel class
+
+	public Dimension getPreferredSize() {
+		return getMinimumSize();
+	}
+
+}
 
 class WinLevel {
 	private int window, level, imgWindow, imgLevel, fullWindow, fullLevel, offSigned=0, preset=-1;
 	private double slope, intercept;
 	private ImageWindow win;
-	
+
 	WinLevel(ImageWindow win, double slope, double intercept, int window, int level, int imgWindow, int imgLevel, int fullWindow, int fullLevel, int offSigned, int preset) {
 		this.win=win;
 		this.slope=slope;
@@ -724,7 +720,7 @@ class WinLevel {
 		this.offSigned=offSigned;
 		this.preset=preset;
 	}
-		
+
 	WinLevel(WinLevel wl) {
 		this.win=wl.win;
 		this.slope=wl.slope;
@@ -751,11 +747,11 @@ class WinLevel {
 	public int getWindow() {
 		return window;
 	}
-	
+
 	public double getSlope() {
 		return slope;
 	}
-	
+
 	public double getIntercept() {
 		return intercept;
 	}
@@ -763,7 +759,7 @@ class WinLevel {
 	public int getLevel() {
 		return level;
 	}
-	
+
 	public int getoffSigned() {
 		return offSigned;
 	}
@@ -771,19 +767,19 @@ class WinLevel {
 	public int getimgWindow() {
 		return imgWindow;
 	}
-	
+
 	public int getimgLevel() {
 		return imgLevel;
 	}
-	
+
 	public int getfullWindow() {
 		return fullWindow;
 	}
-	
+
 	public int getfullLevel() {
 		return fullLevel;
 	}
-	
+
 	public int getPreset() {
 		return preset;
 	}
