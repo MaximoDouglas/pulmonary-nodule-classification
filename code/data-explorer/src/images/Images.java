@@ -12,17 +12,18 @@ import com.mongodb.gridfs.GridFSInputFile;
 import ij.ImagePlus;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
-import segmentation.ParenchymaExtractor;
-import utility.Useful;
 
 import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import org.bson.types.ObjectId;
+
 public class Images {
 
-	private DB db;
+	private DB db;	
+	private double step = 0.05;
 
 	public Images(DB db) {
 		this.db = db;
@@ -251,9 +252,56 @@ public class Images {
 		}
 	}
 
-	public void writeNoduleImages3() throws IOException
+	/**
+	 * Recupera uma imagem no formato ImagePlus a partir do GridFS do banco. 
+	 * @param originalImage - chave da imagem no banco
+	 * @param imageType - formato da imagem
+	 * @return
+	 */
+	private ImagePlus restoreImage(ObjectId originalImage, String imageType)
 	{
-		this.loadCollection("exams"); //carregando a coleção dos exames.
+		try
+		{
+			GridFS fileStore;
+			GridFSDBFile gridFile;
+			ImagePlus dicom;
+			String fileName;
+
+			fileName = "./temp." + imageType;
+
+			fileStore = new GridFS(db, "images");
+
+			gridFile = fileStore.find(originalImage);
+			gridFile.writeTo(fileName);
+
+			dicom = new ImagePlus(fileName);
+
+			return dicom;
+		} catch (IOException e)
+		{
+			System.err.println("Erro! Não foi possível salvar o arquivo de imagem");
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Escreve na tela o percentual de progresso de uma execução interativa.
+	 * @param current - valor atual da interação.
+	 * @param total - Valor total da interação.
+	 */
+	public void progress(int current, int total){
+		if(current == (int)(step*total))
+		{
+			System.out.println(step*100.0 + "%");
+			step = step + 0.05;
+		}
+	}
+
+	public void writeOnDB_NoduleImages_CTWindow() throws IOException{
+		
+		DBCollection col = db.getCollection("exams"); //carregando a coleção dos exames.
 
 		/*Mongo mongoClient = new Mongo( "127.0.0.1" , 27017 );
 		// To connect to mongodb server
@@ -512,11 +560,8 @@ public class Images {
 			exam.append("readingSession", reading);
 			col.update(new BasicDBObject("path", exam.getString("path")), exam);
 
-			Useful.progress(examCount, cursor.size());
+			progress(examCount, cursor.size());
 			++examCount;
-		} //fim para cada exame
-
-		//arq.close();
-
+		}
 	}
 }
