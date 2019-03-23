@@ -300,21 +300,10 @@ public class Images {
 	}
 
 	public void writeOnDB_NoduleImages_CTWindow() throws IOException{
-		
-		DBCollection col = db.getCollection("exams"); //carregando a coleção dos exames.
 
-		/*Mongo mongoClient = new Mongo( "127.0.0.1" , 27017 );
-		// To connect to mongodb server
-		//MongoClient m = new MongoClient( "localhost" , 27017 );
+		DBCollection col = db.getCollection("exams");
 
-		// Now connect to your databases, nome da base aqui foi exams
-		DB db = mongoClient.getDB( "exams" );
-		System.out.println("Connect to database successfully");
-
-		// conecta a coleção exams
-		DBCollection collection = db.getCollection("exams");
-		 */
-		DBCursor cursor = col.find();//.sort(new BasicDBObject("path",1)); //recuperando os documento(s) da coleção
+		DBCursor cursor = col.find();
 		cursor.addOption(com.mongodb.Bytes.QUERYOPTION_NOTIMEOUT);
 
 		ImagePlus parenchymaImage;
@@ -337,31 +326,17 @@ public class Images {
 		int maxDiameter_y;
 
 		int examCount = 0;  
-		//		while(examCount < 44) {cursor.next(); ++examCount; }//começa no (valor+1) tirar isso aqui
 		boolean comment = false;
 
-		//FileWriter arq = new FileWriter("nodulos.txt");
-		//PrintWriter gravarArq = new PrintWriter(arq);
 		Object id;
 
-		//gravarArq.printf("Exame" + ";" + "Nodulo" + ";" + "i_roi" + ";" + "X" + ";" + "Y" + "%n");
-
-
-		while(cursor.hasNext()) //para cada exame
-		{	
-			//if(comment) System.out.println("Exame " + examCount);
-
-			//cursor.count()
-
-
-
+		while(cursor.hasNext()){	
 			exam = (BasicDBObject) cursor.next();
 			id = exam.getObjectId("_id");
 			reading = (BasicDBObject) exam.get("readingSession");
 			bignoduleList = (BasicDBList) reading.get("bignodule");
 
-			for (int i_nodule = 0; i_nodule < bignoduleList.size(); ++i_nodule) //para cada bignódulo
-			{
+			for (int i_nodule = 0; i_nodule < bignoduleList.size(); ++i_nodule){
 				String id2;
 
 				if(comment) System.out.println("Bignodulo " + i_nodule);
@@ -374,21 +349,19 @@ public class Images {
 				x1 = y1 = 512;
 				x2 = y2 = 0;
 
-				for (int i_roi = 0; i_roi < roiList.size(); ++i_roi) //para cada fatia parte2/2
-				{
+				for (int i_roi = 0; i_roi < roiList.size(); ++i_roi) {
 					if(comment) System.out.println("Roi " + i_roi);
 
 					roi = (BasicDBObject) roiList.get(i_roi);
 					edgeMapList = (BasicDBList) roi.get("edgeMap");
 
 
-					for(int i_edgeMap = 0; i_edgeMap < edgeMapList.size(); i_edgeMap++) //para cada coordenada de borda
-					{
+					for(int i_edgeMap = 0; i_edgeMap < edgeMapList.size(); i_edgeMap++) {
 						edgeMap = (BasicDBObject) edgeMapList.get(i_edgeMap);
 
 						int x = Integer.parseInt((String) edgeMap.get("xCoord"));
 						int y = Integer.parseInt((String) edgeMap.get("yCoord"));
-						//for(EdgeMap ed : roi.getEdgeMaps()){
+
 						if(x > x2)
 							x2 = x;
 						if(x < x1)
@@ -397,8 +370,6 @@ public class Images {
 							y2 = y;
 						if(y < y1)
 							y1 = y;
-						//}	
-
 					}
 
 				} //fim para cada roi 
@@ -418,39 +389,24 @@ public class Images {
 					x2 = x2 + dif;
 				}
 
-				for (int i_roi = 0; i_roi < roiList.size(); ++i_roi) //para cada fatia parte2/2
-				{
+				for (int i_roi = 0; i_roi < roiList.size(); ++i_roi) {
 					if(comment) System.out.println("Roi " + i_roi);
 
 					roi = (BasicDBObject) roiList.get(i_roi);
-					//edgeMapList = (BasicDBList) roi.get("edgeMap");
-
 
 					ParenchymaExtractor extractor = new ParenchymaExtractor(restoreImage(roi.getObjectId("originalImage"), "dcm"));
 
-					//janelamento
 					extractor.ajustLevelWindow();
 
 					extractor.convert8Bits(extractor.getImage());
-					parenchymaImage = extractor.getImage();//extractor.convert8Bits(extractor.getRoi());//extractor.convert8Bits(extractor.getRoi());
-					//parenchymaImage.show();
-					//System.out.println(parenchymaImage.getType());
+					parenchymaImage = extractor.getImage();
 
-					//BufferedImage buffer = new BufferedImage(width+1,height+1, BufferedImage.TYPE_INT_RGB);
-					//buffer = (BufferedImage)parenchymaImage;
-
-					BufferedImage img = new BufferedImage(width+1,height+1, BufferedImage.TYPE_BYTE_GRAY);//TYPE_BYTE_GRAY  );
+					BufferedImage img = new BufferedImage(width+1,height+1, BufferedImage.TYPE_BYTE_GRAY);
 
 					ImagePlus imgA = new ImagePlus("imgA2", img);
-					//ImagePlus imgA = IJ.createImage("imgA", width+1, height+1, 1, 8);// getImage();
-
 
 					ImageConverter converter = new ImageConverter(imgA);
-					converter.convertToGray8();//convertToRGB();
-					//					imgA.show();
-
-					//System.out.println(imgA.getType());
-
+					converter.convertToGray8();
 
 					int xx = 0;
 					int yy = 0;
@@ -460,8 +416,7 @@ public class Images {
 					int[] xPoints = new int[edgeMapList2.size()];
 					int[] yPoints = new int[edgeMapList2.size()];
 
-					for(int i_edgeMap = 0; i_edgeMap < edgeMapList2.size(); i_edgeMap++) //para cada coordenada de borda
-					{
+					for(int i_edgeMap = 0; i_edgeMap < edgeMapList2.size(); i_edgeMap++) {
 						edgeMap = (BasicDBObject) edgeMapList2.get(i_edgeMap);
 
 						xPoints[i_edgeMap] = Integer.parseInt((String) edgeMap.get("xCoord"));
@@ -470,39 +425,23 @@ public class Images {
 
 					region = new Polygon(xPoints, yPoints, edgeMapList2.size());
 
-					//parenchymaImage.show();
 					for (int x = x1; x <= x2; x++) {
 						for (int y = y1; y <= y2; y++) {
 
-							int pixel[] = parenchymaImage.getPixel(x, y); //usar apenas o indíce 0 para imagens em escala de cinza.
+							int pixel[] = parenchymaImage.getPixel(x, y);
 							ImageProcessor processor = imgA.getProcessor();
-							//int pixel = processor.getPixel(y, x);//  getPixelValue(y, x);
-							//System.out.println(pixel);
+
 							if(region.contains(x, y)){
-								//ImageProcessor processor = parenchymaImage.getProcessor();
-								//int pixel = processor.getPixel(y, x);
-
-								//System.out.println(pixel);
-								//img.setRGB(xx, yy, pixel);
 								processor.putPixel(xx, yy, pixel);
-
-
 							}
 							else{
 								processor.putPixel(xx, yy, 0);
-								//img.setRGB(xx, yy, 0);
 							}
 							yy++;
 						}
 						yy=0;
 						xx++;
 					}
-
-					//saveImage(imgA, "imgA2", "png");
-					//imgA.show();
-
-					//ImageIO.write(img, "png", new File("//home/lucas/Área de Trabalho/NodulosTestes/"+i_roi+".png"));
-
 
 					int limit = 256;					
 					int x,y;
@@ -516,12 +455,10 @@ public class Images {
 							if((i < ((limit/2) - (width/2))) || (i > ((limit/2) + (width/2))) || 
 									(j < ((limit/2) - (height/2))) || (j > ((limit/2) + (height/2)))){
 								processor2.putPixel(i, j, 0);
-								//img2.setRGB(i, j, 0);
 							}
 
 							else{
 								processor2.putPixel(i, j, imgA.getPixel(x, y));
-								//img2.setRGB(i, j, img.getRGB(x,y));
 								y++;
 							}																			
 						}
@@ -531,8 +468,6 @@ public class Images {
 						}
 					}
 
-					//					imgB.show();
-
 					ParenchymaExtractor.saveImage(imgB, "temp", "png");
 					File imageFile =  new File("temp.png");
 					GridFS gridFS = new GridFS(db, "images");
@@ -540,22 +475,17 @@ public class Images {
 					gridInputFile.setFilename("exam" + examCount + ".n" + i_nodule + ".r" + i_roi + "-noduleImageJT");
 					gridInputFile.save();
 
-					//add o id da imagem em 'exams' parte1/3
 					GridFSDBFile gridFile = gridFS.findOne("exam" + examCount + ".n" + i_nodule + ".r" + i_roi + "-noduleImageJT");
 					roi.append("noduleImageJT", gridFile.getId());
-					//roi.remove("noduleImageJ");
 					roiList.set(i_roi, roi);
 
 
-					//ImageIO.write(img2, "png", new File("//home/lucas/Área de Trabalho/NodulosTestes/"+i_roi+".png"));
-				} //fim para cada roi 
+				} 
 
-				//add o id da imagem em 'exams' parte2/3
 				bignodule.append("roi", roiList);
 				bignoduleList.set(i_nodule, bignodule);
-			} //fim para cada nódulo
+			} 
 
-			//add o id da imagem em 'exams' parte3/3
 			reading.append("bignodule", bignoduleList);
 			exam.append("readingSession", reading);
 			col.update(new BasicDBObject("path", exam.getString("path")), exam);
