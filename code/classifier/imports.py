@@ -13,7 +13,6 @@ import tensorflow as tf
 from scipy import misc
 from scipy.ndimage import rotate
 
-from hyperopt import Trials, STATUS_OK, tpe
 from hyperas import optim
 from hyperas.distributions import choice, uniform
 
