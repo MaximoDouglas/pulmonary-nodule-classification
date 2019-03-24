@@ -207,8 +207,7 @@ public class Features{
 						}
 
 						attributeList = (BasicDBList) nodule.get("parenchymaIntensityAttributes3D");
-						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++) 
-						{
+						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++) {
 							line += Double.toString((double) attributeList.get(i_attribute)) + ",";
 						}
 
@@ -223,8 +222,7 @@ public class Features{
 						}
 
 						attributeList = (BasicDBList) nodule.get("parenchymaTextureAttributes3D");
-						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++)
-						{
+						for (int i_attribute = 0; i_attribute < attributeList.size(); i_attribute++) {
 							line += (String) attributeList.get(i_attribute) + ",";
 						}
 

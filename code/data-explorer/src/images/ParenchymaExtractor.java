@@ -23,8 +23,7 @@ public class ParenchymaExtractor
 	 * @param pathName - localização + nome da imagem.
 	 * @param format - extensão da imagem.
 	 */
-	public static void saveImage(ImagePlus image, String pathName, String format)
-	{
+	public static void saveImage(ImagePlus image, String pathName, String format){
 		IJ.saveAs(image, format, pathName);
 	}
 
@@ -35,8 +34,7 @@ public class ParenchymaExtractor
 	 * @param newHeight - nova altura da imagem.
 	 * @return - imagem com background redimensionado.
 	 */
-	public static ImagePlus resizeCanvas(ImagePlus image, int newWidth, int newHeight)
-	{
+	public static ImagePlus resizeCanvas(ImagePlus image, int newWidth, int newHeight){
 		ImageProcessor processor = image.getProcessor();
 		ImageProcessor newProcessor = processor.createProcessor(newWidth, newHeight);
 		newProcessor.setColor(0); //preenchendo a nova imagem com preto
@@ -52,8 +50,7 @@ public class ParenchymaExtractor
 	 * Cria e carrega na memória uma máscara com a região do parênquima em branco.
 	 * @param method - método de limiarização
 	 */
-	private void createMask(String method)
-	{
+	private void createMask(String method){
 		mask = roi.duplicate();
 		IJ.setAutoThreshold(mask, method);
 		IJ.run(mask, "Convert to Mask", "");	//criando uma máscara com o parênquima em branco
@@ -63,8 +60,7 @@ public class ParenchymaExtractor
 	 * Carrega na memória uma imagem de TC completa.
 	 * @param imagePath - caminho da imagem com a extensão.
 	 */
-	public ParenchymaExtractor(String imagePath)
-	{
+	public ParenchymaExtractor(String imagePath){
 		image = new ImagePlus(imagePath);
 		mask = null;
 	}
@@ -73,8 +69,7 @@ public class ParenchymaExtractor
 	 * Carrega na memória uma imagem de TC completa.
 	 * @param image - imagem de TC.
 	 */
-	public ParenchymaExtractor(ImagePlus image)
-	{
+	public ParenchymaExtractor(ImagePlus image){
 		this.image = image;
 		mask = null;
 	}
@@ -83,8 +78,7 @@ public class ParenchymaExtractor
 	 * Carrega na memória uma imagem de TC completa.
 	 * @param imagePath - caminho da imagem com a extensão.
 	 */
-	public void readImage(String imagePath)
-	{
+	public void readImage(String imagePath){
 		image = new ImagePlus(imagePath);
 		mask = null;
 	}
@@ -92,8 +86,7 @@ public class ParenchymaExtractor
 	/**
 	 * Método que ajusta a janela de nível de cinza para o pulmão
 	 */
-	public void ajustLevelWindow()
-	{
+	public void ajustLevelWindow(){
 		CT_Window_Level windowLevel = new CT_Window_Level();
 		windowLevel.run(image);
 	}
@@ -105,8 +98,7 @@ public class ParenchymaExtractor
 	 * @param width
 	 * @param height
 	 */
-	public void cutRoi(int x, int y, int width, int height)
-	{
+	public void cutRoi(int x, int y, int width, int height){
 		ImageProcessor processor = image.getProcessor();
 		processor.setRoi(x, y, width, height);
 		roi = new ImagePlus("roi", processor.crop());
@@ -117,8 +109,7 @@ public class ParenchymaExtractor
 	 * @param method - método de limiarização
 	 * @return imagem roi contendo a região do parênquima com outras estruturas do pulmão na cor preta.
 	 */
-	public ImagePlus run(String method)
-	{
+	public ImagePlus run(String method){
 		ImagePlus parenchymaImage = roi.duplicate();
 
 		//Convertendo a imagem para 8-bits (256 cores)
@@ -131,14 +122,11 @@ public class ParenchymaExtractor
 		int lines = mask.getHeight();
 
 		//varredura coluna inteira -> linha
-		for (int j = 0; j < lines; ++j)
-		{
-			for (int i = 0; i < columns; ++i)
-			{
+		for (int j = 0; j < lines; ++j) {
+			for (int i = 0; i < columns; ++i) {
 				int pixel[] = mask.getPixel(i, j); //usar apenas o indíce 0 para imagens em escala de cinza.
 
-				if(pixel[0] == 255) //região preta, ruído
-				{
+				if(pixel[0] == 255) { //região preta, ruído 
 					pixel[0] = 0; //escolhendo a cor preta
 					ImageProcessor processor = parenchymaImage.getProcessor();
 					processor.putPixel(i, j, pixel);
@@ -154,56 +142,46 @@ public class ParenchymaExtractor
 		return parenchymaImage;
 	}
 
-	public ImagePlus getImage()
-	{
+	public ImagePlus getImage() {
 		return image;
 	}
 
-	public ImagePlus getRoi()
-	{
+	public ImagePlus getRoi() {
 		return roi;
 	}
 
-	public ImagePlus getMask()
-	{
+	public ImagePlus getMask() {
 		return mask;
 	}
 
-	public void showImage()
-	{
+	public void showImage()	{
 		image.show("Original Imaga");
 	}
 
-	public void closeImage()
-	{
+	public void closeImage() {
 		image.close();
 	}
 
-	public void showRoi()
-	{
+	public void showRoi() {
 		roi.show("Roi");
 	}
 
-	public void closeRoi()
-	{
+	public void closeRoi() {
 		roi.close();
 	}
 
-	public void showMask()
-	{
+	public void showMask() {
 		mask.show("Mask");
 	}
 
-	public void closeMask()
-	{
+	public void closeMask() {
 		mask.close();
 	}
 
 	/**
 	 * Método que converte a imagem para escala de cinza 8 bits
 	 */
-	public ImagePlus convert8Bits(ImagePlus parenchymaImage)
-	{
+	public ImagePlus convert8Bits(ImagePlus parenchymaImage) {
 		ImageConverter converter = new ImageConverter(parenchymaImage);
 		converter.convertToGray8();
 		ImagePlus parenchymaImage8Bits = parenchymaImage;

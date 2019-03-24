@@ -33,7 +33,7 @@ public class Images {
 
 		rootPath += "solid-nodules" + "/";
 
-		try{
+		try {
 
 			//GenerateImages object will store the Dicom images from the database
 			GenerateImages getImage = new GenerateImages(db);
@@ -112,7 +112,6 @@ public class Images {
 								fileNameP2 = malignancyName +  malignantNodulesCount + "-" + i_roi;		
 
 								getImage.generateImage(roi.getObjectId(tag), fileNameP1 + fileNameP2, ".png");
-
 							}
 						}
 					} else {
@@ -230,7 +229,6 @@ public class Images {
 								fileNameP2 = String.valueOf(i_roi);		
 
 								getImage.generateImage(roi.getObjectId(tag), fileNameP1 + fileNameP2, ".png");
-
 							}
 						}
 					} else {
@@ -258,10 +256,8 @@ public class Images {
 	 * @param imageType - formato da imagem
 	 * @return
 	 */
-	private ImagePlus restoreImage(ObjectId originalImage, String imageType)
-	{
-		try
-		{
+	private ImagePlus restoreImage(ObjectId originalImage, String imageType) {
+		try {
 			GridFS fileStore;
 			GridFSDBFile gridFile;
 			ImagePlus dicom;
@@ -277,8 +273,7 @@ public class Images {
 			dicom = new ImagePlus(fileName);
 
 			return dicom;
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			System.err.println("Erro! Não foi possível salvar o arquivo de imagem");
 			e.printStackTrace();
 		}
@@ -292,8 +287,7 @@ public class Images {
 	 * @param total - Valor total da interação.
 	 */
 	public void progress(int current, int total){
-		if(current == (int)(step*total))
-		{
+		if(current == (int)(step*total)) {
 			System.out.println(step*100.0 + "%");
 			step = step + 0.05;
 		}
@@ -361,18 +355,19 @@ public class Images {
 							y1 = y;
 					}
 
-				} //fim para cada roi 
+				}
 
 				int width = x2 - x1;
 				int height = y2 - y1;
 
 				int dif = 0;
-				if(width > height){
+				
+				if (width > height){
 					dif = width - height;
 					height = width;
 					y2 = y2 + dif;
 				}
-				else{
+				else {
 					dif = height - width;
 					width = height;
 					x2 = x2 + dif;
@@ -446,7 +441,7 @@ public class Images {
 								processor2.putPixel(i, j, 0);
 							}
 
-							else{
+							else {
 								processor2.putPixel(i, j, imgA.getPixel(x, y));
 								y++;
 							}																			
@@ -467,8 +462,6 @@ public class Images {
 					GridFSDBFile gridFile = gridFS.findOne("exam" + examCount + ".n" + i_nodule + ".r" + i_roi + "-noduleImageJT");
 					roi.append("noduleImageJT", gridFile.getId());
 					roiList.set(i_roi, roi);
-
-
 				} 
 
 				bignodule.append("roi", roiList);

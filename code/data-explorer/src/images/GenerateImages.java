@@ -10,16 +10,13 @@ public class GenerateImages {
 
 	DB db;
 
-	public GenerateImages(DB db)
-	{
+	public GenerateImages(DB db){
 		this.db = db;
 
 	}
 
-	public void generateImage(ObjectId originalImage, String dir, String extension)
-	{
-		try
-		{
+	public void generateImage(ObjectId originalImage, String dir, String extension){
+		try {
 			GridFS fileStore;
 			GridFSDBFile gridFile;
 			String fileName;
@@ -31,12 +28,9 @@ public class GenerateImages {
 			gridFile = fileStore.find(originalImage);
 			gridFile.writeTo(fileName);
 
-		} catch (IOException e)
-		{
+		} catch (IOException e){
 			System.err.println("Erro! Não foi possível salvar o arquivo de imagem");
 			e.printStackTrace();
 		}
-
 	}
-
 }

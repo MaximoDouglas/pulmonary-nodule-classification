@@ -85,6 +85,7 @@ ActionListener, AdjustmentListener, ItemListener {
 				return;
 			}
 		}
+		
 		instance = this;
 		IJ.register(CT_Window_Level.class);
 		WindowManager.addWindow(this);
@@ -172,8 +173,7 @@ ActionListener, AdjustmentListener, ItemListener {
 	/**
 	 * by Ailton
 	 */
-	void run(ImagePlus imp) 
-	{
+	void run(ImagePlus imp) {
 		ImageProcessor ip = imp.getProcessor();
 		if(imgProcessed(imp)<0) setupNewImage(imp, ip);
 	}
@@ -314,18 +314,22 @@ ActionListener, AdjustmentListener, ItemListener {
 		dicomtag=getDicomNumTag(imp, dcmSLOPE);
 		if (dicomtag!=-99999) slope=dicomtag;
 		else slope=1;								//best guess
+		
 		//Get Intercept
 		dicomtag=getDicomNumTag(imp, dcmINTERCEPT);
 		if (dicomtag!=-99999) intercept=dicomtag;
 		else intercept=-1024;						//best guess
+		
 		//Get Image Level
 		dicomtag=getDicomNumTag(imp, dcmLEVEL);
 		if (dicomtag!=-99999) imgLevel=LUNG_L;//(int)dicomtag;
 		else imgLevel=LUNG_L;
+		
 		//Get Image Window
 		dicomtag=getDicomNumTag(imp, dcmWINDOW);
 		if (dicomtag!=-99999) imgWindow=LUNG_W;//(int)dicomtag;
 		else imgWindow=LUNG_W;
+		
 		//Get Pixel representation
 		dicomtag=getDicomNumTag(imp, dcmPIXREP);		//0 => unsigned, 1 => signed
 		if (dicomtag!=-99999) pixelrep=(int)dicomtag;
@@ -347,10 +351,12 @@ ActionListener, AdjustmentListener, ItemListener {
 			level = fullLevel;
 			preset=1;
 		}
+		
 		if(imgProcessed(imp)<0) {
 			WinLevel newwl =new WinLevel(imp.getWindow(), slope, intercept, window, level, imgWindow, imgLevel, fullWindow, fullLevel, offSigned, 2);
 			winlevelList.add(newwl);
 		}
+		
 		adjustLevel(imp, ip, level);
 		adjustWindow(imp, ip, window);
 	}
@@ -368,7 +374,6 @@ ActionListener, AdjustmentListener, ItemListener {
 	void updateLabels(ImagePlus imp) {
 		windowLabel.setText(""+window);
 		levelLabel.setText(""+level);
-
 	}
 
 	void updateScrollBars(Scrollbar sb, boolean newRange) {
@@ -487,7 +492,6 @@ ActionListener, AdjustmentListener, ItemListener {
 		updateLabels(imp);
 
 		imp.updateChannelAndDraw();
-
 	}
 
 
