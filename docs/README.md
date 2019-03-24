@@ -7,8 +7,7 @@ Automatic classification on Pulmonary Nodules of Computed Tomography Image - Dic
 2. hyperas
 3. sklearn
 4. keras_metrics
-5. IPython
-6. tqdm
+5. tqdm
 
 # Initial ideas
 1. Data exploration (initialy, just visualizations) on the Features dataset;
