@@ -307,7 +307,6 @@ public class Images {
 		cursor.addOption(com.mongodb.Bytes.QUERYOPTION_NOTIMEOUT);
 
 		ImagePlus parenchymaImage;
-		ImagePlus parenchymaImage2;
 
 		BasicDBObject exam;
 		BasicDBObject reading;
@@ -320,29 +319,19 @@ public class Images {
 		BasicDBList edgeMapList;
 		BasicDBList edgeMapList2;
 
-		int min_x, max_x;
-		int min_y, max_y;
-		int maxDiameter_x;
-		int maxDiameter_y;
-
 		int examCount = 0;  
 		boolean comment = false;
 
-		Object id;
-
 		while(cursor.hasNext()){	
 			exam = (BasicDBObject) cursor.next();
-			id = exam.getObjectId("_id");
 			reading = (BasicDBObject) exam.get("readingSession");
 			bignoduleList = (BasicDBList) reading.get("bignodule");
 
 			for (int i_nodule = 0; i_nodule < bignoduleList.size(); ++i_nodule){
-				String id2;
-
+				
 				if(comment) System.out.println("Bignodulo " + i_nodule);
 
 				bignodule = (BasicDBObject) bignoduleList.get(i_nodule);
-				id2 = (String) bignodule.get("noduleID");
 				roiList = (BasicDBList) bignodule.get("roi");
 
 				int x1,x2,y1,y2;
