@@ -27,10 +27,10 @@ from IPython.display import SVG
 from import_images import get_folds
 
 def data():
-    X_train = np.load("data-6-first/X_train.npy")
-    X_test = np.load("data-6-first/X_test.npy")
-    Y_train = np.load("data-6-first/Y_train.npy")
-    Y_test = np.load("data-6-first/Y_test.npy")
+    X_train = np.load("../data-6-first/X_train.npy")
+    X_test = np.load("../data-6-first/X_test.npy")
+    Y_train = np.load("../data-6-first/Y_train.npy")
+    Y_test = np.load("../data-6-first/Y_test.npy")
 
     return X_train, Y_train, X_test, Y_test
 

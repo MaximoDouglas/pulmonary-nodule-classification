@@ -1,3 +1,3 @@
 import optmizer
 
-optmizer.prt()
+optmizer.result()

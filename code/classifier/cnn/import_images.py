@@ -236,7 +236,7 @@ if __name__ == "__main__":
     #Y_train = to_categorical(train_labels, 2)
     #Y_test = to_categorical(test_labels, 2)
 
-    data = "data-6-first"
+    data = "../data-6-first"
 
     shutil.rmtree(data, ignore_errors=True)
     os.mkdir(data)
