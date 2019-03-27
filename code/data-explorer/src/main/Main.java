@@ -16,9 +16,9 @@ public class Main{
 		MongoClient mongoClient = new MongoClient("127.0.0.1", 27017);
 		DB db = mongoClient.getDB("db_tcc");
 		
-		String rootPath = "/home/douglas/dev/tcc/data/";
+		String rootPath 	= "/home/douglas/dev/tcc/data/";
 		String featuresPath = rootPath + "features" + "/";
-		String imagesPath = rootPath + "images" + "/";
+		String imagesPath 	= rootPath + "images" + "/";
 		String windowTag	= "noduleImageJT";
 		
 		Features features = new Features(db);
