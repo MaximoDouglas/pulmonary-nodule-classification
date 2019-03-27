@@ -12,8 +12,8 @@ df = pandas.DataFrame()
 # Load dataset - uncomment just the one that you want to work with
 def loadData():
     global df
-    df = pandas.read_csv("../../../data/nodulesFeatures-3mm-30mm.csv")
-    #df = pandas.read_csv("../data/nodulesFeatures-5-10mm.csv")
+    #df = pandas.read_csv("../../../data/features/nodulesFeatures-3mm-30mm.csv")
+    df = pandas.read_csv("../../../data/features/nodulesFeatures-5-10mm.csv")
 
 # Shows shape (rows, columns)
 def getShape():
