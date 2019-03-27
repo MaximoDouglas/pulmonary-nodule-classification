@@ -165,7 +165,7 @@ def get_folds(basedir, n_slices):
 
 np.random.seed(1742)
 RES = 64
-SLICES = 7
+SLICES = 6
 TEST_SIZE = 50
 
 if __name__ == "__main__":
@@ -177,8 +177,8 @@ if __name__ == "__main__":
     ben = read_images(ben_dir, "benigno")
     mal = read_images(mal_dir, "maligno")
 
-    ben = normalize_balanced(ben, SLICES, True)
-    mal = normalize_balanced(mal, SLICES, True)
+    ben = normalize_first(ben, SLICES, True)
+    mal = normalize_first(mal, SLICES, True)
 
     print("Mudando a forma")
 
@@ -236,7 +236,7 @@ if __name__ == "__main__":
     #Y_train = to_categorical(train_labels, 2)
     #Y_test = to_categorical(test_labels, 2)
 
-    data = "data-balanceadas-repete-7"
+    data = "data-6-first"
 
     shutil.rmtree(data, ignore_errors=True)
     os.mkdir(data)
