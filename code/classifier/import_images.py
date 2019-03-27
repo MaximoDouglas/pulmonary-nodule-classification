@@ -3,7 +3,6 @@ import math
 import itertools
 import re
 import os
-
 from scipy import misc
 import numpy as np
 import matplotlib.pyplot as plt

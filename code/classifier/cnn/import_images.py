@@ -5,7 +5,6 @@ import re
 import os
 from scipy import misc
 import numpy as np
-
 from scipy.ndimage import rotate
 from sklearn.model_selection import KFold
 from keras.utils import to_categorical
