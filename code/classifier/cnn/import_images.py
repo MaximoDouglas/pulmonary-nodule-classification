@@ -169,8 +169,8 @@ SLICES = 6
 TEST_SIZE = 50
 
 if __name__ == "__main__":
-    ben_dir = "/home/douglas/dev/tcc/images/phatch/benigno"
-    mal_dir = "/home/douglas/dev/tcc/images/phatch/maligno"
+    ben_dir = "../../../data/images/solid-nodules/benigno"
+    mal_dir = "../../../data/images/solid-nodules/maligno"
 
     print("Lendo imagens do disco")
 
