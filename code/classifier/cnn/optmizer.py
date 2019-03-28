@@ -21,9 +21,6 @@ from keras.utils.vis_utils import plot_model, model_to_dot
 from keras.backend.tensorflow_backend import set_session
 import keras_metrics as km
 from keras.utils import to_categorical
-
-from IPython.display import SVG
-
 from import_images import get_folds
 
 def data():
