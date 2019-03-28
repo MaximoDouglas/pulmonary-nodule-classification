@@ -165,9 +165,11 @@ def get_folds(basedir, n_slices):
     return X_train, X_test, Y_train, Y_test
 
 np.random.seed(1742)
+
 RES = 64
-SLICES = 6
+SLICES = 7
 TEST_SIZE = 50
+NUMPY_FOLDER = "../data-7-balanced"
 
 if __name__ == "__main__":
     ben_dir = "../../../data/images/solid-nodules/benigno"
@@ -178,8 +180,8 @@ if __name__ == "__main__":
     ben = read_images(ben_dir, "benigno")
     mal = read_images(mal_dir, "maligno")
 
-    ben = normalize_first(ben, SLICES, True)
-    mal = normalize_first(mal, SLICES, True)
+    ben = normalize_balanced(ben, SLICES, True)
+    mal = normalize_balanced(mal, SLICES, True)
 
     print("Mudando a forma")
 
@@ -237,7 +239,7 @@ if __name__ == "__main__":
     #Y_train = to_categorical(train_labels, 2)
     #Y_test = to_categorical(test_labels, 2)
 
-    data = "../data-6-first"
+    data = NUMPY_FOLDER
 
     shutil.rmtree(data, ignore_errors=True)
     os.mkdir(data)
