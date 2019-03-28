@@ -34,6 +34,14 @@ def data():
 
 X, Y, x, y = data()
 
+'''Hyperas found Parameters'''
+c1 = 32
+d1 = 96
+d2 = 128
+drop1 = 0.48850025868977437
+drop2 = 0.41833334235579095
+lrate = 0.0001
+
 def get_model():
 
     K.clear_session()
