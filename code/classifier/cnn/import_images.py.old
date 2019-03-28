@@ -1,27 +1,16 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Módulo responsável pela importação e processamento das imagens dos nódulos.
-"""
+'''Módulo responsável pela importação e processamento das imagens dos nódulos.'''
 import math
 import itertools
 import re
 import os
-import imageio
+from scipy import misc
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.ndimage import rotate
 from sklearn.model_selection import KFold
+from keras.utils import to_categorical
 from tqdm import tqdm
 import shutil
-
-np.random.seed(1937)
-
-RES = 64
-TEST_SIZE = 50
-
-SLICES = 5
-REPEAT = False
-data_fold = "data-5-first"
+import imageio
 
 def normalize_balanced(nodules, n_slices, repeat=False):
     '''Normalizes the nodule slices number:
@@ -47,7 +36,7 @@ def normalize_balanced(nodules, n_slices, repeat=False):
         elif len(nodule) > n_slices:
             new_nodule.append(nodule[0])
             for k in range(1, n_slices-1):
-                new_nodule.append(nodule[round(1 + ((len(nodule) - 1) / (n_slices-1)) * k)])
+                new_nodule.append(nodule[int(1 + ((len(nodule) - 1) / (n_slices-1)) * k)])
             new_nodule.append(nodule[-1])
         normalized_slices.append(new_nodule)
     return normalized_slices
@@ -77,15 +66,6 @@ def normalize_first(nodules, n_slices, repeat=False):
         normalized_slices.append(new_nodule)
     return normalized_slices
 
-def plot_nodule(nod, rows, cols):
-    '''Shows the slices of a nodule in a single plot'''
-    plt.figure(1)
-    for i in range(nod.shape[2]):
-        position = rows * 100 + cols * 10 + i + 1
-        plt.subplot(position)
-        plt.imshow(nod[:, :, i, 0], cmap='gray')
-    plt.show()
-
 def read_images(path, category):
     '''Reads the images files in our file structure and mounts an array
     Parameters:
@@ -104,8 +84,7 @@ def read_images(path, category):
                 for f in sorted(files1, key=float):
                     img = imageio.imread(root1 + "/" + category + f + "-" + str(len(files1) - 1)+ ".png", as_gray=True)
                     slices.append(img)
-            lista.append(slices)
-
+                lista.append(slices)
     return lista
 
 def rotate_slices(slices, times, mode='constant'):
@@ -162,19 +141,15 @@ def my_kfold(ben, mal, n_splits, ben_rot, mal_rot):
 
     return X_train, X_test, Y_train, Y_test
 
-def get_folds(basedir, n_slices, strategy='first', repeat=False):
+def get_folds(basedir, n_slices):
     ben_dir = basedir + "benigno/"
     mal_dir = basedir + "maligno/"
 
     ben = read_images(ben_dir, "benigno")
     mal = read_images(mal_dir, "maligno")
 
-    if strategy == 'first':
-        ben = normalize_first(ben, n_slices, repeat)
-        mal = normalize_first(mal, n_slices, repeat)
-    elif strategy == 'balanced':
-        ben = normalize_balanced(ben, n_slices, repeat)
-        mal = normalize_balanced(mal, n_slices, repeat)
+    ben = normalize_first(ben, n_slices, True)
+    mal = normalize_first(mal, n_slices, True)
 
     ben = np.concatenate(ben).reshape(len(ben), n_slices, RES, RES, 1)
     mal = np.concatenate(mal).reshape(len(mal), n_slices, RES, RES, 1)
@@ -189,6 +164,13 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
 
     return X_train, X_test, Y_train, Y_test
 
+np.random.seed(1742)
+
+RES = 64
+SLICES = 7
+TEST_SIZE = 50
+NUMPY_FOLDER = "../data-7-balanced"
+
 if __name__ == "__main__":
     ben_dir = "../../../data/images/solid-nodules/benigno"
     mal_dir = "../../../data/images/solid-nodules/maligno"
@@ -198,12 +180,10 @@ if __name__ == "__main__":
     ben = read_images(ben_dir, "benigno")
     mal = read_images(mal_dir, "maligno")
 
-    ben = normalize_first(ben, SLICES, REPEAT)
-    mal = normalize_first(mal, SLICES, REPEAT)
+    ben = normalize_balanced(ben, SLICES, True)
+    mal = normalize_balanced(mal, SLICES, True)
 
     print("Mudando a forma")
-
-    print(">", len(ben))
 
     ben = np.concatenate(ben).reshape(len(ben), SLICES, RES, RES, 1)
     mal = np.concatenate(mal).reshape(len(mal), SLICES, RES, RES, 1)
@@ -231,6 +211,9 @@ if __name__ == "__main__":
     ben_train = np.delete(ben, ben_test_indices, axis = 0)
     mal_train = np.delete(mal, mal_test_indices, axis = 0)
 
+    #ben_train_indices = np.random.choice(len(ben_train), len(mal_train), replace=False)
+    #ben_train = ben_train[ben_train_indices]
+
     del(ben, mal, ben_dir, mal_dir, ben_test_indices, mal_test_indices)
 
     print("Aumento de base")
@@ -253,7 +236,10 @@ if __name__ == "__main__":
     Y_train = np.array(train_labels)
     Y_test = np.array(test_labels)
 
-    data = data_fold
+    #Y_train = to_categorical(train_labels, 2)
+    #Y_test = to_categorical(test_labels, 2)
+
+    data = NUMPY_FOLDER
 
     shutil.rmtree(data, ignore_errors=True)
     os.mkdir(data)
