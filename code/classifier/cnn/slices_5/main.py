@@ -1,0 +1,12 @@
+import validate_5_first
+import validate_5_first_repeat
+import validate_5_balanced
+import validate_5_balanced_repeat
+import import_images
+
+import_images
+
+#validate_5_first
+#validate_5_first_repeat
+#validate_5_balanced
+#validate_5_balanced_repeat

@@ -20,8 +20,14 @@ RES = 64
 TEST_SIZE = 50
 
 SLICES = 5
-REPEAT = True
-data_fold = "data-5-balanced-repeat"
+REPEAT = False
+
+d1 = "../data-5-first"
+d2 = "../data-5-first-repeat"
+d3 = "../data-5-balanced"
+d4 = "../data-5-balanced-repeat"
+
+data_fold = d1
 
 def normalize_balanced(nodules, n_slices, repeat=False):
     '''Normalizes the nodule slices number:
@@ -190,16 +196,16 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
     return X_train, X_test, Y_train, Y_test
 
 if __name__ == "__main__":
-    ben_dir = "../../../data/images/solid-nodules/benigno"
-    mal_dir = "../../../data/images/solid-nodules/maligno"
+    ben_dir = "../../solid-nodules/benigno"
+    mal_dir = "../../solid-nodules/maligno"
 
     print("Lendo imagens do disco")
 
     ben = read_images(ben_dir, "benigno")
     mal = read_images(mal_dir, "maligno")
 
-    ben = normalize_balanced(ben, SLICES, REPEAT)
-    mal = normalize_balanced(mal, SLICES, REPEAT)
+    ben = normalize_first(ben, SLICES, REPEAT)
+    mal = normalize_first(mal, SLICES, REPEAT)
 
     print("Mudando a forma")
 
