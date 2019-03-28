@@ -199,5 +199,10 @@ local.properties
 hs_err_pid*
 
 # Data too large to go to git
+data-5-first/
+data-6-balanced/
 data-6-first/
+data-6-balanced/
+data-7-first/
+data-7-balanced/
 */classifier/solid-nodules/
