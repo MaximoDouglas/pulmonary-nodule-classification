@@ -10,6 +10,7 @@ from sklearn.model_selection import KFold
 from keras.utils import to_categorical
 from tqdm import tqdm
 import shutil
+import imageio
 
 def normalize_balanced(nodules, n_slices, repeat=False):
     '''Normalizes the nodule slices number:
@@ -81,7 +82,7 @@ def read_images(path, category):
             for root1, dirs1, files1 in os.walk(root + "/" + dirname):
                 files1[:] = [re.findall('\d+', x)[0] for x in files1]
                 for f in sorted(files1, key=float):
-                    img = misc.imread(root1 + "/" + category + f + "-" + str(len(files1) - 1)+ ".png", flatten=True)
+                    img = imageio.imread(root1 + "/" + category + f + "-" + str(len(files1) - 1)+ ".png", as_gray=True)
                     slices.append(img)
                 lista.append(slices)
     return lista
