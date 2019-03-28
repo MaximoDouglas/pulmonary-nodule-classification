@@ -25,10 +25,10 @@ from keras.utils import to_categorical
 from import_images import get_folds
 
 def data():
-    X_train = np.load("../data-6-first/X_train.npy")
-    X_test = np.load("../data-6-first/X_test.npy")
-    Y_train = np.load("../data-6-first/Y_train.npy")
-    Y_test = np.load("../data-6-first/Y_test.npy")
+    X_train = np.load("../data-5-balanced-repeat/X_train.npy")
+    X_test = np.load("../data-5-balanced-repeat/X_test.npy")
+    Y_train = np.load("../data-5-balanced-repeat/Y_train.npy")
+    Y_test = np.load("../data-5-balanced-repeat/Y_test.npy")
 
     return X_train, Y_train, X_test, Y_test
 
@@ -90,7 +90,7 @@ start = time.time()
 for i in range(1):
     m = {'acc': [], 'spec': [], 'sens': [], 'f1_score': [], 'auc': []}
 
-    X_train_, X_test_, Y_train_, Y_test_= get_folds("../solid-nodules/", 6)
+    X_train_, X_test_, Y_train_, Y_test_= get_folds("../../solid-nodules/", 6)
 
     print("Iteração", i)
 
