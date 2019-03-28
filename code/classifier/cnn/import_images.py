@@ -20,8 +20,8 @@ RES = 64
 TEST_SIZE = 50
 
 SLICES = 5
-REPEAT = False
-data_fold = "data-5-first"
+REPEAT = True
+data_fold = "data-5-balanced-repeat"
 
 def normalize_balanced(nodules, n_slices, repeat=False):
     '''Normalizes the nodule slices number:
@@ -198,8 +198,8 @@ if __name__ == "__main__":
     ben = read_images(ben_dir, "benigno")
     mal = read_images(mal_dir, "maligno")
 
-    ben = normalize_first(ben, SLICES, REPEAT)
-    mal = normalize_first(mal, SLICES, REPEAT)
+    ben = normalize_balanced(ben, SLICES, REPEAT)
+    mal = normalize_balanced(mal, SLICES, REPEAT)
 
     print("Mudando a forma")
 
