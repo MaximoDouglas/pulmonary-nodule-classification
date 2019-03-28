@@ -25,22 +25,22 @@ from keras.utils import to_categorical
 from import_images import get_folds
 
 def data():
-    X_train = np.load("../data-7-first/X_train.npy")
-    X_test = np.load("../data-7-first/X_test.npy")
-    Y_train = np.load("../data-7-first/Y_train.npy")
-    Y_test = np.load("../data-7-first/Y_test.npy")
+    X_train = np.load("../data-6-balanced/X_train.npy")
+    X_test = np.load("../data-6-balanced/X_test.npy")
+    Y_train = np.load("../data-6-balanced/Y_train.npy")
+    Y_test = np.load("../data-6-balanced/Y_test.npy")
 
     return X_train, Y_train, X_test, Y_test
 
 X, Y, x, y = data()
 
 '''Hyperas found Parameters'''
-lrate = 1e-05
-c1 = 96
-d1 = 128
-d2 = 64
-drop1 = 0.11442253506063813
-drop2 = 0.10348877382547751
+c1 = 32
+d1 = 96
+d2 = 128
+drop1 = 0.48850025868977437
+drop2 = 0.41833334235579095
+lrate = 0.0001
 
 def get_model():
 
@@ -90,7 +90,7 @@ start = time.time()
 for i in range(1):
     m = {'acc': [], 'spec': [], 'sens': [], 'f1_score': [], 'auc': []}
 
-    X_train_, X_test_, Y_train_, Y_test_= get_folds("../../solid-nodules/", 7)
+    X_train_, X_test_, Y_train_, Y_test_= get_folds("../../solid-nodules/", 6)
 
     print("Iteração", i)
 

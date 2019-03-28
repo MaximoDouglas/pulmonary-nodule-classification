@@ -90,7 +90,7 @@ start = time.time()
 for i in range(1):
     m = {'acc': [], 'spec': [], 'sens': [], 'f1_score': [], 'auc': []}
 
-    X_train_, X_test_, Y_train_, Y_test_= get_folds("../../solid-nodules/", 6)
+    X_train_, X_test_, Y_train_, Y_test_= get_folds("../../solid-nodules/", 7)
 
     print("Iteração", i)
 
