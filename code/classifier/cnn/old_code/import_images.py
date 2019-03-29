@@ -8,6 +8,7 @@ import re
 import os
 import imageio
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.ndimage import rotate
 from sklearn.model_selection import KFold
 from tqdm import tqdm
@@ -19,12 +20,14 @@ RES = 64
 TEST_SIZE = 50
 
 SLICES = 6
-STRATEGY = 'first'
 REPEAT = False
 
-data_fold = "../data-" + str(SLICES) + "-" + str(STRATEGY)
-if (REPEAT):
-    data_fold += "-repeat"
+d1 = "../data-6-first"
+d2 = "../data-6-first-repeat"
+d3 = "../data-6-balanced"
+d4 = "../data-6-balanced-repeat"
+
+data_fold = d1
 
 def normalize_balanced(nodules, n_slices, repeat=False):
     '''Normalizes the nodule slices number:
@@ -79,6 +82,15 @@ def normalize_first(nodules, n_slices, repeat=False):
                 new_nodule.append(nodule[i])
         normalized_slices.append(new_nodule)
     return normalized_slices
+
+def plot_nodule(nod, rows, cols):
+    '''Shows the slices of a nodule in a single plot'''
+    plt.figure(1)
+    for i in range(nod.shape[2]):
+        position = rows * 100 + cols * 10 + i + 1
+        plt.subplot(position)
+        plt.imshow(nod[:, :, i, 0], cmap='gray')
+    plt.show()
 
 def read_images(path, category):
     '''Reads the images files in our file structure and mounts an array
@@ -192,12 +204,8 @@ if __name__ == "__main__":
     ben = read_images(ben_dir, "benigno")
     mal = read_images(mal_dir, "maligno")
 
-    if (STRATEGY == 'first'):
-        ben = normalize_first(ben, SLICES, REPEAT)
-        mal = normalize_first(mal, SLICES, REPEAT)
-    else:
-        ben = normalize_balanced(ben, SLICES, REPEAT)
-        mal = normalize_balanced(mal, SLICES, REPEAT)
+    ben = normalize_first(ben, SLICES, REPEAT)
+    mal = normalize_first(mal, SLICES, REPEAT)
 
     print("Mudando a forma")
 
