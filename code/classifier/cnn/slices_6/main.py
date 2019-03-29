@@ -1,12 +1,3 @@
-import validate_6_first
-import validate_6_first_repeat
-import validate_6_balanced
-import validate_6_balanced_repeat
 import import_images
 
 import_images
-
-#validate_6_first
-#validate_6_first_repeat
-#validate_6_balanced
-#validate_6_balanced_repeat
