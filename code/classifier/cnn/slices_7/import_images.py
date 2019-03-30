@@ -182,7 +182,7 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
     np.random.shuffle(ben)
     np.random.shuffle(mal)
 
-    X_train, X_test, Y_train, Y_test = my_kfold(ben, mal, 10, 5, 12)
+    X_train, X_test, Y_train, Y_test = my_kfold(ben, mal, 10, 5, 13)
 
     return X_train, X_test, Y_train, Y_test
 
@@ -192,7 +192,7 @@ if __name__ == "__main__":
 
     print("Lendo imagens do disco")
     print("")
-    
+
     ben = read_images(ben_dir, "benigno")
     mal = read_images(mal_dir, "maligno")
 
@@ -242,8 +242,8 @@ if __name__ == "__main__":
 
     print("Aumento de base")
 
-    ben_train = rotate_slices(ben_train, 4)#, 'reflect')
-    mal_train = rotate_slices(mal_train, 10)#, 'reflect')
+    ben_train = rotate_slices(ben_train, 5)#, 'reflect')
+    mal_train = rotate_slices(mal_train, 13)#, 'reflect')
 
     print("Juntando benignos e malignos")
 

@@ -91,15 +91,18 @@ def read_images(path, category):
     lista = []
 
     for root, dirs, files in os.walk(path):
-        for dirname in sorted(dirs, key=int):
-            slices = []
-            for root1, dirs1, files1 in os.walk(root + "/" + dirname):
-                files1[:] = [re.findall('\d+', x)[0] for x in files1]
-                for f in sorted(files1, key=float):
-                    img = imageio.imread(root1 + "/" + category + f + "-" + str(len(files1) - 1)+ ".png", as_gray=True)
-                    slices.append(img)
-            lista.append(slices)
+        for dirname in sorted(dirs, key=str.lower):
+            for root1, dirs1, files1 in os.walk(path + "/" + dirname):
+                for dirname1 in sorted(dirs1, key=str.lower):
+                    for root2, dirs2, files2 in os.walk(path + "/" + dirname + "/" + dirname1):
+                        slices = []
+                        files2[:] = [re.findall('\d+', x)[0] for x in files2]
 
+                        for f in sorted(files2, key=float):
+                            img = imageio.imread(root2 + "/" + f + ".png", as_gray=True)
+                            slices.append(img)
+
+                        lista.append(slices)
     return lista
 
 def rotate_slices(slices, times, mode='constant'):
@@ -179,7 +182,7 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
     np.random.shuffle(ben)
     np.random.shuffle(mal)
 
-    X_train, X_test, Y_train, Y_test = my_kfold(ben, mal, 10, 5, 12)
+    X_train, X_test, Y_train, Y_test = my_kfold(ben, mal, 10, 5, 13)
 
     return X_train, X_test, Y_train, Y_test
 
@@ -233,8 +236,8 @@ if __name__ == "__main__":
 
     print("Aumento de base")
 
-    ben_train = rotate_slices(ben_train, 4)#, 'reflect')
-    mal_train = rotate_slices(mal_train, 10)#, 'reflect')
+    ben_train = rotate_slices(ben_train, 5)#, 'reflect')
+    mal_train = rotate_slices(mal_train, 13)#, 'reflect')
 
     print("Juntando benignos e malignos")
 
