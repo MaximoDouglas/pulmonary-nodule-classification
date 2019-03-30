@@ -91,15 +91,18 @@ def read_images(path, category):
     lista = []
 
     for root, dirs, files in os.walk(path):
-        for dirname in sorted(dirs, key=int):
-            slices = []
-            for root1, dirs1, files1 in os.walk(root + "/" + dirname):
-                files1[:] = [re.findall('\d+', x)[0] for x in files1]
-                for f in sorted(files1, key=float):
-                    img = imageio.imread(root1 + "/" + category + f + "-" + str(len(files1) - 1)+ ".png", as_gray=True)
-                    slices.append(img)
-            lista.append(slices)
+        for dirname in sorted(dirs, key=str.lower):
+            for root1, dirs1, files1 in os.walk(path + "/" + dirname):
+                for dirname1 in sorted(dirs1, key=str.lower):
+                    for root2, dirs2, files2 in os.walk(path + "/" + dirname + "/" + dirname1):
+                        slices = []
+                        files2[:] = [re.findall('\d+', x)[0] for x in files2]
 
+                        for f in sorted(files2, key=float):
+                            img = imageio.imread(root2 + "/" + f + ".png", as_gray=True)
+                            slices.append(img)
+
+                        lista.append(slices)
     return lista
 
 def rotate_slices(slices, times, mode='constant'):
@@ -184,11 +187,12 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
     return X_train, X_test, Y_train, Y_test
 
 if __name__ == "__main__":
-    ben_dir = "../../solid-nodules/benigno"
-    mal_dir = "../../solid-nodules/maligno"
+    ben_dir = "../../../../data/images/solid-nodules-with-attributes/benigno"
+    mal_dir = "../../../../data/images/solid-nodules-with-attributes/maligno"
 
     print("Lendo imagens do disco")
-
+    print("")
+    
     ben = read_images(ben_dir, "benigno")
     mal = read_images(mal_dir, "maligno")
 
@@ -201,21 +205,26 @@ if __name__ == "__main__":
 
     print("Mudando a forma")
 
-    print(">", len(ben))
+    print("Ben > ", len(ben))
+    print("Mal > ", len(mal))
+    print("")
 
     ben = np.concatenate(ben).reshape(len(ben), SLICES, RES, RES, 1)
     mal = np.concatenate(mal).reshape(len(mal), SLICES, RES, RES, 1)
 
     print("Trocando os eixos")
 
-    print("Antes: ", ben.shape)
+    print("Antes ben: ", ben.shape)
+    print("Antes mal: ", mal.shape)
+    print("")
 
     ben = np.moveaxis(ben, 1, 3)
     mal = np.moveaxis(mal, 1, 3)
 
-    print("Depois: ", ben.shape)
+    print("Depois ben: ", ben.shape)
+    print("Depois mal: ", mal.shape)
 
-    print("Separando dados de teste")
+    '''print("Separando dados de teste")
 
     ben_test_indices = np.random.choice(len(ben), TEST_SIZE, replace=False)
     mal_test_indices = np.random.choice(len(mal), TEST_SIZE, replace=False)
@@ -259,4 +268,4 @@ if __name__ == "__main__":
     np.save(data + "/X_train.npy", X_train)
     np.save(data + "/X_test.npy", X_test)
     np.save(data + "/Y_train.npy", Y_train)
-    np.save(data + "/Y_test.npy", Y_test)
+    np.save(data + "/Y_test.npy", Y_test)'''
