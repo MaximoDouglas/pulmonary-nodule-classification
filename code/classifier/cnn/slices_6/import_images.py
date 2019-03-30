@@ -187,8 +187,8 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
     return X_train, X_test, Y_train, Y_test
 
 if __name__ == "__main__":
-    ben_dir = "../../solid-nodules/benigno"
-    mal_dir = "../../solid-nodules/maligno"
+    ben_dir = "../../../../data/images/solid-nodules-with-attributes/benigno"
+    mal_dir = "../../../../data/images/solid-nodules-with-attributes/maligno"
 
     print("Lendo imagens do disco")
 

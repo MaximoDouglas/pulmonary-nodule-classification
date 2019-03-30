@@ -224,7 +224,7 @@ if __name__ == "__main__":
     print("Depois ben: ", ben.shape)
     print("Depois mal: ", mal.shape)
 
-    '''print("Separando dados de teste")
+    print("Separando dados de teste")
 
     ben_test_indices = np.random.choice(len(ben), TEST_SIZE, replace=False)
     mal_test_indices = np.random.choice(len(mal), TEST_SIZE, replace=False)
@@ -268,4 +268,4 @@ if __name__ == "__main__":
     np.save(data + "/X_train.npy", X_train)
     np.save(data + "/X_test.npy", X_test)
     np.save(data + "/Y_train.npy", Y_train)
-    np.save(data + "/Y_test.npy", Y_test)'''
+    np.save(data + "/Y_test.npy", Y_test)
