@@ -134,7 +134,7 @@ def read_images(path, path_features):
                             slices.append(img)
 
                         lista.append(slices)
-                        features.append(allFeatures[i,2:75])
+                        features.append(allFeatures[i,2:75].tolist())
 
     return lista, features
 
@@ -219,14 +219,15 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
 
     return X_train, X_test, Y_train, Y_test
 
-'''if __name__ == "__main__":
+if __name__ == "__main__":
     ben_dir = "../../../../data/images/solid-nodules-with-attributes/benigno"
     mal_dir = "../../../../data/images/solid-nodules-with-attributes/maligno"
+    features_path = "../../../../data/features/solidNodules.csv"
 
     print("Lendo imagens do disco")
 
-    ben = read_images(ben_dir, "benigno")
-    mal = read_images(mal_dir, "maligno")
+    ben, f_ben = read_images(ben_dir, features_path)
+    mal, f_mal = read_images(mal_dir, features_path)
 
     if (STRATEGY == 'first'):
         ben = normalize_first(ben, SLICES, REPEAT)
@@ -257,20 +258,29 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
     mal_test_indices = np.random.choice(len(mal), TEST_SIZE, replace=False)
 
     ben_test = [ben[i] for i in ben_test_indices]
+    f_ben_test = [f_ben[i] for i in ben_test_indices]
+
     mal_test = [mal[i] for i in mal_test_indices]
+    f_mal_test = [f_mal[i] for i in mal_test_indices]
 
     ben_test = np.array(ben_test)
+    f_ben_test = np.array(f_ben_test)
+
     mal_test = np.array(mal_test)
+    f_mal_test = np.array(f_mal_test)
 
     ben_train = np.delete(ben, ben_test_indices, axis = 0)
-    mal_train = np.delete(mal, mal_test_indices, axis = 0)
+    f_ben_train = np.delete(f_ben, ben_test_indices, axis = 0)
 
-    del(ben, mal, ben_dir, mal_dir, ben_test_indices, mal_test_indices)
+    mal_train = np.delete(mal, mal_test_indices, axis = 0)
+    f_mal_train = np.delete(f_mal, mal_test_indices, axis = 0)
+
+    del(ben, f_ben, mal, f_mal, ben_dir, mal_dir, features_path, ben_test_indices, mal_test_indices)
 
     print("Aumento de base")
 
-    ben_train = rotate_slices(ben_train, 5)#, 'reflect')
-    mal_train = rotate_slices(mal_train, 13)#, 'reflect')
+    '''ben_train = rotate_slices(ben_train, 5)#, 'reflect')
+    mal_train = rotate_slices(mal_train, 13)#, 'reflect')'''
 
     print("Juntando benignos e malignos")
 
@@ -292,7 +302,10 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
     shutil.rmtree(data, ignore_errors=True)
     os.mkdir(data)
 
+    np.save(data + "/f_ben_test.npy", f_ben_test)
+    f_ben = np.load(data + "/f_ben_test.npy")
+
     np.save(data + "/X_train.npy", X_train)
     np.save(data + "/X_test.npy", X_test)
     np.save(data + "/Y_train.npy", Y_train)
-    np.save(data + "/Y_test.npy", Y_test)'''
+    np.save(data + "/Y_test.npy", Y_test)
