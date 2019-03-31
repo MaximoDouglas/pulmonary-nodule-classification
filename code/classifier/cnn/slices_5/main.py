@@ -1,3 +1,5 @@
-import import_images
+import import_images_and_features
 
-import_images
+images, features = import_images_and_features.read_images("../../../../data/images/solid-nodules-with-attributes/benigno",
+                                        "../../../../data/features/solidNodules.csv")
+print(features)
