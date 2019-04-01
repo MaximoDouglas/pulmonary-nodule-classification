@@ -159,19 +159,6 @@ def rotate_slices(nodules, f, times, mode='constant'):
         rotated = np.append(rotated, temp_nodule, axis=0)
         rep_feat = np.append(rep_feat, temp_f, axis=0)
 
-        print(rotated.shape)
-
-    return rotated
-
-def rotate_slices_old(nodules, f, times, mode='constant'):
-    ''' Rotates a list of images n times'''
-    rotated = slices
-    angle = 360/times
-    for i in range(1, times):
-        temp = rotate(slices, i*angle, (1, 2), reshape=False, mode = mode)
-        rotated = np.concatenate([rotated, temp])
-        print(rotated.shape)
-
     return rotated
 
 def remove_if_exists(file):
@@ -307,7 +294,7 @@ if __name__ == "__main__":
     print("Aumento de base")
 
     ben_train = rotate_slices(nodules=ben_train, f=f_ben_train, times=5)
-    mal_train = rotate_slices(mal_train, 13)
+    mal_train = rotate_slices(nodules=mal_train, f=f_mal_train, times=13)
 
     '''print("Juntando benignos e malignos")
 
