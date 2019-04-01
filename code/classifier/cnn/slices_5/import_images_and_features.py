@@ -138,13 +138,40 @@ def read_images(path, path_features):
 
     return lista, features
 
-def rotate_slices(slices, times, mode='constant'):
+def rotate_slices(nodules, f, times, mode='constant'):
+    ''' Rotates a list of images n times'''
+    rotated = nodules
+    rep_feat = f
+    angle = 360/times
+
+    for ind, nd in enumerate(nodules):
+        temp_nodule = []
+        temp_f = []
+
+        temp_nodule.append(nd)
+        temp_f.append(f[ind])
+
+        for i in range(1, times):
+            temp_new = rotate(nd, i*angle, (0, 1), reshape=False, mode = mode)
+            temp_nodule.append(temp_new)
+            temp_f.append(f[ind])
+
+        rotated = np.append(rotated, temp_nodule, axis=0)
+        rep_feat = np.append(rep_feat, temp_f, axis=0)
+
+        print(rotated.shape)
+
+    return rotated
+
+def rotate_slices_old(nodules, f, times, mode='constant'):
     ''' Rotates a list of images n times'''
     rotated = slices
     angle = 360/times
     for i in range(1, times):
         temp = rotate(slices, i*angle, (1, 2), reshape=False, mode = mode)
         rotated = np.concatenate([rotated, temp])
+        print(rotated.shape)
+
     return rotated
 
 def remove_if_exists(file):
@@ -279,10 +306,10 @@ if __name__ == "__main__":
 
     print("Aumento de base")
 
-    '''ben_train = rotate_slices(ben_train, 5)#, 'reflect')
-    mal_train = rotate_slices(mal_train, 13)#, 'reflect')'''
+    ben_train = rotate_slices(nodules=ben_train, f=f_ben_train, times=5)
+    mal_train = rotate_slices(mal_train, 13)
 
-    print("Juntando benignos e malignos")
+    '''print("Juntando benignos e malignos")
 
     X_train = np.concatenate([ben_train, mal_train])
     X_test = np.concatenate([ben_test, mal_test])
@@ -308,4 +335,4 @@ if __name__ == "__main__":
     np.save(data + "/X_train.npy", X_train)
     np.save(data + "/X_test.npy", X_test)
     np.save(data + "/Y_train.npy", Y_train)
-    np.save(data + "/Y_test.npy", Y_test)
+    np.save(data + "/Y_test.npy", Y_test)'''
