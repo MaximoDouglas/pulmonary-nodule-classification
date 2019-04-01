@@ -141,6 +141,19 @@ def read_images(path, path_features):
 def rotate_slices(nodules, f, times, mode='constant'):
     ''' Rotates a list of images n times'''
     rotated = nodules
+    angle = 360/times
+    rep_feat = f
+
+    for i in range(1, times):
+        temp = rotate(nodules, i*angle, (1, 2), reshape=False, mode = mode)
+        rotated     = np.concatenate([rotated, temp])
+        rep_feat    = np.concatenate([rep_feat, f])
+
+    return rotated, rep_feat
+
+def rotate_slices_slow(nodules, f, times, mode='constant'):
+    ''' Rotates a list of images n times'''
+    rotated = nodules
     rep_feat = f
     angle = 360/times
 
@@ -159,7 +172,7 @@ def rotate_slices(nodules, f, times, mode='constant'):
         rotated = np.append(rotated, temp_nodule, axis=0)
         rep_feat = np.append(rep_feat, temp_f, axis=0)
 
-    return rotated
+    return rotated, rep_feat
 
 def remove_if_exists(file):
     '''Removes a file if it exists'''
@@ -293,15 +306,26 @@ if __name__ == "__main__":
 
     print("Aumento de base")
 
-    ben_train = rotate_slices(nodules=ben_train, f=f_ben_train, times=5)
-    mal_train = rotate_slices(nodules=mal_train, f=f_mal_train, times=13)
+    ben_train, f_ben_train = rotate_slices(nodules=ben_train, f=f_ben_train, times=5)
+    mal_train, f_mal_train = rotate_slices(nodules=mal_train, f=f_mal_train, times=13)
 
-    '''print("Juntando benignos e malignos")
+    print("Juntando benignos e malignos")
 
     X_train = np.concatenate([ben_train, mal_train])
-    X_test = np.concatenate([ben_test, mal_test])
+    f_train = np.concatenate([f_ben_train, f_mal_train])
 
-    print("Gerando labels")
+    X_test  = np.concatenate([ben_test, mal_test])
+    f_test  = np.concatenate([f_ben_test, f_mal_test])
+
+    print('Shapes: ')
+    print('X_train: ' + str(X_train.shape))
+    print('f_train: ' + str(f_train.shape))
+
+    print()
+    print('X_test: ' + str(X_test.shape))
+    print('f_test: ' + str(f_test.shape))
+
+    '''print("Gerando labels")
 
     train_labels = len(ben_train) * [0] + len(mal_train) * [1]
     test_labels = len(ben_test) * [0] + len(mal_test) * [1]
