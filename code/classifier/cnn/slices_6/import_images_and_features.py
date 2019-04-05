@@ -105,7 +105,11 @@ def read_images(path, path_features):
                         axis = 0 # To get the Rows indices
                         examColumn = 0 # Column of the csv where the exam code is
                         noduleColumn = 1 # Column of the csv where the nodule code is
+
+                        # index of the rows that have the exam id equal to the exam id of the current nodule
                         indExam  = np.where(allFeatures[:,examColumn] == dirname)[axis]
+
+                        # index of the rows that have the nodule id equal to the id of the current nodule
                         indNodule = np.where(allFeatures[:,noduleColumn] == dirname1)[axis]
 
                         i = np.intersect1d(indExam,indNodule)
