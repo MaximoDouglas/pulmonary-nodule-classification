@@ -1,7 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""Módulo responsável pela importação e processamento das imagens dos nódulos.
-"""
+'''Images and features processor'''
 import math
 import itertools
 import re
@@ -174,11 +171,6 @@ def rotate_slices_slow(nodules, f, times, mode='constant'):
 
     return rotated, rep_feat
 
-def remove_if_exists(file):
-    '''Removes a file if it exists'''
-    if os.path.exists(file):
-        os.remove(file)
-
 def my_kfold(ben, mal, n_splits, ben_rot, mal_rot):
     kf = KFold(n_splits)
 
@@ -325,7 +317,7 @@ if __name__ == "__main__":
     print('X_test: ' + str(X_test.shape))
     print('f_test: ' + str(f_test.shape))
 
-    '''print("Gerando labels")
+    print("Gerando labels")
 
     train_labels = len(ben_train) * [0] + len(mal_train) * [1]
     test_labels = len(ben_test) * [0] + len(mal_test) * [1]
@@ -340,10 +332,8 @@ if __name__ == "__main__":
     shutil.rmtree(data, ignore_errors=True)
     os.mkdir(data)
 
-    np.save(data + "/f_ben_test.npy", f_ben_test)
-    f_ben = np.load(data + "/f_ben_test.npy")
-
+    np.save(data + "/f_test.npy", f_test)
     np.save(data + "/X_train.npy", X_train)
     np.save(data + "/X_test.npy", X_test)
     np.save(data + "/Y_train.npy", Y_train)
-    np.save(data + "/Y_test.npy", Y_test)'''
+    np.save(data + "/Y_test.npy", Y_test)
