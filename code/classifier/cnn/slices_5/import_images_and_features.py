@@ -215,12 +215,12 @@ def my_kfold(ben, mal, n_splits, ben_rot, mal_rot):
 
     return X_train, X_test, Y_train, Y_test
 
-def get_folds(basedir, n_slices, strategy='first', repeat=False):
+def get_folds(basedir, n_slices, strategy='first', repeat=False, features=None):
     ben_dir = basedir + "benigno/"
     mal_dir = basedir + "maligno/"
 
-    ben = read_images(ben_dir, "benigno")
-    mal = read_images(mal_dir, "maligno")
+    ben, f_ben = read_images(ben_dir, features)
+    mal, f_mal = read_images(mal_dir, features)
 
     if strategy == 'first':
         ben = normalize_first(ben, n_slices, repeat)
@@ -235,8 +235,13 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
     ben = np.moveaxis(ben, 1, 3)
     mal = np.moveaxis(mal, 1, 3)
 
-    np.random.shuffle(ben)
-    np.random.shuffle(mal)
+    ben_zip = list(zip(ben, f_ben))
+    np.random.shuffle(ben_zip)
+    ben, f_ben = zip(*ben_zip)
+
+    mal_zip = list(zip(mal, f_mal))
+    np.random.shuffle(mal_zip)
+    mal, f_mal = zip(*mal_zip)
 
     X_train, X_test, Y_train, Y_test = my_kfold(ben, mal, 10, 5, 13)
 
