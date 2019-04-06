@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Módulo responsável pela importação e processamento das imagens dos nódulos.
 """
 import math
