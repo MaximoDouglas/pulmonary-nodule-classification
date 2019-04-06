@@ -20,7 +20,7 @@ SLICES = 5
 STRATEGY = 'first'
 REPEAT = False
 
-data_fold = "../data-" + str(SLICES) + "-" + str(STRATEGY)
+data_fold = "data-" + str(SLICES) + "-" + str(STRATEGY)
 if (REPEAT):
     data_fold += "-repeat"
 
@@ -185,8 +185,8 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
     return X_train, X_test, Y_train, Y_test
 
 if __name__ == "__main__":
-    ben_dir = "../../../../data/images/solid-nodules-with-attributes/benigno"
-    mal_dir = "../../../../data/images/solid-nodules-with-attributes/maligno"
+    ben_dir = "../../../data/images/solid-nodules-with-attributes/benigno"
+    mal_dir = "../../../data/images/solid-nodules-with-attributes/maligno"
 
     print("Lendo imagens do disco")
 
