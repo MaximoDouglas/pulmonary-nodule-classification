@@ -1,3 +1,3 @@
-import import_images
+import import_images_and_features
 
-import_images
+import_images_and_features
