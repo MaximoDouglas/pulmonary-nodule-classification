@@ -341,6 +341,7 @@ if __name__ == "__main__":
     shutil.rmtree(data, ignore_errors=True)
     os.mkdir(data)
 
+    np.save(data + "/f_train.npy", f_train)
     np.save(data + "/f_test.npy", f_test)
     np.save(data + "/X_train.npy", X_train)
     np.save(data + "/X_test.npy", X_test)
