@@ -175,22 +175,33 @@ def rotate_slices_slow(nodules, f, times, mode='constant'):
 
     return rotated, rep_feat
 
-def my_kfold(ben, mal, n_splits, ben_rot, mal_rot):
+def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
     kf = KFold(n_splits)
 
     mal_train, mal_test = [], []
+    f_mal_train, f_mal_test = [], []
     for train_index, test_index in kf.split(mal):
         mal_train.append(mal[train_index])
+        f_mal_train.append(f_mal[train_index])
+
         mal_test.append(mal[test_index])
+        f_mal_test.append(f_mal[test_index])
 
     ben_train, ben_test = [], []
+    f_ben_train, f_ben_test = [], []
     # percorro o mal_test para que os folds de test tenham o mesmo número de itens
     for (train_index, test_index), mal in zip(kf.split(ben), mal_test):
+        
         sample = np.random.choice(test_index, len(mal), replace=False)
         sample_ = np.setdiff1d(test_index, sample)
 
-        ben_train.append(ben[np.concatenate((train_index, sample_))])
+        ben_train_ind = np.concatenate((train_index, sample_))
+
+        ben_train.append(ben[ben_train_ind])
+        f_ben_train.append(f_ben[ben_train_ind])
+
         ben_test.append(ben[sample])
+        f_ben_test.append(f_ben[sample])
 
     X_test, Y_test = [], []
     for b, m in zip(ben_test, mal_test):
@@ -198,22 +209,27 @@ def my_kfold(ben, mal, n_splits, ben_rot, mal_rot):
 
         y_test = len(b) * [0] + len(m) * [1]
         Y_test.append(np.array(y_test))
-        #Y_test.append(to_categorical(y_test))
+
+    f_test = []
+    for f_b, f_m in zip(f_ben_test, f_mal_test):
+        f_test.append(np.concatenate((f_b, f_m), 0))
 
     X_train, Y_train = [], []
+    f_train = []
     for i in tqdm(range(n_splits)):
         b, m = ben_train[i], mal_train[i]
+        f_b_train, f_m_train = f_ben_train[i], f_mal_train[i]
 
-        b = rotate_slices(b, ben_rot)
-        m = rotate_slices(m, mal_rot)
+        b, f_b_train = rotate_slices(nodules=b, f=f_b_train, times=ben_rot)
+        m, f_m_train = rotate_slices(nodules=m, f=f_m_train, times=mal_rot)
 
         X_train.append(np.concatenate((b, m), 0))
+        f_train.append(np.concatenate((f_b_train, f_m_train), 0))
 
         y_train = len(b) * [0] + len(m) * [1]
         Y_train.append(np.array(y_train))
-        #Y_train.append(to_categorical(y_train))
 
-    return X_train, X_test, Y_train, Y_test
+    return X_train, X_test, f_train, f_test, Y_train, Y_test
 
 def get_folds(basedir, n_slices, strategy='first', repeat=False, features=None):
     ben_dir = basedir + "benigno/"
@@ -243,7 +259,7 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False, features=None):
     np.random.shuffle(mal_zip)
     mal, f_mal = zip(*mal_zip)
 
-    X_train, X_test, Y_train, Y_test = my_kfold(ben, mal, 10, 5, 13)
+    X_train, X_test, f_train, f_test, Y_train, Y_test = my_kfold(ben, mal, f_ben, f_mal, 10, 5, 13)
 
     return X_train, X_test, Y_train, Y_test
 
