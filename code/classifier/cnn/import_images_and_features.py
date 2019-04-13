@@ -135,7 +135,7 @@ def read_images(path, path_features):
                             slices.append(img)
 
                         lista.append(slices)
-                        features.append(allFeatures[i,2:75].tolist())
+                        features.append(allFeatures[i,2:74].tolist())
 
     return lista, features
 
