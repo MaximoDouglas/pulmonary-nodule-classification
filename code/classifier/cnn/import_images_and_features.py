@@ -261,7 +261,7 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False, features=None):
 
     X_train, X_test, f_train, f_test, Y_train, Y_test = my_kfold(ben, mal, f_ben, f_mal, 10, 5, 13)
 
-    return X_train, X_test, Y_train, Y_test
+    return X_train, X_test, f_train, f_test, Y_train, Y_test
 
 if __name__ == "__main__":
     ben_dir = "../../../data/images/solid-nodules-with-attributes/benigno"
