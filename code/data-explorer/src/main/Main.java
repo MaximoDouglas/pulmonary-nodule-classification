@@ -23,10 +23,10 @@ public class Main{
 		
 		Features features = new Features(db);
 		features.makeCSVfile_solidNodules(featuresPath);
-		features.makeCSVfile_solidNodules_withParenchyma(featuresPath);
+		//features.makeCSVfile_solidNodules_withParenchyma(featuresPath);
 		
 		Images images = new Images(db);
-		images.downloadImages_solidNodules(imagesPath, windowTag);
+		//images.downloadImages_solidNodules(imagesPath, windowTag);
 		images.downloadImages_solidNodules_withAttributes(imagesPath, windowTag);
 		
 		System.out.println("FINISHED");
