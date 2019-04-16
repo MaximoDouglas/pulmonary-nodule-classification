@@ -1,5 +1,4 @@
-"""Módulo responsável pela importação e processamento das imagens dos nódulos.
-"""
+'''Images and features processor'''
 import math
 import itertools
 import re
@@ -10,6 +9,7 @@ from scipy.ndimage import rotate
 from sklearn.model_selection import KFold
 from tqdm import tqdm
 import shutil
+import pandas as pd
 
 np.random.seed(1937)
 
@@ -78,15 +78,21 @@ def normalize_first(nodules, n_slices, repeat=False):
         normalized_slices.append(new_nodule)
     return normalized_slices
 
-def read_images(path, category):
+def read_images(path, path_features):
     '''Reads the images files in our file structure and mounts an array
     Parameters:
         path (string): path to the nodules folders
-        category (string): benigno or maligno
+        path_features (string): path to the features .csv
     Returns:
         list: list of nodules with slices as Numpy Arrays
+        features: list of features corresponding to the nodules on list
     '''
-    lista = []
+
+    df = pd.read_csv(path_features)
+    allFeatures = df.values
+
+    lista       = []
+    features    = []
 
     for root, dirs, files in os.walk(path):
         for dirname in sorted(dirs, key=str.lower):
@@ -96,43 +102,106 @@ def read_images(path, category):
                         slices = []
                         files2[:] = [re.findall('\d+', x)[0] for x in files2]
 
+                        axis = 0 # To get the Rows indices
+                        examColumn = 0 # Column of the csv where the exam code is
+                        noduleColumn = 1 # Column of the csv where the nodule code is
+
+                        # index of the rows that have the exam id equal to the exam id of the current nodule
+                        indExam  = np.where(allFeatures[:,examColumn] == dirname)[axis]
+
+                        # index of the rows that have the nodule id equal to the id of the current nodule
+                        indNodule = np.where(allFeatures[:,noduleColumn] == dirname1)[axis]
+
+                        i = np.intersect1d(indExam,indNodule)
+
+                        # A list are returned, but there's just one value, so I used its index
+                        index = 0
+                        exam = allFeatures[i,examColumn][index]
+                        nodule = allFeatures[i,noduleColumn][index]
+
+                        '''Verify if there's more than one index for each nodule
+                        and if there's divergence between the nodule location and the
+                        csv values'''
+
+                        if((len(i) > 1) or (str(exam) != str(dirname)) or (str(nodule) != str(dirname1))):
+                            print("Features error!")
+                        else:
+                            '''Transform the list of index with just one value in a
+                            primitive value to use as index to save the features values'''
+                            i = i[0]
+
                         for f in sorted(files2, key=float):
                             img = imageio.imread(root2 + "/" + f + ".png", as_gray=True)
                             slices.append(img)
 
                         lista.append(slices)
-    return lista
+                        features.append(allFeatures[i,2:74].tolist())
 
-def rotate_slices(slices, times, mode='constant'):
+    return lista, features
+
+def rotate_slices(nodules, f, times, mode='constant'):
     ''' Rotates a list of images n times'''
-    rotated = slices
+    rotated = nodules
     angle = 360/times
+    rep_feat = f
+
     for i in range(1, times):
-        temp = rotate(slices, i*angle, (1, 2), reshape=False, mode = mode)
-        rotated = np.concatenate([rotated, temp])
-    return rotated
+        temp = rotate(nodules, i*angle, (1, 2), reshape=False, mode = mode)
+        rotated     = np.concatenate([rotated, temp])
+        rep_feat    = np.concatenate([rep_feat, f])
 
-def remove_if_exists(file):
-    '''Removes a file if it exists'''
-    if os.path.exists(file):
-        os.remove(file)
+    return rotated, rep_feat
 
-def my_kfold(ben, mal, n_splits, ben_rot, mal_rot):
+def rotate_slices_slow(nodules, f, times, mode='constant'):
+    ''' Rotates a list of images n times'''
+    rotated = nodules
+    rep_feat = f
+    angle = 360/times
+
+    for ind, nd in enumerate(nodules):
+        temp_nodule = []
+        temp_f = []
+
+        temp_nodule.append(nd)
+        temp_f.append(f[ind])
+
+        for i in range(1, times):
+            temp_new = rotate(nd, i*angle, (0, 1), reshape=False, mode = mode)
+            temp_nodule.append(temp_new)
+            temp_f.append(f[ind])
+
+        rotated = np.append(rotated, temp_nodule, axis=0)
+        rep_feat = np.append(rep_feat, temp_f, axis=0)
+
+    return rotated, rep_feat
+
+def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
     kf = KFold(n_splits)
 
     mal_train, mal_test = [], []
+    f_mal_train, f_mal_test = [], []
     for train_index, test_index in kf.split(mal):
         mal_train.append(mal[train_index])
+        f_mal_train.append(f_mal[train_index])
+
         mal_test.append(mal[test_index])
+        f_mal_test.append(f_mal[test_index])
 
     ben_train, ben_test = [], []
+    f_ben_train, f_ben_test = [], []
     # percorro o mal_test para que os folds de test tenham o mesmo número de itens
     for (train_index, test_index), mal in zip(kf.split(ben), mal_test):
+        
         sample = np.random.choice(test_index, len(mal), replace=False)
         sample_ = np.setdiff1d(test_index, sample)
 
-        ben_train.append(ben[np.concatenate((train_index, sample_))])
+        ben_train_ind = np.concatenate((train_index, sample_))
+
+        ben_train.append(ben[ben_train_ind])
+        f_ben_train.append(f_ben[ben_train_ind])
+
         ben_test.append(ben[sample])
+        f_ben_test.append(f_ben[sample])
 
     X_test, Y_test = [], []
     for b, m in zip(ben_test, mal_test):
@@ -140,29 +209,34 @@ def my_kfold(ben, mal, n_splits, ben_rot, mal_rot):
 
         y_test = len(b) * [0] + len(m) * [1]
         Y_test.append(np.array(y_test))
-        #Y_test.append(to_categorical(y_test))
+
+    f_test = []
+    for f_b, f_m in zip(f_ben_test, f_mal_test):
+        f_test.append(np.concatenate((f_b, f_m), 0))
 
     X_train, Y_train = [], []
+    f_train = []
     for i in tqdm(range(n_splits)):
         b, m = ben_train[i], mal_train[i]
+        f_b_train, f_m_train = f_ben_train[i], f_mal_train[i]
 
-        b = rotate_slices(b, ben_rot)
-        m = rotate_slices(m, mal_rot)
+        b, f_b_train = rotate_slices(nodules=b, f=f_b_train, times=ben_rot)
+        m, f_m_train = rotate_slices(nodules=m, f=f_m_train, times=mal_rot)
 
         X_train.append(np.concatenate((b, m), 0))
+        f_train.append(np.concatenate((f_b_train, f_m_train), 0))
 
         y_train = len(b) * [0] + len(m) * [1]
         Y_train.append(np.array(y_train))
-        #Y_train.append(to_categorical(y_train))
 
-    return X_train, X_test, Y_train, Y_test
+    return X_train, X_test, f_train, f_test, Y_train, Y_test
 
-def get_folds(basedir, n_slices, strategy='first', repeat=False):
+def get_folds(basedir, n_slices, strategy='first', repeat=False, features=None):
     ben_dir = basedir + "benigno/"
     mal_dir = basedir + "maligno/"
 
-    ben = read_images(ben_dir, "benigno")
-    mal = read_images(mal_dir, "maligno")
+    ben, f_ben = read_images(ben_dir, features)
+    mal, f_mal = read_images(mal_dir, features)
 
     if strategy == 'first':
         ben = normalize_first(ben, n_slices, repeat)
@@ -177,21 +251,27 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False):
     ben = np.moveaxis(ben, 1, 3)
     mal = np.moveaxis(mal, 1, 3)
 
-    np.random.shuffle(ben)
-    np.random.shuffle(mal)
+    ben_zip = list(zip(ben, f_ben))
+    np.random.shuffle(ben_zip)
+    ben, f_ben = zip(*ben_zip)
 
-    X_train, X_test, Y_train, Y_test = my_kfold(ben, mal, 10, 5, 13)
+    mal_zip = list(zip(mal, f_mal))
+    np.random.shuffle(mal_zip)
+    mal, f_mal = zip(*mal_zip)
 
-    return X_train, X_test, Y_train, Y_test
+    X_train, X_test, f_train, f_test, Y_train, Y_test = my_kfold(ben, mal, f_ben, f_mal, 10, 5, 13)
+
+    return X_train, X_test, f_train, f_test, Y_train, Y_test
 
 if __name__ == "__main__":
     ben_dir = "../../../data/images/solid-nodules-with-attributes/benigno"
     mal_dir = "../../../data/images/solid-nodules-with-attributes/maligno"
+    features_path = "../../../data/features/solidNodules.csv"
 
     print("Lendo imagens do disco")
 
-    ben = read_images(ben_dir, "benigno")
-    mal = read_images(mal_dir, "maligno")
+    ben, f_ben = read_images(ben_dir, features_path)
+    mal, f_mal = read_images(mal_dir, features_path)
 
     if (STRATEGY == 'first'):
         ben = normalize_first(ben, SLICES, REPEAT)
@@ -222,25 +302,45 @@ if __name__ == "__main__":
     mal_test_indices = np.random.choice(len(mal), TEST_SIZE, replace=False)
 
     ben_test = [ben[i] for i in ben_test_indices]
+    f_ben_test = [f_ben[i] for i in ben_test_indices]
+
     mal_test = [mal[i] for i in mal_test_indices]
+    f_mal_test = [f_mal[i] for i in mal_test_indices]
 
     ben_test = np.array(ben_test)
+    f_ben_test = np.array(f_ben_test)
+
     mal_test = np.array(mal_test)
+    f_mal_test = np.array(f_mal_test)
 
     ben_train = np.delete(ben, ben_test_indices, axis = 0)
-    mal_train = np.delete(mal, mal_test_indices, axis = 0)
+    f_ben_train = np.delete(f_ben, ben_test_indices, axis = 0)
 
-    del(ben, mal, ben_dir, mal_dir, ben_test_indices, mal_test_indices)
+    mal_train = np.delete(mal, mal_test_indices, axis = 0)
+    f_mal_train = np.delete(f_mal, mal_test_indices, axis = 0)
+
+    del(ben, f_ben, mal, f_mal, ben_dir, mal_dir, features_path, ben_test_indices, mal_test_indices)
 
     print("Aumento de base")
 
-    ben_train = rotate_slices(ben_train, 5)#, 'reflect')
-    mal_train = rotate_slices(mal_train, 13)#, 'reflect')
+    ben_train, f_ben_train = rotate_slices(nodules=ben_train, f=f_ben_train, times=5)
+    mal_train, f_mal_train = rotate_slices(nodules=mal_train, f=f_mal_train, times=13)
 
     print("Juntando benignos e malignos")
 
     X_train = np.concatenate([ben_train, mal_train])
-    X_test = np.concatenate([ben_test, mal_test])
+    f_train = np.concatenate([f_ben_train, f_mal_train])
+
+    X_test  = np.concatenate([ben_test, mal_test])
+    f_test  = np.concatenate([f_ben_test, f_mal_test])
+
+    print('Shapes: ')
+    print('X_train: ' + str(X_train.shape))
+    print('f_train: ' + str(f_train.shape))
+
+    print()
+    print('X_test: ' + str(X_test.shape))
+    print('f_test: ' + str(f_test.shape))
 
     print("Gerando labels")
 
@@ -257,6 +357,8 @@ if __name__ == "__main__":
     shutil.rmtree(data, ignore_errors=True)
     os.mkdir(data)
 
+    np.save(data + "/f_train.npy", f_train)
+    np.save(data + "/f_test.npy", f_test)
     np.save(data + "/X_train.npy", X_train)
     np.save(data + "/X_test.npy", X_test)
     np.save(data + "/Y_train.npy", Y_train)

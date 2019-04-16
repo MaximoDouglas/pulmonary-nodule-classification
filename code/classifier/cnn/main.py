@@ -1,3 +1,0 @@
-import import_images_and_features
-
-import_images_and_features
