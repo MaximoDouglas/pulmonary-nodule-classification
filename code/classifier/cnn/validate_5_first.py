@@ -91,7 +91,7 @@ N_SLICES = 5
 for i in range(1):
     m = {'acc': [], 'spec': [], 'sens': [], 'f1_score': [], 'auc': []}
     
-    X_train_, X_test_, f_train, f_test, Y_train_, Y_test_= get_folds("../solid-nodules-with-attributes/", 
+    X_train_, X_test_, f_train, f_test, Y_train_, Y_test_=  get_folds(basedir="../solid-nodules-with-attributes/", 
                                                                         n_slices=N_SLICES, 
                                                                         strategy='first', 
                                                                         repeat=False,
