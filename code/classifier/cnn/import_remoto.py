@@ -177,18 +177,19 @@ def rotate_slices_slow(nodules, f, times, mode='constant'):
 
 def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
     kf = KFold(n_splits)
-
-    mal_train, mal_test = [], []
+    
     f_mal_train, f_mal_test = [], []
+    mal_train, mal_test = [], []
     for train_index, test_index in kf.split(mal):
-        mal_train.append(mal[train_index])
-        f_mal_train.append(f_mal[train_index])
+        mal_train.append([mal[index] for index in train_index])
+        f_mal_train.append([f_mal[index] for index in train_index])
 
-        mal_test.append(mal[test_index])
-        f_mal_test.append(f_mal[test_index])
+        mal_test.append([mal[index] for index in test_index])
+        f_mal_test.append([f_mal[index] for index in test_index])
 
     ben_train, ben_test = [], []
     f_ben_train, f_ben_test = [], []
+    
     # percorro o mal_test para que os folds de test tenham o mesmo número de itens
     for (train_index, test_index), mal in zip(kf.split(ben), mal_test):
         
@@ -197,11 +198,11 @@ def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
 
         ben_train_ind = np.concatenate((train_index, sample_))
 
-        ben_train.append(ben[ben_train_ind])
-        f_ben_train.append(f_ben[ben_train_ind])
-
-        ben_test.append(ben[sample])
-        f_ben_test.append(f_ben[sample])
+        ben_train.append([ben[index] for index in ben_train_ind])
+        f_ben_train.append([f_ben[index] for index in ben_train_ind])
+        
+        ben_test.append([ben[index] for index in sample])
+        f_ben_test.append([f_ben[index] for index in sample])
 
     X_test, Y_test = [], []
     for b, m in zip(ben_test, mal_test):
