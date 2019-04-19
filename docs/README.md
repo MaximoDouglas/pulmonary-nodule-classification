@@ -2,7 +2,7 @@
 
 Classification model on Pulmonary Nodules of Computed Tomography Image - Dicom.
 
-# Future Pipeline
+## Future Pipeline
 2. Download the images of solid nodules and its features from the database;
 3. Crop the images using Phatch, configuring que percentage as 37.5% - It results on 64x64 images;
 4. Generate numpies for model optimization;
@@ -11,7 +11,7 @@ Classification model on Pulmonary Nodules of Computed Tomography Image - Dicom.
 7. Validate models obtained on items **5** and **6**;
 8. Compare results.
 
-# Pipeline
+## Pipeline
 2. Download the images of solid nodules and its features from the database;
 3. Crop the images using Phatch, configuring que percentage as 37.5% - It results on 64x64 images;
 4. Generate numpies for model optimization;
