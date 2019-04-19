@@ -38,12 +38,14 @@ import shutil
 
 from import_remoto import get_folds
 
-c1 = 32
+# Optimized params
+c1 = 48
 d1 = 96
-d2 = 16
-drop1 = 0.07176927609418894
-drop2 = 0.2837032463233716
+d2 = 24
+drop1 = 0.41935233640034336
+drop2 = 0.4642243750136609
 
+# Model definition
 def get_model():
     K.clear_session()
     gc.collect()
