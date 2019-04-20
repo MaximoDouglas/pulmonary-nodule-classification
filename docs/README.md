@@ -1,17 +1,21 @@
 # Pulmonary nodule classification
 
-Automatic classification on Pulmonary Nodules of Computed Tomography Image - Dicom.
+Classification model on Pulmonary Nodules of Computed Tomography Image - Dicom.
 
-# Initial ideas
-1. Data exploration (initialy, just visualizations) on the Features dataset;
-2. Create a classifier (CNN) using the images as inputs;
-3. Create a classifier that uses the Features and Images as Input of the network;
-4. Create a CNN archtecture wich receives the images as input and injects the Features after the flatten layer.
-
-# Workflow
-1. Apply the CT Window on images;
-2. Download the images from de database - Solid nodules and Solid nodules with attributes;
+## Future Pipeline
+2. Download the images of solid nodules and its features from the database;
 3. Crop the images using Phatch, configuring que percentage as 37.5% - It results on 64x64 images;
-4. Modify the import_images.py to read and prepare the images as numpy arrays;
-5. Use the numpy arrays prepared on **4** to be the inputs of the network;
-6. Evaluate the model metrics using Accuracy, Specificity, Sensitivity and AUC.
+4. Generate numpies for model optimization;
+5. Optimize model (images only) using the numpies generated on item **4**;
+6. Optimize model (images with features injection) using the numpies generated on item **4**;
+7. Validate models obtained on items **5** and **6**;
+8. Compare results.
+
+## Pipeline
+2. Download the images of solid nodules and its features from the database;
+3. Crop the images using Phatch, configuring que percentage as 37.5% - It results on 64x64 images;
+4. Generate numpies for model optimization;
+5. Optimize model (images only) using the numpies generated on item **4**;
+6. Validate model obtained on item **5** 
+7. Validate model obtained on item **5** using features injection;
+8. Compare results.
