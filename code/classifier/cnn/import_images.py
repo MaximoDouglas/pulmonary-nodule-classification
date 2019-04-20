@@ -79,7 +79,7 @@ def normalize_first(nodules, n_slices, repeat=False):
     return normalized_slices
 
 def read_images(path, path_features):
-    '''Reads the images files in our file structure and mounts an array
+    '''Reads the images files, a .csv with the features of each nodule and mounts an array
     Parameters:
         path (string): path to the nodules folders
         path_features (string): path to the features .csv
@@ -91,7 +91,7 @@ def read_images(path, path_features):
     df = pd.read_csv(path_features)
     allFeatures = df.values
 
-    lista       = []
+    list       = []
     features    = []
 
     for root, dirs, files in os.walk(path):
@@ -112,15 +112,17 @@ def read_images(path, path_features):
                         # index of the rows that have the nodule id equal to the id of the current nodule
                         indNodule = np.where(allFeatures[:,noduleColumn] == dirname1)[axis]
 
+                        # Intersect the two arrays, which results in the row for the features 
+                        # of the current nodule
                         i = np.intersect1d(indExam,indNodule)
 
-                        # A list are returned, but there's just one value, so I used its index
+                        # A list is returned, but there's just one value, so I used its index
                         index = 0
-                        exam = allFeatures[i,examColumn][index]
-                        nodule = allFeatures[i,noduleColumn][index]
+                        exam = allFeatures[i, examColumn][index]
+                        nodule = allFeatures[i, noduleColumn][index]
 
                         '''Verify if there's more than one index for each nodule
-                        and if there's divergence between the nodule location and the
+                        and if there's divergence between the nodule image file location and the
                         csv values'''
 
                         if((len(i) > 1) or (str(exam) != str(dirname)) or (str(nodule) != str(dirname1))):
@@ -134,11 +136,12 @@ def read_images(path, path_features):
                             img = imageio.imread(root2 + "/" + f + ".png", as_gray=True)
                             slices.append(img)
 
-                        lista.append(slices)
+                        list.append(slices)
                         features.append(allFeatures[i,2:74].tolist())
 
-    return lista, features
+    return list, features
 
+'''This is the fastest method, which just replicate the features the same amount as the images get rotated'''
 def rotate_slices(nodules, f, times, mode='constant'):
     ''' Rotates a list of images n times'''
     rotated = nodules
@@ -152,6 +155,7 @@ def rotate_slices(nodules, f, times, mode='constant'):
 
     return rotated, rep_feat
 
+'''This method is slower, but navigate for each nodule, which can be helpful in the future'''
 def rotate_slices_slow(nodules, f, times, mode='constant'):
     ''' Rotates a list of images n times'''
     rotated = nodules
@@ -175,12 +179,14 @@ def rotate_slices_slow(nodules, f, times, mode='constant'):
 
     return rotated, rep_feat
 
+'''This method works just for specific versions of python, becausa uses a list as a index to get a sublist'''
 def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
     kf = KFold(n_splits)
 
     mal_train, mal_test = [], []
     f_mal_train, f_mal_test = [], []
     for train_index, test_index in kf.split(mal):
+        # Using mal[train_index] is deprecate - It may be changed to [mal[index] for index in train_index]
         mal_train.append(mal[train_index])
         f_mal_train.append(f_mal[train_index])
 
@@ -189,7 +195,8 @@ def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
 
     ben_train, ben_test = [], []
     f_ben_train, f_ben_test = [], []
-    # percorro o mal_test para que os folds de test tenham o mesmo número de itens
+    
+    # To make sure that the folds of test will have the same number of mal and ben nodules
     for (train_index, test_index), mal in zip(kf.split(ben), mal_test):
         
         sample = np.random.choice(test_index, len(mal), replace=False)
