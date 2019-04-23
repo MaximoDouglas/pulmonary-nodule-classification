@@ -182,21 +182,20 @@ def rotate_slices_slow(nodules, f, times, mode='constant'):
 '''This method works just for specific versions of python, becausa uses a list as a index to get a sublist'''
 def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
     kf = KFold(n_splits)
-
-    mal_train, mal_test = [], []
+    
     f_mal_train, f_mal_test = [], []
+    mal_train, mal_test = [], []
     for train_index, test_index in kf.split(mal):
-        # Using mal[train_index] is deprecate - It may be changed to [mal[index] for index in train_index]
-        mal_train.append(mal[train_index])
-        f_mal_train.append(f_mal[train_index])
+        mal_train.append([mal[index] for index in train_index])
+        f_mal_train.append([f_mal[index] for index in train_index])
 
-        mal_test.append(mal[test_index])
-        f_mal_test.append(f_mal[test_index])
+        mal_test.append([mal[index] for index in test_index])
+        f_mal_test.append([f_mal[index] for index in test_index])
 
     ben_train, ben_test = [], []
     f_ben_train, f_ben_test = [], []
     
-    # To make sure that the folds of test will have the same number of mal and ben nodules
+    # percorro o mal_test para que os folds de test tenham o mesmo número de itens
     for (train_index, test_index), mal in zip(kf.split(ben), mal_test):
         
         sample = np.random.choice(test_index, len(mal), replace=False)
@@ -204,11 +203,11 @@ def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
 
         ben_train_ind = np.concatenate((train_index, sample_))
 
-        ben_train.append(ben[ben_train_ind])
-        f_ben_train.append(f_ben[ben_train_ind])
-
-        ben_test.append(ben[sample])
-        f_ben_test.append(f_ben[sample])
+        ben_train.append([ben[index] for index in ben_train_ind])
+        f_ben_train.append([f_ben[index] for index in ben_train_ind])
+        
+        ben_test.append([ben[index] for index in sample])
+        f_ben_test.append([f_ben[index] for index in sample])
 
     X_test, Y_test = [], []
     for b, m in zip(ben_test, mal_test):
@@ -238,9 +237,11 @@ def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
 
     return X_train, X_test, f_train, f_test, Y_train, Y_test
 
+RES = 64
+
 def get_folds(basedir, n_slices, strategy='first', repeat=False, features=None):
-    ben_dir = basedir + "benigno/"
-    mal_dir = basedir + "maligno/"
+    ben_dir = basedir + "benigno"
+    mal_dir = basedir + "maligno"
 
     ben, f_ben = read_images(ben_dir, features)
     mal, f_mal = read_images(mal_dir, features)
