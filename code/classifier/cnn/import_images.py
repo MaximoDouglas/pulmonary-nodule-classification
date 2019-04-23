@@ -4,12 +4,12 @@ import itertools
 import re
 import os
 import imageio
+import shutil
 import numpy as np
+import pandas as pd
 from scipy.ndimage import rotate
 from sklearn.model_selection import KFold
 from tqdm import tqdm
-import shutil
-import pandas as pd
 
 np.random.seed(1937)
 
