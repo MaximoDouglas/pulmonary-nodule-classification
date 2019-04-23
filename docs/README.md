@@ -14,7 +14,7 @@ Classification model on Pulmonary Nodules of Computed Tomography Image - Dicom.
 ## Next Steps:
 - [ ] Code for optimize model with features injection;
 
-## Literature read schedule
+## Literature reading
 - [ ] Causey, L. "Highly accurate model for prediction of lung nodule malignancy with CT scans";
 - [ ] Lins, L. "Modelo Computacional para Classificação de Nódulos Pulmonares Utilizando Redes Neurais Convolucionais";
 - [ ] Kang, G. "3D multi-view convolutional neural networks for lung nodule classification";
