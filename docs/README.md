@@ -12,7 +12,7 @@ Classification model on Pulmonary Nodules of Computed Tomography Image - Dicom.
 7. Compare results.
 
 ## Next Steps:
-[-] Code for optimize model with features injection;
+- [ ] Code for optimize model with features injection;
 
 ## Literature read schedule
 [ ] Causey, L. "Highly accurate model for prediction of lung nodule malignancy with CT scans";
