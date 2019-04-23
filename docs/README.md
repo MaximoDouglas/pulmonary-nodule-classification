@@ -6,21 +6,19 @@ Classification model on Pulmonary Nodules of Computed Tomography Image - Dicom.
 1. Download the images of solid nodules and its features from the database;
 2. Crop the images using Phatch, configuring que percentage as 37.5% - It results on 64x64 images;
 3. Generate numpies for model optimization;
-4. Optimize model (images only) using the numpies generated on item **4**;
-5. Validate model obtained on item **5** 
-6. Validate model obtained on item **5** using features injection;
+4. Optimize model (images only) using the numpies generated on item **3**;
+5. Validate model obtained on item **4** 
+6. Validate model obtained on item **4** using features injection;
 7. Compare results.
 
 ## Next Steps:
-1. Generate numpies for model optimization;
-2. Optimize model (images with features injection) using the numpies generated on item **1**;
-3. Validate models obtained on item **2**;
+[ ] Code for optimize model with features injection;
 
-## Bibliographic revision schedule
-1. Causey, L. "Highly accurate model for prediction of lung nodule malignancy with CT scans";
-2. Lins, L. "Modelo Computacional para Classificação de Nódulos Pulmonares Utilizando Redes Neurais Convolucionais";
-3. Kang, G. "3D multi-view convolutional neural networks for lung nodule classification";
-4. Fawcett, T. "An introduction to ROC analysis";
-5. Wong, T. "Performance evaluation of classification algorithms by k-fold and leave-one-out cross validation";
-6. Koehrsen, W. ["A Conceptual Explanation of Bayesian Hyperparameter Optimization for Machine Learning"](https://towardsdatascience.com/a-conceptual-explanation-of-bayesian-model-based-hyperparameter-optimization-for-machine-learning-b8172278050f);
-7. Reinhold, J. ["Deep Learning with Magnetic Resonance and Computed Tomography Images"](https://towardsdatascience.com/deep-learning-with-magnetic-resonance-and-computed-tomography-images-e9f32273dcb5).
+## Literature read schedule
+[ ] Causey, L. "Highly accurate model for prediction of lung nodule malignancy with CT scans";
+[ ] Lins, L. "Modelo Computacional para Classificação de Nódulos Pulmonares Utilizando Redes Neurais Convolucionais";
+[ ] Kang, G. "3D multi-view convolutional neural networks for lung nodule classification";
+[ ] Fawcett, T. "An introduction to ROC analysis";
+[ ] Wong, T. "Performance evaluation of classification algorithms by k-fold and leave-one-out cross validation";
+[ ] Koehrsen, W. ["A Conceptual Explanation of Bayesian Hyperparameter Optimization for Machine Learning"](https://towardsdatascience.com/a-conceptual-explanation-of-bayesian-model-based-hyperparameter-optimization-for-machine-learning-b8172278050f);
+[ ] Reinhold, J. ["Deep Learning with Magnetic Resonance and Computed Tomography Images"](https://towardsdatascience.com/deep-learning-with-magnetic-resonance-and-computed-tomography-images-e9f32273dcb5).
