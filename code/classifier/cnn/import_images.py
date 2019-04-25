@@ -8,6 +8,7 @@ import shutil
 import numpy as np
 import pandas as pd
 from scipy.ndimage import rotate
+import matplotlib.pyplot as plt
 from sklearn.model_selection import KFold
 from tqdm import tqdm
 
@@ -241,8 +242,6 @@ def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
 
     return X_train, X_test, f_train, f_test, Y_train, Y_test
 
-RES = 64
-
 def get_folds(basedir, n_slices, strategy='first', repeat=False, features=None):
     ben_dir = basedir + "benigno"
     mal_dir = basedir + "maligno"
@@ -347,7 +346,7 @@ if __name__ == "__main__":
 
     ben_train, f_ben_train = rotate_slices(nodules=ben_train, features=f_ben_train, times=5)
     mal_train, f_mal_train = rotate_slices(nodules=mal_train, features=f_mal_train, times=13)
-
+    
     if LOG:
         print("     Ben train: ", ben_train.shape)
         print("     Ben features train: ", f_ben_train.shape)
