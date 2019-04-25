@@ -11,6 +11,7 @@ from scipy.ndimage import rotate
 import matplotlib.pyplot as plt
 from sklearn.model_selection import KFold
 from tqdm import tqdm
+import random
 
 # Begin Settings -------------------------|
 
@@ -73,6 +74,14 @@ def plot_nodule(nodules, ind_nodules, ind_slices):
     
     plt.subplots_adjust(hspace=0.5)
     plt.show()
+
+def verify_features(features, step):
+    index = np.random.randint(0, len(features) - step - 1)
+    
+    if (features[index].all() == features[index + step].all()):
+        return "     Features repeat - OK"
+    else:
+        return "     Features repeat - FAIL"
 
 def normalize_balanced(nodules, n_slices, repeat=False):
     '''Normalizes the nodule slices number:
@@ -376,6 +385,7 @@ if __name__ == "__main__":
     plot_nodule(nodules=mal_train, ind_nodules=[0, 217, 434, 651], ind_slices=[0, 1, 2, 3])
 
     if LOG:
+        print(verify_features(features=f_mal_train, step=217))
         print("     Ben train: ", ben_train.shape)
         print("     Ben features train: ", f_ben_train.shape)
         print()
