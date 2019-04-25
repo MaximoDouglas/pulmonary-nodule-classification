@@ -43,7 +43,7 @@ def normalize_balanced(nodules, n_slices, repeat=False):
         if len(nodule) <= n_slices:
                 for slice in nodule:
                     new_nodule.append(slice)
-                for i in range(n_slices - len(nodule)):
+                for _ in range(n_slices - len(nodule)):
                     new_nodule.append(np.zeros((RES, RES)))
         elif len(nodule) > n_slices:
             new_nodule.append(nodule[0])
@@ -91,41 +91,41 @@ def read_images(path, path_features):
     df = pd.read_csv(path_features)
     allFeatures = df.values
 
-    list       = []
+    list        = []
     features    = []
 
-    for root, dirs, files in os.walk(path):
+    for _,dirs,_ in os.walk(path):
         for dirname in sorted(dirs, key=str.lower):
-            for root1, dirs1, files1 in os.walk(path + "/" + dirname):
-                for dirname1 in sorted(dirs1, key=str.lower):
-                    for root2, dirs2, files2 in os.walk(path + "/" + dirname + "/" + dirname1):
-                        slices = []
-                        files2[:] = [re.findall('\d+', x)[0] for x in files2]
+            for _,subdirs,_ in os.walk(path + "/" + dirname):
+                for subdirname in sorted(subdirs, key=str.lower):
+                    for root2,_,files2 in os.walk(path + "/" + dirname + "/" + subdirname):
+                        slices      = []
+                        files2[:]   = [re.findall('\\d+', x)[0] for x in files2]
 
-                        axis = 0 # To get the Rows indices
-                        examColumn = 0 # Column of the csv where the exam code is
-                        noduleColumn = 1 # Column of the csv where the nodule code is
+                        axis            = 0 # To get the Rows indices
+                        examColumn      = 0 # Column of the csv where the exam code is
+                        noduleColumn    = 1 # Column of the csv where the nodule code is
 
                         # index of the rows that have the exam id equal to the exam id of the current nodule
-                        indExam  = np.where(allFeatures[:,examColumn] == dirname)[axis]
+                        indExam = np.where(allFeatures[:,examColumn] == dirname)[axis]
 
                         # index of the rows that have the nodule id equal to the id of the current nodule
-                        indNodule = np.where(allFeatures[:,noduleColumn] == dirname1)[axis]
+                        indNodule = np.where(allFeatures[:,noduleColumn] == subdirname)[axis]
 
                         # Intersect the two arrays, which results in the row for the features 
                         # of the current nodule
                         i = np.intersect1d(indExam,indNodule)
 
                         # A list is returned, but there's just one value, so I used its index
-                        index = 0
-                        exam = allFeatures[i, examColumn][index]
-                        nodule = allFeatures[i, noduleColumn][index]
+                        index   = 0
+                        exam    = allFeatures[i, examColumn][index]
+                        nodule  = allFeatures[i, noduleColumn][index]
 
                         '''Verify if there's more than one index for each nodule
                         and if there's divergence between the nodule image file location and the
                         csv values'''
 
-                        if((len(i) > 1) or (str(exam) != str(dirname)) or (str(nodule) != str(dirname1))):
+                        if((len(i) > 1) or (str(exam) != str(dirname)) or (str(nodule) != str(subdirname))):
                             print("Features error!")
                         else:
                             '''Transform the list of index with just one value in a
@@ -142,42 +142,24 @@ def read_images(path, path_features):
     return list, features
 
 '''This is the fastest method, which just replicate the features the same amount as the images get rotated'''
-def rotate_slices(nodules, f, times, mode='constant'):
-    ''' Rotates a list of images n times'''
-    rotated = nodules
-    angle = 360/times
-    rep_feat = f
+def rotate_slices(nodules, features, times, mode='constant'):
+    ''' Rotates a list of images n times.
+        'rotated' is a list that will contain all nodule images (originals and the results of the rotations)
+        'aug_feat' is a list that will contain all nodule features (repeated as the images get augmented)
+        '''
 
+    rotated = nodules
+    aug_feat = features
+    angle = 360/times
+    
+    '''Make rotations (n - 2) times, where n is equal to 'times' parameter. 
+        If it was n times, it would repeat the same image 2 more times (0 and 360 degree)'''
     for i in range(1, times):
-        temp = rotate(nodules, i*angle, (1, 2), reshape=False, mode = mode)
+        temp        = rotate(input=nodules, angle=i*angle, axes=(1, 2), reshape=False, mode=mode)
         rotated     = np.concatenate([rotated, temp])
-        rep_feat    = np.concatenate([rep_feat, f])
+        aug_feat    = np.concatenate([aug_feat, features])
 
-    return rotated, rep_feat
-
-'''This method is slower, but navigate for each nodule, which can be helpful in the future'''
-def rotate_slices_slow(nodules, f, times, mode='constant'):
-    ''' Rotates a list of images n times'''
-    rotated = nodules
-    rep_feat = f
-    angle = 360/times
-
-    for ind, nd in enumerate(nodules):
-        temp_nodule = []
-        temp_f = []
-
-        temp_nodule.append(nd)
-        temp_f.append(f[ind])
-
-        for i in range(1, times):
-            temp_new = rotate(nd, i*angle, (0, 1), reshape=False, mode = mode)
-            temp_nodule.append(temp_new)
-            temp_f.append(f[ind])
-
-        rotated = np.append(rotated, temp_nodule, axis=0)
-        rep_feat = np.append(rep_feat, temp_f, axis=0)
-
-    return rotated, rep_feat
+    return rotated, aug_feat
 
 '''This method works just for specific versions of python, becausa uses a list as a index to get a sublist'''
 def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
@@ -226,8 +208,8 @@ def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
         b, m = ben_train[i], mal_train[i]
         f_b_train, f_m_train = f_ben_train[i], f_mal_train[i]
 
-        b, f_b_train = rotate_slices(nodules=b, f=f_b_train, times=ben_rot)
-        m, f_m_train = rotate_slices(nodules=m, f=f_m_train, times=mal_rot)
+        b, f_b_train = rotate_slices(nodules=b, features=f_b_train, times=ben_rot)
+        m, f_m_train = rotate_slices(nodules=m, features=f_m_train, times=mal_rot)
 
         X_train.append(np.concatenate((b, m), 0))
         f_train.append(np.concatenate((f_b_train, f_m_train), 0))
@@ -331,8 +313,8 @@ if __name__ == "__main__":
 
     print("Aumento de base")
 
-    ben_train, f_ben_train = rotate_slices(nodules=ben_train, f=f_ben_train, times=5)
-    mal_train, f_mal_train = rotate_slices(nodules=mal_train, f=f_mal_train, times=13)
+    ben_train, f_ben_train = rotate_slices(nodules=ben_train, features=f_ben_train, times=5)
+    mal_train, f_mal_train = rotate_slices(nodules=mal_train, features=f_mal_train, times=13)
 
     print("Juntando benignos e malignos")
 
