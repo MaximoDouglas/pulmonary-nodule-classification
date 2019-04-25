@@ -1,4 +1,4 @@
-'''Images and features processor'''
+# Images and features processor
 import math
 import itertools
 import re
@@ -11,31 +11,54 @@ from scipy.ndimage import rotate
 from sklearn.model_selection import KFold
 from tqdm import tqdm
 
+# Begin Settings -------------------------|
+
+# Important folders:
+ben_dir = "../../../data/images/solid-nodules-with-attributes/benigno"
+mal_dir = "../../../data/images/solid-nodules-with-attributes/maligno"
+features_path = "../../../data/features/solidNodules.csv"
+
+# Random seed to get a better reproductibility
 np.random.seed(1937)
 
+# If set True, it shows data informations in the output of the program
+LOG = True
+
+# Images resolution
 RES = 64
+
+# Size of the test fold
 TEST_SIZE = 50
 
+# Number of slices
 SLICES = 5
+
+# Strategy used for normalization - it can be 'first' or 'balanced'
 STRATEGY = 'first'
+
+''' If set True, it will repeat slices when the number of slices of a nodule is less than SLICES. 
+    If set False, the normalization will be filling with black images in the end'''
 REPEAT = False
 
-data_fold = "data-" + str(SLICES) + "-" + str(STRATEGY)
+# It makes the name for the folder where the numpies will be stored
+data_folder = "data-" + str(SLICES) + "-" + str(STRATEGY)
 if (REPEAT):
-    data_fold += "-repeat"
+    data_folder += "-repeat"
+
+# End settings ---------------------------|
 
 def normalize_balanced(nodules, n_slices, repeat=False):
     '''Normalizes the nodule slices number:
     - A nodule with less than n slices is completed with black slices
     - A nodule with more than n slices have its first and last one selected, plus
-    the 1 + (n-1/5)*k, where k = {1, 2, 3, 4}
-    '''
+    the 1 + (n-1/5)*k, where k = {1, 2, 3, 4}'''
+
     normalized_slices = []
 
     for nodule in nodules:
         new_nodule = []
-        # adds black slices
-
+        
+        # If repeat is set True, repeat slices
         if repeat:
             times = math.ceil(n_slices/len(nodule))
             nodule = list(itertools.chain.from_iterable(itertools.repeat(x, times) for x in nodule))
@@ -56,8 +79,8 @@ def normalize_balanced(nodules, n_slices, repeat=False):
 def normalize_first(nodules, n_slices, repeat=False):
     '''Normalizes the nodule slices number:
     - A nodule with less than n slices is completed with black slices
-    - A nodule with more than n slices have its n first slices selected
-    '''
+    - A nodule with more than n slices have its n first slices selected'''
+
     normalized_slices = []
 
     for nodule in nodules:
@@ -85,8 +108,7 @@ def read_images(path, path_features):
         path_features (string): path to the features .csv
     Returns:
         list: list of nodules with slices as Numpy Arrays
-        features: list of features corresponding to the nodules on list
-    '''
+        features: list of features corresponding to the nodules on list'''
 
     df = pd.read_csv(path_features)
     allFeatures = df.values
@@ -152,8 +174,8 @@ def rotate_slices(nodules, features, times, mode='constant'):
     aug_feat = features
     angle = 360/times
     
-    '''Make rotations (n - 2) times, where n is equal to 'times' parameter. 
-        If it was n times, it would repeat the same image 2 more times (0 and 360 degree)'''
+    '''Make rotations (n - 1) times, where n is equal to 'times' parameter. 
+        If it was n times, it would repeat the same image one more time (360 degree)'''
     for i in range(1, times):
         temp        = rotate(input=nodules, angle=i*angle, axes=(1, 2), reshape=False, mode=mode)
         rotated     = np.concatenate([rotated, temp])
@@ -254,11 +276,8 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False, features=None):
     return X_train, X_test, f_train, f_test, Y_train, Y_test
 
 if __name__ == "__main__":
-    ben_dir = "../../../data/images/solid-nodules-with-attributes/benigno"
-    mal_dir = "../../../data/images/solid-nodules-with-attributes/maligno"
-    features_path = "../../../data/features/solidNodules.csv"
 
-    print("Lendo imagens do disco")
+    print("Begin > ")
 
     ben, f_ben = read_images(ben_dir, features_path)
     mal, f_mal = read_images(mal_dir, features_path)
@@ -270,53 +289,73 @@ if __name__ == "__main__":
         ben = normalize_balanced(ben, SLICES, REPEAT)
         mal = normalize_balanced(mal, SLICES, REPEAT)
 
-    print("Mudando a forma")
-
-    print(">", len(ben))
+    if LOG:
+        print("Changind shape > ")
+        print("     Ben as a list: ", len(ben))
+        print("     Mal as a list: ", len(mal))
 
     ben = np.concatenate(ben).reshape(len(ben), SLICES, RES, RES, 1)
     mal = np.concatenate(mal).reshape(len(mal), SLICES, RES, RES, 1)
-
-    print("Trocando os eixos")
-
-    print("Antes: ", ben.shape)
+    
+    if LOG:
+        print("     Ben as a numpy: ", ben.shape)
+        print("     Mal as a numpy: ", mal.shape)
+        print()
+        print("Swaping axes > ")
 
     ben = np.moveaxis(ben, 1, 3)
     mal = np.moveaxis(mal, 1, 3)
 
-    print("Depois: ", ben.shape)
-
-    print("Separando dados de teste")
+    if LOG:
+        print("     Ben new shape: ", ben.shape)
+        print("     Mal new shape: ", mal.shape)
+        print()
+        print("Separating Train and Test > ")
 
     ben_test_indices = np.random.choice(len(ben), TEST_SIZE, replace=False)
     mal_test_indices = np.random.choice(len(mal), TEST_SIZE, replace=False)
 
-    ben_test = [ben[i] for i in ben_test_indices]
-    f_ben_test = [f_ben[i] for i in ben_test_indices]
+    ben_test = np.array([ben[i] for i in ben_test_indices])
+    f_ben_test = np.array([f_ben[i] for i in ben_test_indices])
 
-    mal_test = [mal[i] for i in mal_test_indices]
-    f_mal_test = [f_mal[i] for i in mal_test_indices]
+    mal_test = np.array([mal[i] for i in mal_test_indices])
+    f_mal_test = np.array([f_mal[i] for i in mal_test_indices])
 
-    ben_test = np.array(ben_test)
-    f_ben_test = np.array(f_ben_test)
+    ben_train = np.delete(ben, ben_test_indices, axis=0)
+    f_ben_train = np.delete(f_ben, ben_test_indices, axis=0)
 
-    mal_test = np.array(mal_test)
-    f_mal_test = np.array(f_mal_test)
+    mal_train = np.delete(mal, mal_test_indices, axis=0)
+    f_mal_train = np.delete(f_mal, mal_test_indices, axis=0)
 
-    ben_train = np.delete(ben, ben_test_indices, axis = 0)
-    f_ben_train = np.delete(f_ben, ben_test_indices, axis = 0)
-
-    mal_train = np.delete(mal, mal_test_indices, axis = 0)
-    f_mal_train = np.delete(f_mal, mal_test_indices, axis = 0)
-
+    # Clean memory
     del(ben, f_ben, mal, f_mal, ben_dir, mal_dir, features_path, ben_test_indices, mal_test_indices)
 
-    print("Aumento de base")
+    if LOG:
+        print("     Ben train: ", ben_train.shape)
+        print("     Ben test: ", ben_test.shape)
+        print()
+        print("     Ben features train: ", f_ben_train.shape)
+        print("     Ben features test: ", f_ben_test.shape)
+        print()
+        print("     Mal train: ", mal_train.shape)
+        print("     Mal test: ", mal_test.shape)
+        print()
+        print("     Mal features train: ", f_mal_train.shape)
+        print("     Mal features test: ", f_mal_test.shape)
+        print()
+        print("Data augmentation > ")
 
     ben_train, f_ben_train = rotate_slices(nodules=ben_train, features=f_ben_train, times=5)
     mal_train, f_mal_train = rotate_slices(nodules=mal_train, features=f_mal_train, times=13)
 
-    print("Juntando benignos e malignos")
+    if LOG:
+        print("     Ben train: ", ben_train.shape)
+        print("     Ben features train: ", f_ben_train.shape)
+        print()
+        print("     Mal train: ", mal_train.shape)
+        print("     Mal features train: ", f_mal_train.shape)
+        print()
+        print("Concatenating Ben and Mal > ")
 
     X_train = np.concatenate([ben_train, mal_train])
     f_train = np.concatenate([f_ben_train, f_mal_train])
@@ -324,32 +363,30 @@ if __name__ == "__main__":
     X_test  = np.concatenate([ben_test, mal_test])
     f_test  = np.concatenate([f_ben_test, f_mal_test])
 
-    print('Shapes: ')
-    print('X_train: ' + str(X_train.shape))
-    print('f_train: ' + str(f_train.shape))
+    if LOG:
+        print("     X_train: ", X_train.shape)
+        print("     f_train: ", f_train.shape)
+        print()
+        print("     X_test: ", X_test.shape)
+        print("     f_test: ", f_test.shape)
 
-    print()
-    print('X_test: ' + str(X_test.shape))
-    print('f_test: ' + str(f_test.shape))
-
-    print("Gerando labels")
-
+        print()
+        print("Generating labels and saving numpies on disk > ")
+    
     train_labels = len(ben_train) * [0] + len(mal_train) * [1]
-    test_labels = len(ben_test) * [0] + len(mal_test) * [1]
-
-    print("Tipo categórico")
-
     Y_train = np.array(train_labels)
+
+    test_labels = len(ben_test) * [0] + len(mal_test) * [1]
     Y_test = np.array(test_labels)
+    
+    shutil.rmtree(data_folder, ignore_errors=True)
+    os.mkdir(data_folder)
 
-    data = data_fold
-
-    shutil.rmtree(data, ignore_errors=True)
-    os.mkdir(data)
-
-    np.save(data + "/f_train.npy", f_train)
-    np.save(data + "/f_test.npy", f_test)
-    np.save(data + "/X_train.npy", X_train)
-    np.save(data + "/X_test.npy", X_test)
-    np.save(data + "/Y_train.npy", Y_train)
-    np.save(data + "/Y_test.npy", Y_test)
+    np.save(data_folder + "/f_train.npy", f_train)
+    np.save(data_folder + "/f_test.npy", f_test)
+    np.save(data_folder + "/X_train.npy", X_train)
+    np.save(data_folder + "/X_test.npy", X_test)
+    np.save(data_folder + "/Y_train.npy", Y_train)
+    np.save(data_folder + "/Y_test.npy", Y_test)
+    
+    print("Finished!")
