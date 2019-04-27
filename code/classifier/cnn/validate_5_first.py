@@ -1,3 +1,4 @@
+# Validation code - CHECK SETTINGS BEFORE USE
 import time
 import gc
 import numpy as np
@@ -66,12 +67,15 @@ def get_model():
 
     return model
 
-# Validation
+# Validation ----------------------------------|
+
 metrics = {'acc': [], 'spec': [], 'sens': [], 'f1_score': [], 'auc': []}
 
+# Calc sensitivity
 def sensitivity(tp, fn):
     return tp/(tp+fn)
 
+# Calc sensitivity
 def specificity(tn, fp):
     return tn/(tn+fp)
 
@@ -80,6 +84,7 @@ base_fpr = np.linspace(0, 1, 101)
 
 start = time.time()
 
+# Cross-validation
 for i in range(1):
     m = {'acc': [], 'spec': [], 'sens': [], 'f1_score': [], 'auc': []}
     

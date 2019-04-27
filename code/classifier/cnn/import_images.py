@@ -1,4 +1,4 @@
-# Images and features processor
+# Images and features processor - CHECK SETTINGS BEFORE USE
 import math
 import itertools
 import re
@@ -15,7 +15,7 @@ import random
 
 # Begin Settings -------------------------|
 
-# Important folders:
+# Important folders
 ben_dir = "../../../data/images/solid-nodules-with-attributes/benigno"
 mal_dir = "../../../data/images/solid-nodules-with-attributes/maligno"
 features_path = "../../../data/features/solidNodules.csv"
@@ -38,7 +38,7 @@ SLICES = 5
 # Strategy used for normalization - it can be 'first' or 'balanced'
 STRATEGY = 'first'
 
-''' If set True, it will repeat slices when the number of slices of a nodule is less than SLICES. 
+'''If set True, it will repeat slices when the number of slices of a nodule is less than SLICES. 
     If set False, the normalization will be filling with black images in the end'''
 REPEAT = False
 
@@ -203,8 +203,7 @@ def read_images(path, path_features):
 def rotate_slices(nodules, features, times, mode='constant'):
     ''' Rotates a list of images n times.
         'rotated' is a list that will contain all nodule images (originals and the results of the rotations)
-        'aug_feat' is a list that will contain all nodule features (repeated as the images get augmented)
-        '''
+        'aug_feat' is a list that will contain all nodule features (repeated as the images get augmented)'''
 
     rotated = nodules
     aug_feat = features
@@ -235,7 +234,7 @@ def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
     ben_train, ben_test = [], []
     f_ben_train, f_ben_test = [], []
     
-    # percorro o mal_test para que os folds de test tenham o mesmo número de itens
+    # It uses mal_test to make sure that the ben_test will have the same size, to make a balanced test fold
     for (train_index, test_index), mal in zip(kf.split(ben), mal_test):
         
         sample = np.random.choice(test_index, len(mal), replace=False)
@@ -313,15 +312,15 @@ if __name__ == "__main__":
 
     print("Begin > ")
 
-    ben, f_ben = read_images(ben_dir, features_path)
-    mal, f_mal = read_images(mal_dir, features_path)
+    ben, f_ben = read_images(path=ben_dir, path_features=features_path)
+    mal, f_mal = read_images(path=mal_dir, path_features=features_path)
 
     if (STRATEGY == 'first'):
-        ben = normalize_first(ben, SLICES, REPEAT)
-        mal = normalize_first(mal, SLICES, REPEAT)
+        ben = normalize_first(nodules=ben, n_slices=SLICES, repeat=REPEAT)
+        mal = normalize_first(nodules=mal, n_slices=SLICES, repeat=REPEAT)
     else:
-        ben = normalize_balanced(ben, SLICES, REPEAT)
-        mal = normalize_balanced(mal, SLICES, REPEAT)
+        ben = normalize_balanced(nodules=ben, n_slices=SLICES, repeat=REPEAT)
+        mal = normalize_balanced(nodules=mal, n_slices=SLICES, repeat=REPEAT)
 
     if LOG:
         print("Changind shape > ")
@@ -382,10 +381,11 @@ if __name__ == "__main__":
     ben_train, f_ben_train = rotate_slices(nodules=ben_train, features=f_ben_train, times=5)
     mal_train, f_mal_train = rotate_slices(nodules=mal_train, features=f_mal_train, times=13)
     
-    plot_nodule(nodules=mal_train, ind_nodules=[0, 217, 434, 651], ind_slices=[0, 1, 2, 3])
-
     if LOG:
         print(verify_features(features=f_mal_train, step=217))
+
+        plot_nodule(nodules=mal_train, ind_nodules=[0, 217, 434, 651], ind_slices=[0, 1, 2, 3])
+        
         print("     Ben train: ", ben_train.shape)
         print("     Ben features train: ", f_ben_train.shape)
         print()
