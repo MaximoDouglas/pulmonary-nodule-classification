@@ -32,7 +32,7 @@ RES = 64
 # Size of the test fold
 TEST_SIZE = 50
 
-# Number of slices
+# Number of slices for each nodule
 SLICES = 5
 
 # Strategy used for normalization - it can be 'first' or 'balanced'
@@ -138,7 +138,7 @@ def normalize_first(nodules, n_slices, repeat=False):
     return normalized_slices
 
 def read_images(path, path_features):
-    '''Reads the images files, a .csv with the features of each nodule and mounts an array
+    '''Reads the image files and a .csv with the features of each nodule
     Parameters:
         path (string): path to the nodules folders
         path_features (string): path to the features .csv
@@ -218,7 +218,6 @@ def rotate_slices(nodules, features, times, mode='constant'):
 
     return rotated, aug_feat
 
-'''This method works just for specific versions of python, becausa uses a list as a index to get a sublist'''
 def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
     kf = KFold(n_splits)
     
