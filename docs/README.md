@@ -21,4 +21,5 @@ Classification model on Pulmonary Nodules of Computed Tomography Image - Dicom.
 - [ ] Fawcett, T. "An introduction to ROC analysis";
 - [ ] Wong, T. "Performance evaluation of classification algorithms by k-fold and leave-one-out cross validation";
 - [ ] Koehrsen, W. ["A Conceptual Explanation of Bayesian Hyperparameter Optimization for Machine Learning"](https://towardsdatascience.com/a-conceptual-explanation-of-bayesian-model-based-hyperparameter-optimization-for-machine-learning-b8172278050f);
-- [ ] Reinhold, J. ["Deep Learning with Magnetic Resonance and Computed Tomography Images"](https://towardsdatascience.com/deep-learning-with-magnetic-resonance-and-computed-tomography-images-e9f32273dcb5).
+- [ ] Reinhold, J. ["Deep Learning with Magnetic Resonance and Computed Tomography Images"](https://towardsdatascience.com/deep-learning-with-magnetic-resonance-and-computed-tomography-images-e9f32273dcb5);
+- [ ] Junior, J. Characterization of Pulmonary Nodules Based on Features of Margin Sharpness and Texture.
