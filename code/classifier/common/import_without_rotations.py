@@ -49,40 +49,6 @@ if (REPEAT):
 
 # End settings ---------------------------|
 
-'''Function to plot a sequence of images. 
-    nodules: a numpy of nodule images
-    ind_nodules: list of indices to referenciate nodules in the 'nodules' numpy
-    ind_slices: list of indices to referenciate the slices of each nodule to be plotted'''
-def plot_nodule(nodules, ind_nodules, ind_slices):
-    
-    rows = len(ind_nodules)
-    columns = len(ind_slices)
-
-    _, axarr = plt.subplots(rows,columns)
-    ind = 0
-
-    for r, i in enumerate(ind_nodules):
-        for c, j in enumerate(ind_slices):
-            nod = nodules[i, :, :, j, 0]
-            if (rows != 1 and columns != 1):
-                axarr[r,c].imshow(nod, cmap='gray')
-                axarr[r,c].set_title('Nodule - ' + str(i) + ' - Slice - ' + str(j))
-            else:
-                axarr[ind].imshow(nod, cmap='gray')
-                axarr[ind].set_title('Nodule - ' + str(i) + ' - Slice - ' + str(j))
-                ind += 1
-    
-    plt.subplots_adjust(hspace=0.5)
-    plt.show()
-
-def verify_features(features, step):
-    index = np.random.randint(0, len(features) - step - 1)
-    
-    if (features[index].all() == features[index + step].all()):
-        return "     Features repeat - OK"
-    else:
-        return "     Features repeat - FAIL"
-
 def normalize_balanced(nodules, n_slices, repeat=False):
     '''Normalizes the nodule slices number:
     - A nodule with less than n slices is completed with black slices
@@ -198,25 +164,6 @@ def read_images(path, path_features):
                         features.append(allFeatures[i,2:74].tolist())
 
     return list, features
-
-'''This is the fastest method, which just replicate the features the same amount as the images get rotated'''
-def rotate_slices(nodules, features, times, mode='constant'):
-    ''' Rotates a list of images n times.
-        'rotated' is a list that will contain all nodule images (originals and the results of the rotations)
-        'aug_feat' is a list that will contain all nodule features (repeated as the images get augmented)'''
-
-    rotated = nodules
-    aug_feat = features
-    angle = 360/times
-    
-    '''Make rotations (n - 1) times, where n is equal to 'times' parameter. 
-        If it was n times, it would repeat the same image one more time (360 degree)'''
-    for i in range(1, times):
-        temp        = rotate(input=nodules, angle=i*angle, axes=(1, 2), reshape=False, mode=mode)
-        rotated     = np.concatenate([rotated, temp])
-        aug_feat    = np.concatenate([aug_feat, features])
-
-    return rotated, aug_feat
 
 def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
     kf = KFold(n_splits)
@@ -377,14 +324,10 @@ if __name__ == "__main__":
         print()
         print("Data augmentation > ")
 
-    ben_train, f_ben_train = rotate_slices(nodules=ben_train, features=f_ben_train, times=5)
-    mal_train, f_mal_train = rotate_slices(nodules=mal_train, features=f_mal_train, times=13)
+    """ ben_train, f_ben_train = rotate_slices(nodules=ben_train, features=f_ben_train, times=5)
+    mal_train, f_mal_train = rotate_slices(nodules=mal_train, features=f_mal_train, times=13) """
     
     if LOG:
-        print(verify_features(features=f_mal_train, step=217))
-
-        plot_nodule(nodules=mal_train, ind_nodules=[0, 217, 434, 651], ind_slices=[0, 1, 2, 3])
-        
         print("     Ben train: ", ben_train.shape)
         print("     Ben features train: ", f_ben_train.shape)
         print()
