@@ -211,9 +211,6 @@ def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
         b, m = ben_train[i], mal_train[i]
         f_b_train, f_m_train = f_ben_train[i], f_mal_train[i]
 
-        b, f_b_train = rotate_slices(nodules=b, features=f_b_train, times=ben_rot)
-        m, f_m_train = rotate_slices(nodules=m, features=f_m_train, times=mal_rot)
-
         X_train.append(np.concatenate((b, m), 0))
         f_train.append(np.concatenate((f_b_train, f_m_train), 0))
 
