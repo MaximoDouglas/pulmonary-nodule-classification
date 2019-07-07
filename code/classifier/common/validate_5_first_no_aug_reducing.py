@@ -71,7 +71,7 @@ def read_images(path, path_features):
         list: list of nodules with slices as Numpy Arrays
         features: list of features corresponding to the nodules on list
     '''
-
+    
     df = pd.read_csv(path_features)
     allFeatures = df.values
 
