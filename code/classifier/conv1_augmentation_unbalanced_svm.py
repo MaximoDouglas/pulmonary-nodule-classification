@@ -9,7 +9,7 @@ from sklearn.metrics import fbeta_score, make_scorer
 from os import listdir
 from os.path import isfile, join
 
-base_dir  = '../../data/features/convolutional_features/conv1_augmentation_balanced/'
+base_dir  = '../../data/features/convolutional_features/conv1_augmentation_unbalanced/'
 onlyfiles = [f for f in listdir(base_dir) if isfile(join(base_dir, f))]
 
 for file_name in onlyfiles:
@@ -31,7 +31,7 @@ for file_name in onlyfiles:
 
   scores = cross_validate(clf, X, y, scoring=scoring, cv=10)
 
-  print("Results -------| conv1_aug_balanced :> "+ file_name + " |-------")
+  print("Results -------| conv1_aug_unbalanced :> "+ file_name + " |-------")
   print(" Time to validate:",                (np.sum(scores['fit_time']) + np.sum(scores['score_time']))/60, " minutes")
   print(" Accuracy: %.2f%% (+/- %.2f%%)"     % (100*np.mean(scores['test_accuracy']),     np.std(100*scores['test_accuracy'])))
   print(" Specificity: %.2f%% (+/- %.2f%%)"  % (100*np.mean(scores['test_specificity']),  np.std(100*scores['test_specificity'])))
