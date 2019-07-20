@@ -22,16 +22,14 @@ for feature in margin_features:
     loc = df.columns.get_loc(feature)
     complex_dict[feature] = loc
 
+print('36 features --------------------')
+
 print(complex_dict)
 
 for key in complex_dict:
     complex_set.append(complex_dict[key])
 
+print()
+print('48 features --------------------')
+
 print(complex_set)
-print(len(complex_set))
-
-
-'''
-differenceends: 61
-idm135_N:       42
-'''

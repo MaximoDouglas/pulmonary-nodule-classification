@@ -9,10 +9,9 @@ from hyperas import optim
 from hyperas.distributions import choice, uniform
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, roc_curve, auc
-from sklearn.preprocessing import MinMaxScaler
 from keras import backend as K
 from keras import optimizers
-from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout, Input, concatenate
+from keras.layers import Conv3D, MaxPool3D, Flatten, Dense, Dropout, Input
 from keras.losses import binary_crossentropy
 from keras.models import Model
 from keras.callbacks import EarlyStopping
@@ -29,7 +28,6 @@ from tqdm import tqdm
 import shutil
 
 '''data settings'''
-number_of_folds        = 10
 rotations_of_benignant = 5
 rotations_of_malignant = 13
 slices_per_nodule      = 5
@@ -39,33 +37,33 @@ base_dir               = "/content/drive/My Drive/Pesquisa - Dicom images/data/"
 images_dir             = base_dir + "images/solid-nodules-with-attributes/"
 features_path          = base_dir + "features/solidNodules.csv"
 images_resolution      = 64
-features_set           = -1
+features_set           = -1 #-1 means that all the features must be used
 
 '''model settings'''
-convolucional_layer_units = 48
-dense_layer_units_1       = 96
-dense_layer_units_2       = 24
-dropout_layer_1           = 0.41935233640034336
-dropout_layer_2           = 0.4642243750136609
+convolucional_layer_units = 64
+dense_layer_units_1       = 64
+dense_layer_units_2       = 16
+dropout_layer_1           = 0.1141906556451216
+dropout_layer_2           = 0.27112063453183133
 input_shape               = (64, 64, 5, 1)
-features_input_shape      = (72,)
 
 '''validation settings'''
+number_of_folds        = 10
 metrics                = {'acc': [], 'spec': [], 'sens': [], 'f1_score': [], 'auc': []}
 number_of_validations  = 1
 
 def normalize_first(nodules, n_slices, repeat=False):
     '''Normalizes the nodule slices number:
     - A nodule with less than n slices is completed with black slices
-    - A nodule with more than n slices have its n first slices selected
-    '''
+    - A nodule with more than n slices have its n first slices selected'''
+
     normalized_slices = []
 
     for nodule in nodules:
         new_nodule = []
 
         if repeat:
-            times = math.ceil(n_slices/len(nodule))
+            times  = math.ceil(n_slices/len(nodule))
             nodule = list(itertools.chain.from_iterable(itertools.repeat(x, times) for x in nodule))
 
         if len(nodule) <= n_slices:
@@ -88,7 +86,7 @@ def read_images(path, path_features):
         list: list of nodules with slices as Numpy Arrays
         features: list of features corresponding to the nodules on list'''
 
-    df = pd.read_csv(path_features)    
+    df = pd.read_csv(path_features)
     allFeatures = df.values
 
     lista       = []
@@ -99,15 +97,15 @@ def read_images(path, path_features):
             for _, dirs1, _ in os.walk(path + "/" + dirname):
                 for dirname1 in sorted(dirs1, key=str.lower):
                     for root2, _, files2 in os.walk(path + "/" + dirname + "/" + dirname1):
-                        slices = []
+                        slices    = []
                         files2[:] = [re.findall('\d+', x)[0] for x in files2]
 
-                        axis = 0 # To get the Rows indices
-                        examColumn = 0 # Column of the csv where the exam code is
+                        axis         = 0 # To get the Rows indices
+                        examColumn   = 0 # Column of the csv where the exam code is
                         noduleColumn = 1 # Column of the csv where the nodule code is
 
                         # index of the rows that have the exam id equal to the exam id of the current nodule
-                        indExam  = np.where(allFeatures[:,examColumn] == dirname)[axis]
+                        indExam   = np.where(allFeatures[:,examColumn] == dirname)[axis]
 
                         # index of the rows that have the nodule id equal to the id of the current nodule
                         indNodule = np.where(allFeatures[:,noduleColumn] == dirname1)[axis]
@@ -115,8 +113,8 @@ def read_images(path, path_features):
                         i = np.intersect1d(indExam,indNodule)
 
                         # A list are returned, but there's just one value, so I used its index
-                        index = 0
-                        exam = allFeatures[i,examColumn][index]
+                        index  = 0
+                        exam   = allFeatures[i,examColumn][index]
                         nodule = allFeatures[i,noduleColumn][index]
 
                         '''Verify if there's more than one index for each nodule
@@ -128,6 +126,7 @@ def read_images(path, path_features):
                         else:
                             '''Transform the list of index with just one value in a
                             primitive value to use as index to save the features values'''
+
                             i = i[0]
 
                         for f in sorted(files2, key=float):
@@ -172,9 +171,9 @@ def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
     f_ben_train, f_ben_test = [], []
     
     # percorro o mal_test para que os folds de test tenham o mesmo número de itens
-    for (train_index, test_index), mal_te in zip(kf.split(ben), mal_test):
+    for (train_index, test_index), mal in zip(kf.split(ben), mal_test):
         
-        sample = np.random.choice(test_index, len(mal_te), replace=False)
+        sample = np.random.choice(test_index, len(mal), replace=False)
         sample_ = np.setdiff1d(test_index, sample)
 
         ben_train_ind = np.concatenate((train_index, sample_))
@@ -201,10 +200,7 @@ def my_kfold(ben, mal, f_ben, f_mal, n_splits, ben_rot, mal_rot):
     for i in tqdm(range(n_splits)):
         b, m = ben_train[i], mal_train[i]
         f_b_train, f_m_train = f_ben_train[i], f_mal_train[i]
-
-        b, f_b_train = rotate_slices(nodules=b, f=f_b_train, times=ben_rot)
-        m, f_m_train = rotate_slices(nodules=m, f=f_m_train, times=mal_rot)
-
+        
         X_train.append(np.concatenate((b, m), 0))
         f_train.append(np.concatenate((f_b_train, f_m_train), 0))
 
@@ -239,24 +235,21 @@ def get_folds(basedir, n_slices, strategy='first', repeat=False, features=None):
     mal, f_mal = zip(*mal_zip)
 
     X_train, X_test, f_train, f_test, Y_train, Y_test = my_kfold(ben, mal, f_ben, f_mal, 
-                                                                    number_of_folds, 
-                                                                    rotations_of_benignant, 
-                                                                    rotations_of_malignant)
+                                                                  number_of_folds, 
+                                                                  rotations_of_benignant, 
+                                                                  rotations_of_malignant)
 
     return X_train, X_test, f_train, f_test, Y_train, Y_test
 
 def get_model():
     input_layer = Input(input_shape)
-    input_feat = Input(features_input_shape)
 
     conv_layer1 = Conv3D(filters=convolucional_layer_units, kernel_size=(3, 3, 3), activation='relu')(input_layer)
     pooling_layer1 = MaxPool3D(pool_size=(2, 2, 2))(conv_layer1)
 
     flatten_layer = Flatten()(pooling_layer1)
-    
-    merged = concatenate([flatten_layer, input_feat])
 
-    dense_layer1 = Dense(units=dense_layer_units_1, activation='relu')(merged)
+    dense_layer1 = Dense(units=64, activation='relu')(flatten_layer)
     dense_layer1 = Dropout(dropout_layer_1)(dense_layer1)
 
     dense_layer2 = Dense(units=dense_layer_units_2, activation='relu')(dense_layer1)
@@ -264,16 +257,11 @@ def get_model():
 
     output_layer = Dense(units=1, activation='sigmoid')(dense_layer2)
 
-    model = Model(inputs=[input_layer, input_feat], outputs=[output_layer])
+    model = Model(inputs=input_layer, outputs=output_layer)
 
     opt = optimizers.RMSprop(lr=0.0001)
 
-    model.compile(loss=binary_crossentropy, optimizer=opt, metrics=['accuracy', 
-                                                                    km.binary_true_positive(), 
-                                                                    km.binary_true_negative(), 
-                                                                    km.binary_false_positive(), 
-                                                                    km.binary_false_negative(), 
-                                                                    km.binary_f1_score()])
+    model.compile(loss=binary_crossentropy, optimizer=opt, metrics=['accuracy', km.binary_true_positive(), km.binary_true_negative(), km.binary_false_positive(), km.binary_false_negative(), km.binary_f1_score()])
 
     return model
 
@@ -289,19 +277,19 @@ base_fpr = np.linspace(0, 1, 101)
 start = time.time()
 for i in range(number_of_validations):
     m = {'acc': [], 'spec': [], 'sens': [], 'f1_score': [], 'auc': []}
+
+    X_train_, X_test_, f_train, f_test, Y_train_, Y_test_=  get_folds(basedir=images_dir, 
+                                                                      n_slices=slices_per_nodule, 
+                                                                      strategy=strategy, 
+                                                                      repeat=repeat_slices,
+                                                                      features=features_path)
     
-    X_train_, X_test_, f_train_, f_test_, Y_train_, Y_test_= get_folds(basedir=images_dir, 
-                                                                        n_slices=slices_per_nodule, 
-                                                                        strategy=strategy, 
-                                                                        repeat=repeat_slices,
-                                                                        features=features_path)
-    
-    for X_train, X_test, f_train, f_test, Y_train, Y_test in zip(X_train_, X_test_, f_train_, f_test_, Y_train_, Y_test_):
+    for X_train, X_test, Y_train, Y_test in zip(X_train_, X_test_, Y_train_, Y_test_):
         model = get_model()
         
-        model.fit([X_train, f_train], Y_train, batch_size=128, epochs=10, verbose=0)
+        model.fit(X_train, Y_train, batch_size=128, epochs=10, verbose=0)
 
-        scores = model.evaluate([X_test, f_test], Y_test, verbose=0)
+        scores = model.evaluate(X_test, Y_test, verbose=0)
 
         tp, tn, fp, fn = scores[2], scores[3], scores[4], scores[5]
         
@@ -311,7 +299,7 @@ for i in range(number_of_validations):
         f1_score = scores[6]*100
         
         # AUC
-        pred = model.predict([X_test, f_test]).ravel()
+        pred = model.predict(X_test).ravel()
         fpr, tpr, thresholds_keras = roc_curve(Y_test, pred)
         auc_val = auc(fpr, tpr)
         
@@ -327,19 +315,19 @@ for i in range(number_of_validations):
         
         print("acc: %.2f%% spec: %.2f%% sens: %.2f%% f1: %.2f%% auc: %.2f" % (acc, spec, sens, f1_score, auc_val))
         
-    metrics['acc'] = metrics['acc'] + m['acc']
-    metrics['spec'] = metrics['spec'] + m['spec']
-    metrics['sens'] = metrics['sens'] + m['sens']
+    metrics['acc']      = metrics['acc'] + m['acc']
+    metrics['spec']     = metrics['spec'] + m['spec']
+    metrics['sens']     = metrics['sens'] + m['sens']
     metrics['f1_score'] = metrics['f1_score'] + m['f1_score']
-    metrics['auc'] = metrics['auc'] + m['auc']
-    
+    metrics['auc']      = metrics['auc'] + m['auc']
+
 end = time.time()
 
 print()
 print("Results ------------------------------------------")
-print("Time to validate:", (end - start)/60, "minutos")
-print("Accuracy: %.2f%% (+/- %.2f%%)" % (np.mean(metrics['acc']), np.std(metrics['acc'])))
-print("Specificity: %.2f%% (+/- %.2f%%)" % (np.mean(metrics['spec']), np.std(metrics['spec'])))
-print("Sensitivity: %.2f%% (+/- %.2f%%)" % (np.mean(metrics['sens']), np.std(metrics['sens'])))
-print("F1-score: %.2f%% (+/- %.2f%%)" % (np.mean(metrics['f1_score']), np.std(metrics['f1_score'])))
-print("AUC: %.2f (+/- %.2f)" % (np.mean(metrics['auc']), np.std(metrics['auc'])))
+print("Time to validate:",               (end - start)/60, "minutos")
+print("Accuracy: %.2f%% (+/- %.2f%%)"    % (np.mean(metrics['acc']),      np.std(metrics['acc'])))
+print("Specificity: %.2f%% (+/- %.2f%%)" % (np.mean(metrics['spec']),     np.std(metrics['spec'])))
+print("Sensitivity: %.2f%% (+/- %.2f%%)" % (np.mean(metrics['sens']),     np.std(metrics['sens'])))
+print("F1-score: %.2f%% (+/- %.2f%%)"    % (np.mean(metrics['f1_score']), np.std(metrics['f1_score'])))
+print("AUC: %.2f (+/- %.2f)"             % (np.mean(metrics['auc']),      np.std(metrics['auc'])))
