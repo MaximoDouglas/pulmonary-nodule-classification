@@ -21,7 +21,7 @@ for file_name in onlyfiles:
   X = dataFrame[dataFrame.columns[:-1]]
   y = dataFrame[dataFrame.columns[-1]]
 
-  clf = svm.SVC(kernel='linear', C=1)
+  clf = svm.SVC(kernel='rbf', gamma='scale', C=1)
 
   def specificity(y_true, y_predicted): 
     true_negative  = confusion_matrix(y_true, y_predicted)[0, 0]
