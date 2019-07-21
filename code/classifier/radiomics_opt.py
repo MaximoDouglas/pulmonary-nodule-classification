@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn import datasets
-from sklearn.model_selection import cross_validate, RandomizedSearchCV
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import cross_validate, RandomizedSearchCV, StratifiedKFold
 from sklearn.metrics import confusion_matrix, roc_curve, auc, SCORERS
 from sklearn.metrics import fbeta_score, make_scorer
 from os import listdir
@@ -12,20 +13,25 @@ import scipy
 from genetic_selection import GeneticSelectionCV
 import math
 
-file_name  = '../../data/features/convolutional_features/conv1_no_augmentation_balanced/dense_layer_1_none.csv'
+file_name  = '../../data/features/solidNodules.csv'
 
 dataFrame = pd.read_csv(file_name)
 
-X = dataFrame[dataFrame.columns[:-1]]
-y = dataFrame[dataFrame.columns[-1]]
+scaler = MinMaxScaler(copy=False)
+X = scaler.fit_transform(dataFrame[dataFrame.columns[2:74]])
+y = pd.factorize(dataFrame[dataFrame.columns[75]])[0]
 
-clf = svm.SVC(C=8.021483799761896, gamma=0.08627040154277943, kernel='linear')
+X_optimized_ind = [0, 1, 2, 4, 7, 9, 10, 16, 17, 20, 24, 26, 27, 
+                  28, 29, 30, 31, 33, 36, 38, 39, 42, 44, 45, 46, 
+                  48, 51, 52, 54, 55, 57, 58, 60, 61, 63, 65, 69, 70]
+
+clf = svm.SVC(C = 88.22932067066742, gamma=0.04329670049462131, kernel = 'rbf')
 
 selector = GeneticSelectionCV(clf,
                               cv=10,
                               verbose=1,
-                              scoring="recall",
-                              max_features=math.floor((.80)*(X.shape[1])),
+                              scoring="roc_auc",
+                              max_features=X.shape[1],
                               n_population=50,
                               crossover_proba=0.5,
                               mutation_proba=0.2,
@@ -47,7 +53,9 @@ for i, bol in enumerate(selector.support_):
       if (bol):
             selected_features.append(i)
 
-X_selected = X[X.columns[selected_features]]
+print(selected_features)
+
+X_selected = X[:,selected_features]
 
 def specificity(y_true, y_predicted): 
     true_negative  = confusion_matrix(y_true, y_predicted)[0, 0]
@@ -58,9 +66,9 @@ def specificity(y_true, y_predicted):
 scoring = {'accuracy': 'accuracy', 'specificity': make_scorer(specificity), 
               'recall': 'recall', 'f1': 'f1', 'roc_auc': 'roc_auc'}
 
-scores = cross_validate(clf, X_selected, y, scoring=scoring, cv=10)
+scores = cross_validate(clf, X_selected, y, scoring=scoring, cv=StratifiedKFold(10))
 
-print("Results -------| conv1_aug_balanced :> "+ file_name + " |-------")
+print("Results -------| " + file_name + " |-------")
 print(" Time to validate:",                (np.sum(scores['fit_time']) + np.sum(scores['score_time']))/60, " minutes")
 print(" Accuracy: %.2f%% (+/- %.2f%%)"     % (100*np.mean(scores['test_accuracy']),     np.std(100*scores['test_accuracy'])))
 print(" Specificity: %.2f%% (+/- %.2f%%)"  % (100*np.mean(scores['test_specificity']),  np.std(100*scores['test_specificity'])))
@@ -68,3 +76,17 @@ print(" Sensitivity: %.2f%% (+/- %.2f%%)"  % (100*np.mean(scores['test_recall'])
 print(" F1-score: %.2f%% (+/- %.2f%%)"     % (100*np.mean(scores['test_f1']),           np.std(100*scores['test_f1'])))
 print(" AUC: %.2f (+/- %.2f)"              % (np.mean(scores['test_roc_auc']),          np.std(scores['test_roc_auc'])))
 print()
+
+'''
+Last optimization resul:
+Using the following array:
+      [0, 1, 2, 4, 7, 9, 10, 16, 17, 20, 24, 26, 27, 
+      28, 29, 30, 31, 33, 36, 38, 39, 42, 44, 45, 46, 
+      48, 51, 52, 54, 55, 57, 58, 60, 61, 63, 65, 69, 70]
+
+CV results:
+      Accuracy: 84.24% (+/- 2.72%)
+      Specificity: 90.27% (+/- 4.60%)
+      Sensitivity: 70.36% (+/- 10.57%)
+      F1-score: 72.72% (+/- 5.54%)
+      AUC: 0.91 (+/- 0.02)'''
