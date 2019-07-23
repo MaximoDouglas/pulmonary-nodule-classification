@@ -1,22 +1,25 @@
-from sklearn import svm
 import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn import datasets
-from sklearn.model_selection import cross_validate, RandomizedSearchCV
-from sklearn.metrics import confusion_matrix, roc_curve, auc, SCORERS
-from sklearn.metrics import fbeta_score, make_scorer
-from os import listdir
-from os.path import isfile, join
-import scipy
-from genetic_selection import GeneticSelectionCV
-import math
 
-file_name  = '../../data/features/convolutional_features/conv1_no_augmentation_balanced/dense_layer_2_all.csv'
+'''
+intensity = ['energy_N',	'entropy_N',	'kurtosis_N',	'maximum_N',	'mean_N',	
+              'meanAbsoluteDeviation_N',	median_N',	'minimum_N',	'range_N',	'rootMeanSquare_N',
+              'skewness_N',	'standardDeviation_N',	'uniformity_N',	'variance_N']
 
-dataFrame = pd.read_csv(file_name)
+shape = ['differenceends', 'sumvalues',	'sumsquares',	'sumlogs', 'amean', 'gmean',	
+'pvariance',	'svariance',	'sd',	'kurtosis',	'skewness', 'scm']
+'''
 
-X = dataFrame[dataFrame.columns[:-1]]
-y = dataFrame[dataFrame.columns[-1]]
+feat_list = ['differenceends', 'sumvalues',	'sumsquares',	'sumlogs', 'amean', 'gmean',	
+'pvariance',	'svariance',	'sd',	'kurtosis',	'skewness', 'scm']
 
-print(y.value_counts())
+file_name  = '../../data/features/solidNodules.csv'
+
+df = pd.read_csv(file_name)
+
+feat = []
+for feature in feat_list:
+  loc = df.columns.get_loc(feature)
+  print(df.columns[loc])
+  feat.append(loc)
+
+print(feat)

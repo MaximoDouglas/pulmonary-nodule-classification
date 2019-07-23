@@ -15,17 +15,29 @@ import math
 
 file_name  = '../../data/features/solidNodules.csv'
 
-dataFrame = pd.read_csv(file_name)
+dataFrameOld = pd.read_csv(file_name)
+dataFrameNew = dataFrameOld[dataFrameOld.columns[2:74]]
 
 scaler = MinMaxScaler(copy=False)
-X = scaler.fit_transform(dataFrame[dataFrame.columns[2:74]])
-y = pd.factorize(dataFrame[dataFrame.columns[75]])[0]
+X = scaler.fit_transform(dataFrameOld[dataFrameOld.columns[2:74]])
+#y = pd.factorize(dataFrame[dataFrame.columns[75]])[0]
 
-X_optimized_ind = [0, 1, 2, 4, 7, 9, 10, 16, 17, 20, 24, 26, 27, 
+X_optimized_ind_new_df = [0, 1, 2, 4, 7, 9, 10, 16, 17, 20, 24, 26, 27, 
                   28, 29, 30, 31, 33, 36, 38, 39, 42, 44, 45, 46, 
                   48, 51, 52, 54, 55, 57, 58, 60, 61, 63, 65, 69, 70]
 
-clf = svm.SVC(C = 88.22932067066742, gamma=0.04329670049462131, kernel = 'rbf')
+X_optimized_ind_old_df = []
+
+for ind in X_optimized_ind_new_df:
+      X_optimized_ind_old_df.append(ind + 2)
+
+print(X_optimized_ind_old_df)
+
+print(dataFrameOld.columns[X_optimized_ind_old_df] == dataFrameNew.columns[X_optimized_ind_new_df])
+
+print()
+
+'''clf = svm.SVC(C = 88.22932067066742, gamma=0.04329670049462131, kernel = 'rbf')
 
 selector = GeneticSelectionCV(clf,
                               cv=10,
@@ -75,14 +87,36 @@ print(" Specificity: %.2f%% (+/- %.2f%%)"  % (100*np.mean(scores['test_specifici
 print(" Sensitivity: %.2f%% (+/- %.2f%%)"  % (100*np.mean(scores['test_recall']),       np.std(100*scores['test_recall'])))
 print(" F1-score: %.2f%% (+/- %.2f%%)"     % (100*np.mean(scores['test_f1']),           np.std(100*scores['test_f1'])))
 print(" AUC: %.2f (+/- %.2f)"              % (np.mean(scores['test_roc_auc']),          np.std(scores['test_roc_auc'])))
-print()
+print()'''
 
 '''
 Last optimization resul:
 Using the following array:
-      [0, 1, 2, 4, 7, 9, 10, 16, 17, 20, 24, 26, 27, 
-      28, 29, 30, 31, 33, 36, 38, 39, 42, 44, 45, 46, 
-      48, 51, 52, 54, 55, 57, 58, 60, 61, 63, 65, 69, 70]
+
+Para o slice [2:74]:
+      [0, 1, 2, 4, 
+      7, 9, 10, 16, 
+      17, 20, 24, 26, 
+      27, 28, 29, 30, 
+      31, 33, 36, 38, 
+      39, 42, 44, 45, 
+      46, 48, 51, 52, 
+      54, 55, 57, 58, 
+      60, 61, 63, 65, 
+      69, 70]
+
+Para todas as colunas
+      [2, 3, 4, 6, 
+      9, 11, 12, 18, 
+      19, 22, 26, 28, 
+      29, 30, 31, 32, 
+      33, 35, 38, 40, 
+      41, 44, 46, 47, 
+      48, 50, 53, 54, 
+      56, 57, 59, 60, 
+      62, 63, 65, 67, 
+      71, 72]
+
 
 CV results:
       Accuracy: 84.24% (+/- 2.72%)
