@@ -8,18 +8,3 @@ intensity = ['energy_N',	'entropy_N',	'kurtosis_N',	'maximum_N',	'mean_N',
 shape = ['differenceends', 'sumvalues',	'sumsquares',	'sumlogs', 'amean', 'gmean',	
 'pvariance',	'svariance',	'sd',	'kurtosis',	'skewness', 'scm']
 '''
-
-feat_list = ['differenceends', 'sumvalues',	'sumsquares',	'sumlogs', 'amean', 'gmean',	
-'pvariance',	'svariance',	'sd',	'kurtosis',	'skewness', 'scm']
-
-file_name  = '../../data/features/solidNodules.csv'
-
-df = pd.read_csv(file_name)
-
-feat = []
-for feature in feat_list:
-  loc = df.columns.get_loc(feature)
-  print(df.columns[loc])
-  feat.append(loc)
-
-print(feat)
