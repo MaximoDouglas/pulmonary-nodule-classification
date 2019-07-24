@@ -5,26 +5,22 @@ from sklearn.model_selection import train_test_split
 from sklearn import datasets
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import cross_validate, RandomizedSearchCV, StratifiedKFold
-from sklearn.metrics import confusion_matrix, roc_curve, auc, SCORERS
-from sklearn.metrics import fbeta_score, make_scorer
-from os import listdir
-from os.path import isfile, join
-import scipy
+from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.metrics import make_scorer
 from genetic_selection import GeneticSelectionCV
-import math
 from scipy import interp
 import pylab as pl
 
-file_name = '../../../../data/features/convolutional_features/model_1/dense1_optimized.csv'
+file_name = '../../../../data/features/convolutional_features/model_3/dense2_shape.csv'
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
 X = scaler.fit_transform(dataFrame[dataFrame.columns[:-1]])
 y = dataFrame[dataFrame.columns[-1]]
 
-#'C': 7.334242614793659, 'gamma': 0.39016350510809084, 'kernel': 'rbf'
+#'C': 3.9735397103241574, 'gamma': 0.2119916750368503, 'kernel': 'linear'
 
-clf = svm.SVC(C = 7.334242614793659, gamma = 0.39016350510809084, kernel = 'rbf', probability=True)
+clf = svm.SVC(C = 3.9735397103241574, gamma = 0.2119916750368503, kernel = 'linear', probability=True)
 
 selector = GeneticSelectionCV(clf,
                               cv=10,
@@ -38,7 +34,7 @@ selector = GeneticSelectionCV(clf,
                               crossover_independent_proba=0.5,
                               mutation_independent_proba=0.05,
                               tournament_size=3,
-                              n_gen_no_change=20,
+                              n_gen_no_change=10,
                               caching=False,
                               n_jobs=-1)
 

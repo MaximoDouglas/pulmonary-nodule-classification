@@ -1,14 +1,8 @@
-from sklearn import svm
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn import datasets
+from sklearn import svm
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import cross_validate, RandomizedSearchCV
-from sklearn.metrics import confusion_matrix, roc_curve, auc, SCORERS
-from sklearn.metrics import fbeta_score, make_scorer
-from os import listdir
-from os.path import isfile, join
+from sklearn.model_selection import RandomizedSearchCV
 import scipy
 
 def report(results, n_top=3):
@@ -22,8 +16,7 @@ def report(results, n_top=3):
             print("Parameters: {0}".format(results['params'][candidate]))
             print("")
 
-
-file_name = '../../../../data/features/convolutional_features/model_1/dense1_optimized.csv'
+file_name = '../../../../data/features/convolutional_features/model_1/flatten_none.csv'
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
