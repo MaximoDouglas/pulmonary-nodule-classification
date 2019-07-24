@@ -11,18 +11,16 @@ from genetic_selection import GeneticSelectionCV
 from scipy import interp
 import pylab as pl
 
-file_name = '../../../../data/features/convolutional_features/model_3/dense2_shape.csv'
+file_name = '../../../../data/features/convolutional_features/model_1/flatten/flatten_none.csv'
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
 X = scaler.fit_transform(dataFrame[dataFrame.columns[:-1]])
 y = dataFrame[dataFrame.columns[-1]]
 
-#'C': 3.9735397103241574, 'gamma': 0.2119916750368503, 'kernel': 'linear'
+clf = svm.SVC(C = 100, gamma = 0.1, kernel = 'rbf', probability=True)
 
-clf = svm.SVC(C = 3.9735397103241574, gamma = 0.2119916750368503, kernel = 'linear', probability=True)
-
-selector = GeneticSelectionCV(clf,
+'''selector = GeneticSelectionCV(clf,
                               cv=10,
                               verbose=1,
                               scoring="roc_auc",
@@ -48,7 +46,9 @@ for i, bol in enumerate(selector.support_):
 print(selected_features)
 print("List size: " + str(len(selected_features)))
 
-X_selected = X[:,selected_features]
+X_selected = X[:,selected_features]'''
+
+X_selected = X
 
 def specificity(y_true, y_predicted): 
     true_negative  = confusion_matrix(y_true, y_predicted)[0, 0]
