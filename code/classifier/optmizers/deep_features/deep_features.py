@@ -10,21 +10,27 @@ from sklearn.metrics import make_scorer
 from genetic_selection import GeneticSelectionCV
 from scipy import interp
 import pylab as pl
+import time
 
-file_name = '../../../../data/features/convolutional_features/model_1/flatten/flatten_none.csv'
+start = time.time()
+file_name = '../../../../data/features/convolutional_features/model_1/flatten/flatten_shape.csv'
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
 X = scaler.fit_transform(dataFrame[dataFrame.columns[:-1]])
+print("All features: " + str(X.shape[1]))
+
 y = dataFrame[dataFrame.columns[-1]]
 
-clf = svm.SVC(C = 100, gamma = 0.1, kernel = 'rbf', probability=True)
+#'C': 448.4417358668408, 'gamma': 0.08647472366113734, 'kernel': 'poly'
 
-'''selector = GeneticSelectionCV(clf,
+clf = svm.SVC(C = 448.4417358668408, gamma = 0.08647472366113734, kernel = 'poly', probability=True)
+
+selector = GeneticSelectionCV(clf,
                               cv=10,
                               verbose=1,
                               scoring="roc_auc",
-                              max_features=X.shape[1],
+                              max_features=73,
                               n_population=50,
                               crossover_proba=0.5,
                               mutation_proba=0.2,
@@ -44,11 +50,9 @@ for i, bol in enumerate(selector.support_):
             selected_features.append(i)
 
 print(selected_features)
-print("List size: " + str(len(selected_features)))
+print("Optmized features: " + str(len(selected_features)))
 
-X_selected = X[:,selected_features]'''
-
-X_selected = X
+X_selected = X[:,selected_features]
 
 def specificity(y_true, y_predicted): 
     true_negative  = confusion_matrix(y_true, y_predicted)[0, 0]
@@ -62,8 +66,9 @@ scoring = {'accuracy': 'accuracy', 'specificity': make_scorer(specificity),
 cv = StratifiedKFold(10)
 scores = cross_validate(clf, X_selected, y, scoring=scoring, cv=cv)
 
+end = time.time()
 print("Results -------| " + file_name + " |-------")
-print(" Time to validate:",                (np.sum(scores['fit_time']) + np.sum(scores['score_time']))/60, " minutes")
+print(" Time to validate:",                (end - start)/60, " minutes")
 print(" Accuracy: %.2f%% (+/- %.2f%%)"     % (100*np.mean(scores['test_accuracy']),     np.std(100*scores['test_accuracy'])))
 print(" Specificity: %.2f%% (+/- %.2f%%)"  % (100*np.mean(scores['test_specificity']),  np.std(100*scores['test_specificity'])))
 print(" Sensitivity: %.2f%% (+/- %.2f%%)"  % (100*np.mean(scores['test_recall']),       np.std(100*scores['test_recall'])))
