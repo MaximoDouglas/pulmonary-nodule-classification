@@ -1,10 +1,36 @@
-import pandas as pd
+import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt 
 
-'''
-intensity = ['energy_N',	'entropy_N',	'kurtosis_N',	'maximum_N',	'mean_N',	
-              'meanAbsoluteDeviation_N',	median_N',	'minimum_N',	'range_N',	'rootMeanSquare_N',
-              'skewness_N',	'standardDeviation_N',	'uniformity_N',	'variance_N']
+'''random = np.linspace(0.2, np.minimum(rv.dist.rvs(random_state=1), 0.45))
 
-shape = ['differenceends', 'sumvalues',	'sumsquares',	'sumlogs', 'amean', 'gmean',	
-'pvariance',	'svariance',	'sd',	'kurtosis',	'skewness', 'scm']
+print(random)
+print(rv.pdf(random))
+
+plt.plot(random, rv.pdf(random))
+plt.show()
 '''
+
+'''rv = stats.expon(scale=100)
+random = np.linspace(0,  500, num=500)
+
+print(random)
+print(rv.pdf(random))
+
+plt.plot(random, rv.pdf(random))
+plt.title("'C' Probability Density Function")
+plt.xlabel("Possible 'C' values")
+plt.ylabel("Probability Density")
+plt.show()'''
+'''
+rv = stats.expon(scale=.1)
+random = np.linspace(0,  0.9, num=500)
+
+print(random)
+print(rv.pdf(random))
+
+plt.plot(random, rv.pdf(random))
+plt.title("Gamma Probability Density Function")
+plt.xlabel("Possible Gamma values")
+plt.ylabel("Probability Density")
+plt.show()'''
