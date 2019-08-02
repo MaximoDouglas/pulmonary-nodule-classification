@@ -14,22 +14,22 @@ import time
 import math
 
 start = time.time()
-file_name = '../../../../data/features/convolutional_features/model_1/dense1_all.csv'
+file_name = '../../../../data/features/convolutional_features/model_1/dense1_shape.csv'
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
 X = scaler.fit_transform(dataFrame[dataFrame.columns[:-1]])
 y = dataFrame[dataFrame.columns[-1]]
 
-#'C': 189.29901245270196, 'gamma': 0.004062410098546966, 'kernel': 'sigmoid'
+#'kernel': 'rbf', 'gamma': 0.06315368362771984, 'C': 3.600997373507638
 
-clf = svm.SVC(C = 189.29901245270196, gamma = 0.004062410098546966, kernel = 'sigmoid', probability=True)
+clf = svm.SVC(C = 3.600997373507638, gamma = 0.06315368362771984, kernel = 'rbf', probability=True)
 
 selector = GeneticSelectionCV(clf,
                               cv=10,
                               verbose=1,
                               scoring="roc_auc",
-                              max_features=X.shape[1],
+                              max_features = 100 if (X.shape[1] > 100) else X.shape[1],
                               n_population=50,
                               crossover_proba=0.5,
                               mutation_proba=0.2,
@@ -54,6 +54,25 @@ print("Optmized features: " + str(len(selected_features)))
 
 X_selected = X[:,selected_features]
 
+def f1(y_true, y_predicted):
+    true_positive  = confusion_matrix(y_true, y_predicted)[1, 1]
+    false_positive = confusion_matrix(y_true, y_predicted)[0, 1]
+    false_negative = confusion_matrix(y_true, y_predicted)[1, 0]
+
+    return 2*(true_positive)/(2*true_positive + false_positive + false_negative)
+
+def fpr(y_true, y_predicted): 
+    true_negative  = confusion_matrix(y_true, y_predicted)[0, 0]
+    false_positive = confusion_matrix(y_true, y_predicted)[0, 1]
+
+    return (false_positive)/(true_negative + false_positive)
+
+def tpr(y_true, y_predicted):
+    true_positive  = confusion_matrix(y_true, y_predicted)[1, 1]
+    false_negative = confusion_matrix(y_true, y_predicted)[1, 0]
+    
+    return (true_positive)/(true_positive + false_negative)
+
 def specificity(y_true, y_predicted): 
     true_negative  = confusion_matrix(y_true, y_predicted)[0, 0]
     false_positive = confusion_matrix(y_true, y_predicted)[0, 1]
@@ -61,7 +80,8 @@ def specificity(y_true, y_predicted):
     return (true_negative)/(true_negative + false_positive)
 
 scoring = {'accuracy': 'accuracy', 'specificity': make_scorer(specificity), 
-              'recall': 'recall', 'f1': 'f1', 'roc_auc': 'roc_auc'}
+              'recall': 'recall', 'f1': make_scorer(f1), 'roc_auc': 'roc_auc',
+              'fpr': make_scorer(fpr), 'tpr': make_scorer(tpr)}
 
 cv = StratifiedKFold(10)
 scores = cross_validate(clf, X_selected, y, scoring=scoring, cv=cv)
