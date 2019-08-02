@@ -14,22 +14,22 @@ import time
 import math
 
 start = time.time()
-file_name = '../../../../data/features/convolutional_features/model_3/flatten/flatten_shape.csv'
+file_name = '../../../../data/features/convolutional_features/model_1/dense1_all.csv'
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
 X = scaler.fit_transform(dataFrame[dataFrame.columns[:-1]])
 y = dataFrame[dataFrame.columns[-1]]
 
-#'C': 158.9329245654639, 'gamma': 0.013292005543262073, 'kernel': 'rbf'
+#'C': 189.29901245270196, 'gamma': 0.004062410098546966, 'kernel': 'sigmoid'
 
-clf = svm.SVC(C = 158.9329245654639, gamma = 0.013292005543262073, kernel = 'rbf', probability=True)
+clf = svm.SVC(C = 189.29901245270196, gamma = 0.004062410098546966, kernel = 'sigmoid', probability=True)
 
 selector = GeneticSelectionCV(clf,
                               cv=10,
                               verbose=1,
                               scoring="roc_auc",
-                              max_features=73,
+                              max_features=X.shape[1],
                               n_population=50,
                               crossover_proba=0.5,
                               mutation_proba=0.2,

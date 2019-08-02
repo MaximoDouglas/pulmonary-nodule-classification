@@ -16,7 +16,7 @@ def report(results, n_top=3):
             print("Parameters: {0}".format(results['params'][candidate]))
             print("")
 
-file_name = '../../../../data/features/convolutional_features/model_3/flatten/flatten_shape.csv'
+file_name = '../../../../data/features/convolutional_features/model_1/dense1_none.csv'
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
@@ -30,7 +30,7 @@ param_dist = {'C': scipy.stats.expon(scale=100), 'gamma': scipy.stats.expon(scal
 n_iter_search = 30
 random_search = RandomizedSearchCV(clf, param_distributions=param_dist,
                                    n_iter=n_iter_search, cv=10, iid=False,
-                                   verbose=2, n_jobs=-1)
+                                   verbose=2, n_jobs=-1, scoring='roc_auc')
 random_search.fit(X, y)
 
 report(random_search.cv_results_)
