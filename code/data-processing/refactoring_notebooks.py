@@ -2,14 +2,15 @@ import numpy as np
 import scipy.stats as stats
 import matplotlib.pyplot as plt 
 
-'''random = np.linspace(0.2, np.minimum(rv.dist.rvs(random_state=1), 0.45))
+rv = stats.expon(scale=0.9, loc=0)
+
+random = np.linspace(0, 0.9)
 
 print(random)
 print(rv.pdf(random))
 
 plt.plot(random, rv.pdf(random))
 plt.show()
-'''
 
 '''rv = stats.expon(scale=100)
 random = np.linspace(0,  500, num=500)

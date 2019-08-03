@@ -14,16 +14,16 @@ import time
 import math
 
 start = time.time()
-file_name = '../../../../data/features/convolutional_features/model_1/dense1_shape.csv'
+file_name = '../../../../data/features/convolutional_features/model_1/dense2_all.csv'
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
 X = scaler.fit_transform(dataFrame[dataFrame.columns[:-1]])
 y = dataFrame[dataFrame.columns[-1]]
 
-#'kernel': 'rbf', 'gamma': 0.06315368362771984, 'C': 3.600997373507638
+#'kernel': 'poly', 'gamma': 0.03652323144256208, 'C': 36.03997890804361
 
-clf = svm.SVC(C = 3.600997373507638, gamma = 0.06315368362771984, kernel = 'rbf', probability=True)
+clf = svm.SVC(C = 36.03997890804361, gamma = 0.03652323144256208, kernel = 'poly', probability=True)
 
 selector = GeneticSelectionCV(clf,
                               cv=10,

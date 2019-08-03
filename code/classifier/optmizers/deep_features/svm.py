@@ -16,7 +16,7 @@ def report(results, n_top=3):
             print("Parameters: {0}".format(results['params'][candidate]))
             print("")
 
-file_name = '../../../../data/features/convolutional_features/model_1/dense1_shape.csv'
+file_name = '../../../../data/features/convolutional_features/model_1/dense2_all.csv'
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
