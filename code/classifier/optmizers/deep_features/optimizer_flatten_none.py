@@ -61,12 +61,8 @@ def sensitivity(y_true, y_predicted):
 # Setup ------------------------------------------------------------------------------
 clf = svm.SVC()
 
-base_dir_to_deep_features  = '../../../../data/features/convolutional_features/'
-base_dir_to_images         = '../../../../result_roc/'
-experiment_name            = 'model_2/flatten_optimized'
-file_name                  = base_dir_to_deep_features + experiment_name + '.csv'
-
-
+img_name  = 'model3_flatten_none.png'
+file_name = '../../model3/flatten_none.csv'
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
@@ -101,7 +97,7 @@ param_dist = {'C': c_space, 'gamma': gamma_space,
 
 # Random Search ---------------------------------------------------------------------
 random_search = RandomizedSearchCV(clf, param_distributions=param_dist,
-                                   n_iter=100, cv=10, iid=False,
+                                   n_iter=10, cv=10, iid=False,
                                    verbose=2, n_jobs=-1, scoring='roc_auc')
 random_search.fit(X, y)
 
@@ -198,7 +194,7 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('ROC Curve Behavior')
 plt.legend(loc="lower right")
-plt.savefig(base_dir_to_images + experiment_name + '.png')
+plt.savefig(img_name)
 
 # End Validation ----------------------------------------------------------------------
 
