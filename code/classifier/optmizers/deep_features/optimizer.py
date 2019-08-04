@@ -63,7 +63,7 @@ clf = svm.SVC()
 
 base_dir_to_deep_features  = '../../../../data/features/convolutional_features/'
 base_dir_to_images         = '../../../../result_roc/'
-experiment_name            = 'model_2/flatten_optimized'
+experiment_name            = 'model_2/flatten_shape'
 file_name                  = base_dir_to_deep_features + experiment_name + '.csv'
 
 
