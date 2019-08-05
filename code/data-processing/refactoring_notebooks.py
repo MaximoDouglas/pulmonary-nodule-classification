@@ -1,37 +1,55 @@
+import pandas as pd
 import numpy as np
-import scipy.stats as stats
-import matplotlib.pyplot as plt 
+import os
+import matplotlib.pyplot as plt
+from scipy import stats
+from collections import Counter
 
-rv = stats.expon(scale=0.9, loc=0)
+'''file_name  = '../../data/features/solidNodules.csv'
 
-random = np.linspace(0, 0.9)
+df = pd.read_csv(file_name)
 
-print(random)
-print(rv.pdf(random))
+malignancies = df[df.columns[-2]]
 
-plt.plot(random, rv.pdf(random))
-plt.show()
+dist = malignancies.value_counts()
 
-'''rv = stats.expon(scale=100)
-random = np.linspace(0,  500, num=500)
+print(dist)'''
 
-print(random)
-print(rv.pdf(random))
+images_dir = '../../data/images/solid-nodules-with-attributes/'
 
-plt.plot(random, rv.pdf(random))
-plt.title("'C' Probability Density Function")
-plt.xlabel("Possible 'C' values")
-plt.ylabel("Probability Density")
+def get_immediate_subdirectories(a_dir):
+    return [name for name in os.listdir(a_dir)
+            if os.path.isdir(os.path.join(a_dir, name))]
+
+sub = get_immediate_subdirectories(images_dir)
+
+summary = {'benigno':[], 'maligno':[]}
+
+for malignancy in sub:
+  exams = get_immediate_subdirectories(images_dir + malignancy)
+  
+  for exam in exams:
+    nodules = get_immediate_subdirectories(images_dir + malignancy + '/' + exam)
+    
+    for nodule in nodules:
+      nodule_full_path = images_dir + malignancy + '/' + exam + '/' + nodule
+      
+      files = len([name for name in os.listdir(nodule_full_path)
+            if os.path.isfile(os.path.join(nodule_full_path, name))])
+
+      summary[malignancy].append(files)
+
+df_ben = pd.DataFrame(summary['benigno'])
+df_mal = pd.DataFrame(summary['maligno'])
+
+'''fig, ax = plt.subplots()
+ax.boxplot([summary['maligno'], summary['benigno']])
+ax.set_xticklabels(['Malignos', 'Benignos'])
+ax.yaxis.set_ticks(np.arange(0, 50, 2))
 plt.show()'''
-'''
-rv = stats.expon(scale=.1)
-random = np.linspace(0,  0.9, num=500)
 
-print(random)
-print(rv.pdf(random))
+print("Df Ben min/max: " + str(df_ben[0].min()) + ' / ' + str(df_ben[0].max()))
+print("Df Mal min/max: " + str(df_mal[0].min()) + ' / ' + str(df_mal[0].max()))
 
-plt.plot(random, rv.pdf(random))
-plt.title("Gamma Probability Density Function")
-plt.xlabel("Possible Gamma values")
-plt.ylabel("Probability Density")
-plt.show()'''
+print("Df Ben: " + str(df_ben[0].median()) + ' (+/- ' + str(df_ben[0].std()) + ')')
+print("Df Mal: " + str(df_mal[0].median()) + ' (+/- ' + str(df_mal[0].std()) + ')')
