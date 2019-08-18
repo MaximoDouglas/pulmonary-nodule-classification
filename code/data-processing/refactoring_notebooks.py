@@ -70,11 +70,13 @@ print("Df Mal min/max: " + str(df_mal[0].min()) + ' / ' + str(df_mal[0].max()))
 print("Df Ben: " + str(df_ben[0].median()) + ' (+/- ' + str(df_ben[0].std()) + ')')
 print("Df Mal: " + str(df_mal[0].median()) + ' (+/- ' + str(df_mal[0].std()) + ')')'''
 
-c_expon_gen     = stats.expon(scale=100, loc=0)
+'''c_expon_gen     = stats.expon(scale=100, loc=0)
 gamma_expon_gen = stats.expon(scale=0.1, loc=0)
+'''
 
-x = np.linspace(0, 500, 500)
+gen = stats.norm(scale=0.05, loc=0.4)
+x = np.linspace(0, 0.5, 100)
 
-plt.plot(x, c_expon_gen.pdf(x), 'b-')
-plt.title('Gamma space Distribution')
+plt.plot(x, gen.pdf(x), 'b-')
+plt.title('Dropout space Distribution')
 plt.show()
