@@ -66,7 +66,6 @@ base_dir_to_images         = '../../../../result_roc/'
 experiment_name            = 'model_2/flatten_shape'
 file_name                  = base_dir_to_deep_features + experiment_name + '.csv'
 
-
 dataFrame = pd.read_csv(file_name)
 
 scaler = MinMaxScaler(copy=False)
