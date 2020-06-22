@@ -18,13 +18,14 @@
 |__ docs
     |__ paper_related
     |__ repository_related
+        |__ experiment_summary.xls
 
 |__ results
-    |__ experiment 001
+    |__ experiment_001
         |__ images
             |__ roc
         |__ spread_sheets
-    |__ experiment 002
+    |__ experiment_002
     ...
-    |__ experiment n
+    |__ experiment_n
 ```
