@@ -5,7 +5,9 @@
 ./
 |__ data
     |__ images
-    |__ radiomics
+    |__ features
+        |__ radiomics
+        |__ convolutional
 
 |__ notebooks
     |__ experiment_001
