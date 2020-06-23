@@ -201,3 +201,6 @@ hs_err_pid*
 
 # Data too large to go to git
 flatten_*
+
+# Visual Studio
+*.DS_Store
