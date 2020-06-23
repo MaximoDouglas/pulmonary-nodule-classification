@@ -20,7 +20,7 @@
 |__ docs
     |__ paper_related
     |__ repository_related
-        |__ experiment_summary.xls
+        |__ experiment_summary.md
 
 |__ results
     |__ experiment_001
