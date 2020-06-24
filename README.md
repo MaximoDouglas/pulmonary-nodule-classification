@@ -10,10 +10,10 @@
         |__ convolutional
 
 |__ notebooks
-    |__ experiment_001
-    |__ experiment_002
+    |__ 001_experiment_short_description
+    |__ 002_experiment_short_description
     ...
-    |__ experiment_n
+    |__ n_experiment_short_description
 
 |__ local_env_codes
 
@@ -23,11 +23,11 @@
         |__ experiment_summary.md
 
 |__ results
-    |__ experiment_001
+    |__ 001_experiment_short_description
         |__ images
             |__ roc
         |__ spread_sheets
-    |__ experiment_002
+    |__ 002_experiment_short_description
     ...
-    |__ experiment_n
+    |__ n_experiment_short_description
 ```
