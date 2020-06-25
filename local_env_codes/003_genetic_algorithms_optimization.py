@@ -126,7 +126,7 @@ clf = svm.SVC(C = C, gamma = gamma, kernel = kernel, probability=True)
 
 selector = GeneticSelectionCV(clf,
                               cv=10,
-                              verbose=1,
+                              verbose=0,
                               scoring="roc_auc",
                               max_features = 100 if (X.shape[1] > 100) else X.shape[1],
                               n_population=50,
