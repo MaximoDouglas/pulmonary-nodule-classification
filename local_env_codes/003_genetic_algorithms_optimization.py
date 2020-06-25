@@ -13,6 +13,15 @@ from genetic_selection import GeneticSelectionCV
 from scipy import interp
 import pylab as plt
 import time
+import argparse
+
+argument_parser = argparse.ArgumentParser()
+argument_parser.add_argument("-f", "--features", required=True, help="Features file")
+argument_parser.add_argument("-r", "--result_roc", required=True, help="Base dir to save result roc curves")
+argument_parser.add_argument("-e", "--experiment", required=True, help="Experiment name")
+
+args = vars(argument_parser.parse_args())
+print(args)
 
 start = time.time()
 
@@ -61,12 +70,11 @@ def sensitivity(y_true, y_predicted):
 # Setup ------------------------------------------------------------------------------
 clf = svm.SVC()
 
-base_dir_to_deep_features  = '../../../../data/features/convolutional_features/'
-base_dir_to_images         = '../../../../result_roc/'
-experiment_name            = 'model_2/flatten_shape'
-file_name                  = base_dir_to_deep_features + experiment_name + '.csv'
+features_file     = args["features"]
+result_roc_folder = args["result_roc"]
+experiment_name   = args["experiment"]
 
-dataFrame = pd.read_csv(file_name)
+dataFrame = pd.read_csv(features_file)
 
 scaler = MinMaxScaler(copy=False)
 X = scaler.fit_transform(dataFrame[dataFrame.columns[:-1]])
@@ -197,15 +205,15 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('ROC Curve Behavior')
 plt.legend(loc="lower right")
-plt.savefig(base_dir_to_images + experiment_name + '.png')
+plt.savefig(result_roc_folder + experiment_name + '.png')
 
 # End Validation ----------------------------------------------------------------------
 
 # Summary -----------------------------------------------------------------------------
-print(file_name)
+print(features_file)
 report(random_searchcv_results)
 
-print("Results -------| " + file_name + " |-------")
+print("Results -------| " + features_file + " |-------")
 print(" Time to validate:",                (end - start)/60, " minutes")
 print(" Accuracy: %.2f%% (+/- %.2f%%)"     % (100*np.mean(scores['acc']),     (100*np.std(scores['acc']))))
 print(" Specificity: %.2f%% (+/- %.2f%%)"  % (100*np.mean(scores['spec']),    (100*np.std(scores['spec']))))
