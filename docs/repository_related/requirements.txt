@@ -1,0 +1,5 @@
+# venv -> to create the virtual environment
+venv
+
+# pandas 
+pip install pandas
