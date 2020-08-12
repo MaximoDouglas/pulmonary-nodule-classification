@@ -1,0 +1,1 @@
+{'features': 'data/features/deep_features_with_radiomics/dense1_all_features_set.csv', 'result_roc': 'docs/outputs/genetic_algorithms/rocs', 'experiment': 'dense1_all_features_set'}
