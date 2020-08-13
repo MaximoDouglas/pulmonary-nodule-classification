@@ -10,7 +10,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import cross_validate, RandomizedSearchCV, StratifiedKFold
 from sklearn.metrics import confusion_matrix, roc_curve, auc
 from genetic_selection import GeneticSelectionCV
-from scipy import interp
+from numpy import interp
 import pylab as plt
 import time
 import argparse
