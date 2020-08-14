@@ -18,7 +18,6 @@ import argparse
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument("-f", "--features", required=True, help="Features file")
 argument_parser.add_argument("-r", "--result_roc", required=True, help="Base dir to save result roc curves")
-argument_parser.add_argument("-e", "--experiment", required=True, help="Experiment name")
 
 args = vars(argument_parser.parse_args())
 print(args)
@@ -71,12 +70,9 @@ def sensitivity(y_true, y_predicted):
 clf = svm.SVC()
 
 features_file   = args["features"]
-experiment_name = args["experiment"]
+experiment_name = features_file.split('/')[-1].split('.')[-2]
 
 result_roc_folder = args["result_roc"]
-
-if result_roc_folder[-1] != '/':
-    result_roc_folder += '/'
 
 dataFrame = pd.read_csv(features_file)
 
