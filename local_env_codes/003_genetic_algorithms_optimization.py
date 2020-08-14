@@ -70,9 +70,13 @@ def sensitivity(y_true, y_predicted):
 # Setup ------------------------------------------------------------------------------
 clf = svm.SVC()
 
-features_file     = args["features"]
+features_file   = args["features"]
+experiment_name = args["experiment"]
+
 result_roc_folder = args["result_roc"]
-experiment_name   = args["experiment"]
+
+if result_roc_folder[-1] != '/':
+    result_roc_folder += '/'
 
 dataFrame = pd.read_csv(features_file)
 
