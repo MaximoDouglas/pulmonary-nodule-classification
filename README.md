@@ -5,9 +5,12 @@
 ./
 |__ data
     |__ images
+        |__ benigno
+        |__ maligno
     |__ features
         |__ radiomics
-        |__ convolutional
+        |__ deep_features_with_radiomics
+        |__ legacy_deep_features_with_radiomics
 
 |__ notebooks
     |__ 001_experiment_short_description
@@ -18,16 +21,12 @@
 |__ local_env_codes
 
 |__ docs
-    |__ paper_related
-    |__ repository_related
-        |__ experiment_summary.md
+    |__ experiment_summary.md
+    |__ requirements.txt
 
 |__ results
-    |__ 001_experiment_short_description
-        |__ images
-            |__ roc
-        |__ spread_sheets
-    |__ 002_experiment_short_description
-    ...
-    |__ n_experiment_short_description
+    |__ genetic_algorithms
+        |__ rocs
+        |__ terminal_outputs
+    |__ rfe
 ```
