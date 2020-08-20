@@ -19,6 +19,7 @@
     |__ n_experiment_short_description
 
 |__ local_env_codes
+    |__ 003_genetic_algorithms_optimization
 
 |__ docs
     |__ experiment_summary.md
@@ -29,4 +30,9 @@
         |__ genetic_algorithms
             |__ rocs
             |__ terminal_outputs
+```
+### Running optimization
+Example:
+```
+python local_env_codes/003_genetic_algorithms_optimization.py -r results/conv64_dense128_drop04406_dense32_drop14918/genetic_algorithms/rocs/ -f data/features/deep_features_with_radiomics/conv64_dense128_drop04406_dense32_drop14918/dense1_shape_features.csv > results/conv64_dense128_drop04406_dense32_drop14918/genetic_algorithms/terminal_outputs/dense1_shape_features.txt
 ```
