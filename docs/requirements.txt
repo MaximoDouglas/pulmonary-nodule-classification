@@ -1,8 +1,6 @@
-#Requirements to run the local environment codes
+# Requirements to run the local environment codes
 
-pandas
-numpy
 sklearn => 'pip install scikit-learn==0.21.0'
-scipy
 genetic_selection => 'pip install sklearn-genetic'
-pylab
+pandas => 'pip install pandas'
+pylab => 'pip install matplotlib'
