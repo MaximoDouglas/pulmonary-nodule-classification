@@ -25,8 +25,8 @@
     |__ requirements.txt
 
 |__ results
-    |__ genetic_algorithms
-        |__ rocs
-        |__ terminal_outputs
-    |__ rfe
+    |__ convX_denseY_dropZ_denseW_dropK
+        |__ genetic_algorithms
+            |__ rocs
+            |__ terminal_outputs
 ```
