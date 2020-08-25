@@ -106,7 +106,7 @@ param_dist = {'C': c_space, 'gamma': gamma_space,
 # Random Search ---------------------------------------------------------------------
 random_search = RandomizedSearchCV(clf, param_distributions=param_dist,
                                    n_iter=100, cv=10, iid=False,
-                                   verbose=2, n_jobs=-1, scoring='roc_auc')
+                                   verbose=0, n_jobs=-1, scoring='roc_auc')
 random_search.fit(X, y)
 
 random_searchcv_results = random_search.cv_results_
@@ -121,7 +121,7 @@ kernel = random_searchcv_results['params'][0]['kernel']
 
 clf = svm.SVC(C = C, gamma = gamma, kernel = kernel, probability=True)
 
-selector = SelectKBest(f_classif, k=math.floor(X.shape[1]/10))
+selector = SelectKBest(f_classif, k=math.ceil(X.shape[1]/20))
 selector = selector.fit(X, y)
 
 selected_features = selector.get_support(indices=False)
