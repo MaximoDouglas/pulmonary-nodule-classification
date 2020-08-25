@@ -122,14 +122,17 @@ kernel = random_searchcv_results['params'][0]['kernel']
 clf = svm.SVC(C = C, gamma = gamma, kernel = kernel, probability=True)
 
 selector = SelectKBest(f_classif, k=math.floor(X.shape[1]/10))
+selector = selector.fit(X, y)
 
-selected_features = selector.fit_transform(X, y)
+selected_features = selector.get_support(indices=False)
+selected_features = getSelectedFeaturesAsIndexList(selected_features)
 
+print("\nFeature List: ")
 print(selected_features)
 print("All features: " + str(X.shape[1]))
-print("Optmized features: " + str(selected_features.shape[1]))
+print("Optmized features: " + str(len(selected_features)))
 
-X_selected = selected_features
+X_selected = X[:,selected_features]
 
 # End Features Optimization -----------------------------------------------------------
 
