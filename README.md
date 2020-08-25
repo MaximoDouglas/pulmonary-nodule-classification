@@ -34,5 +34,5 @@
 ### Running optimization
 Example:
 ```
-python local_env_codes/003_genetic_algorithms_optimization.py -r results/conv64_dense128_drop04406_dense32_drop14918/genetic_algorithms/rocs/ -f data/features/deep_features_with_radiomics/conv64_dense128_drop04406_dense32_drop14918/dense1_shape_features.csv > results/conv64_dense128_drop04406_dense32_drop14918/genetic_algorithms/terminal_outputs/dense1_shape_features.txt
+python local_env_codes/004_select_k_best_chi2_k5_optimization.py -f data/features/deep_features_with_radiomics/conv96_dense64_drop241_dense24_drop236/ -r results/conv96_dense64_drop241_dense24_drop236/select_k_best_chi2_k5/rocs/ > results/conv96_dense64_drop241_dense24_drop236/select_k_best_chi2_k5/terminal_outputs/output.txt
 ```
