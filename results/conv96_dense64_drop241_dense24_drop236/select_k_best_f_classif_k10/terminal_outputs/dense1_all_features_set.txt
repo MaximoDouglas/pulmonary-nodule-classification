@@ -1,0 +1,27 @@
+{'features': 'data/features/deep_features_with_radiomics/conv96_dense64_drop241_dense24_drop236/dense1_all_features_set.csv', 'result_roc': 'results/conv96_dense64_drop241_dense24_drop236/select_k_best_f_classif_k10/rocs/'}
+
+Feature List: 
+[74, 81, 82, 83, 84, 86, 89, 91, 98, 107, 109, 116, 124, 125]
+All features: 135
+Optmized features: 14
+data/features/deep_features_with_radiomics/conv96_dense64_drop241_dense24_drop236/dense1_all_features_set.csv
+Model with rank: 1
+Mean validation score: 0.886 (std: 0.041)
+Parameters: {'kernel': 'rbf', 'gamma': 0.08813567471126942, 'C': 18.505605169930114}
+
+Model with rank: 2
+Mean validation score: 0.874 (std: 0.053)
+Parameters: {'kernel': 'rbf', 'gamma': 0.02846643781043299, 'C': 91.26622565953815}
+
+Model with rank: 3
+Mean validation score: 0.862 (std: 0.053)
+Parameters: {'kernel': 'rbf', 'gamma': 0.04229885768123236, 'C': 110.97832647008971}
+
+Results -------| data/features/deep_features_with_radiomics/conv96_dense64_drop241_dense24_drop236/dense1_all_features_set.csv |-------
+ Time to validate: 0.47910708586374917  minutes
+ Accuracy: 62.78% (+/- 7.32%)
+ Specificity: 61.82% (+/- 5.60%)
+ Sensitivity: 63.73% (+/- 10.72%)
+ F1-score: 62.82% (+/- 8.89%)
+ AUC: 0.68 (+/- 0.08)
+
