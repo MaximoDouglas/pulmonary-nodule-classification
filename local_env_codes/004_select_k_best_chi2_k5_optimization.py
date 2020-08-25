@@ -128,7 +128,7 @@ for feature_file_name in feature_file_name_list:
 
     clf = svm.SVC(C = C, gamma = gamma, kernel = kernel, probability=True)
 
-    selector = SelectKBest(f_classif, k=math.ceil(X.shape[1]/10))
+    selector = SelectKBest(chi2, k=math.ceil(X.shape[1]/20))
     selector = selector.fit(X, y)
 
     selected_features = selector.get_support(indices=False)
