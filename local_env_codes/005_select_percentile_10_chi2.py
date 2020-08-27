@@ -4,7 +4,7 @@ from sklearn import svm
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold
 from sklearn.metrics import confusion_matrix, roc_curve, auc
-from sklearn.feature_selection import chi2, SelectKBest, f_classif
+from sklearn.feature_selection import SelectPercentile, f_classif, chi2, mutual_info_classif
 from numpy import interp
 import scipy.stats as stats
 import pylab as plt
@@ -16,9 +16,11 @@ import argparse
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument("-f", "--features", required=True, help="Features folder")
 argument_parser.add_argument("-r", "--result_roc", required=True, help="Result rocs folder")
-
 args = vars(argument_parser.parse_args())
 print(args)
+
+PERCENTILE = 5
+SCORE_FUNC = f_classif
 
 start = time.time()
 
@@ -128,7 +130,7 @@ for feature_file_name in feature_file_name_list:
 
     clf = svm.SVC(C = C, gamma = gamma, kernel = kernel, probability=True)
 
-    selector = SelectKBest(f_classif, k=math.ceil(X.shape[1]/20))
+    selector = SelectPercentile(score_func=SCORE_FUNC, percentile=PERCENTILE)
     selector = selector.fit(X, y)
 
     selected_features = selector.get_support(indices=False)
