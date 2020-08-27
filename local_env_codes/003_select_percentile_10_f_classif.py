@@ -19,7 +19,7 @@ argument_parser.add_argument("-r", "--result_roc", required=True, help="Result r
 args = vars(argument_parser.parse_args())
 print(args)
 
-PERCENTILE = 5
+PERCENTILE = 10
 SCORE_FUNC = f_classif
 
 start = time.time()

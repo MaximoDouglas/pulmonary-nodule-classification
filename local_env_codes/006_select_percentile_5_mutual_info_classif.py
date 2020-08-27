@@ -20,7 +20,7 @@ args = vars(argument_parser.parse_args())
 print(args)
 
 PERCENTILE = 5
-SCORE_FUNC = f_classif
+SCORE_FUNC = mutual_info_classif
 
 start = time.time()
 
