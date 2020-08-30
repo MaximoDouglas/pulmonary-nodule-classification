@@ -82,9 +82,8 @@ def predict_model(base, model, features=[], random_state=0, k_folds=10, n_repeat
 
     if type(y) is type(pd.Series()):
         y = y.iloc[:].values
- 
     predictions_dict = {}
-    predictions_dict['features'] = pd.DataFrame(features, feature_names)
+    # predictions_dict['features'] = pd.DataFrame(features, feature_names)
     predictions_dict['kfolds'] = {}
     start_time = time.time()
     print("--- Starting classification ---")
@@ -100,8 +99,8 @@ def predict_model(base, model, features=[], random_state=0, k_folds=10, n_repeat
         y_pred = model.predict_proba(X_test)
         predictions_dict['kfolds']['rep%dkf%d'%(i//n_repeats,i)] = {
             'y_true':y_test,
-            'y_pred':y_pred[:, 1],
-            'importances': pd.DataFrame(feature_importances, removed_feature_names)
+            'y_pred':y_pred[:, 1]
+            # 'importances': pd.DataFrame(feature_importances, removed_feature_names)
         }
 
     classification_time = time.time() - start_time
