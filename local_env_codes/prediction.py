@@ -86,7 +86,7 @@ def predict_model(base, model, features=[], random_state=0, k_folds=10, n_repeat
     # predictions_dict['features'] = pd.DataFrame(features, feature_names)
     predictions_dict['kfolds'] = {}
     start_time = time.time()
-    print("--- Starting classification ---")
+    
     for i, (train, test) in enumerate(rskf.split(X, y)):
         # X_train, y_train = sampling.fit_resample(X[train], y[train])
         X_train, y_train = (X[train], y[train])
@@ -104,7 +104,6 @@ def predict_model(base, model, features=[], random_state=0, k_folds=10, n_repeat
         }
 
     classification_time = time.time() - start_time
-    print("--- %s seconds ---" % classification_time)
     return predictions_dict
 
 

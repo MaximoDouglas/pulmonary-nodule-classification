@@ -37,11 +37,11 @@ def report(results, n_top=3):
             print("Parameters: {0}".format(results['params'][candidate]))
             print("")
 
-def getSelectedFeaturesAsIndexList(intList):
+def getSelectedFeaturesAsIndexList(boolean_list):
   selected_features = []
 
-  for i, int_value in enumerate(intList):
-    if (int_value == 1):
+  for i, boolean_value in enumerate(boolean_list):
+    if (boolean_value):
       selected_features.append(i)
   
   return (selected_features)
@@ -134,8 +134,12 @@ for feature_file_name in feature_file_name_list:
 
     selector = GeneticSelection()
     
-    selected_features = selector.fit((X, y), clf)[0]
-    selected_features = getSelectedFeaturesAsIndexList(selected_features)
+    population = selector.fit((X, y), clf)
+    
+    best_individual = population[0]
+    best_individual = [ True if feature >= 0.5 else False for feature in best_individual ]
+
+    selected_features = getSelectedFeaturesAsIndexList(best_individual)
 
     print("\nFeature List: ")
     print(selected_features)
