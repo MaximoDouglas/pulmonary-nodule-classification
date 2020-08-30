@@ -195,6 +195,8 @@ class GeneticSelection:
 
 
     def evaluation(self, base, model, individual):
+        print("INDIV")
+        print(individual)
         ''' Function to calculate the fitness score of a individual and save it in a map
         
         Parameters
@@ -244,7 +246,11 @@ class GeneticSelection:
         '''
         features = self.encodeThreshold(features)
         predictions = predict_model(base, model, features=features)
+        print("PREDICTION")
+        print(predictions)
         score = metrics_by_model(predictions)[self.scoring].mean()
+        print("SCORE")
+        print(score)
         return score
 
 
