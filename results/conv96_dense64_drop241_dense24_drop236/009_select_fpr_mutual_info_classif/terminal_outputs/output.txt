@@ -1,0 +1,2 @@
+{'features': 'data/features/deep_features_with_radiomics/conv96_dense64_drop241_dense24_drop236/', 'result_roc': 'results/conv96_dense64_drop241_dense24_drop236/009_select_fpr_mutual_info_classif/rocs/'}
+EXPERIMENT: dense2_edge_sharpness_features
