@@ -33,8 +33,8 @@ class GeneticSelection:
         ['accuracy', 'average_precision', 'f1', 'ppv', 'tpr', 'tnr', 'roc_auc']
     
     '''
-    def __init__(self, random_state=0, scoring='roc_auc', n_population=100, n_generations=50,
-                 elite_solutions_size=4, n_gen_no_change=10, elite_inheritance_proba=0.6, mutants_solutions_size=10):
+    def __init__(self, random_state=0, scoring='roc_auc', n_population=50, n_generations=100,
+                 elite_solutions_size=10, n_gen_no_change=10, elite_inheritance_proba=0.75, mutants_solutions_size=35):
         self.random = np.random.RandomState(random_state) if isinstance(random_state, int) else random_state
         self.n_population = n_population
         self.n_generations = n_generations
