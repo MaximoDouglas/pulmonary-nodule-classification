@@ -65,7 +65,7 @@ def sensitivity(y_true, y_predicted):
     return (true_positive)/(true_positive + false_negative)
 
 # End Functions ----------------------------------------------------------------------
-SelectFpr
+
 # Setup ------------------------------------------------------------------------------
 result_roc_folder      = args["result_roc"]
 features_folder_path   = args["features"]

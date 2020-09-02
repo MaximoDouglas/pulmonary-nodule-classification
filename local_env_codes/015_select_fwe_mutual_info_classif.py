@@ -19,7 +19,7 @@ argument_parser.add_argument("-r", "--result_roc", required=True, help="Result r
 args = vars(argument_parser.parse_args())
 print(args)
 
-ALPHA      = 0.5
+ALPHA      = 0.01
 SCORE_FUNC = mutual_info_classif
 
 start = time.time()
@@ -65,7 +65,7 @@ def sensitivity(y_true, y_predicted):
     return (true_positive)/(true_positive + false_negative)
 
 # End Functions ----------------------------------------------------------------------
-SelectFpr
+
 # Setup ------------------------------------------------------------------------------
 result_roc_folder      = args["result_roc"]
 features_folder_path   = args["features"]
@@ -121,10 +121,7 @@ for feature_file_name in feature_file_name_list:
     random_searchcv_results = random_search.cv_results_
 
     C      = random_searchcv_results['params'][0]['C']
-    gamma  = random_searchcv_results['params'][0]['gamma']
-    kernel = random_searchcv_results['params'][0]['kernel']
-
-    # End Random Search ------------------------------------------------------------------
+    gamma  = random_seahch ------------------------------------------------------------------
 
     # Features Optimization --------------------------------------------------------------
 
