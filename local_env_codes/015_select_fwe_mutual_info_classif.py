@@ -4,7 +4,7 @@ from sklearn import svm
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold
 from sklearn.metrics import confusion_matrix, roc_curve, auc
-from sklearn.feature_selection import SelectFdr, f_classif, chi2, mutual_info_classif
+from sklearn.feature_selection import SelectFwe, f_classif, chi2, mutual_info_classif
 from numpy import interp
 import scipy.stats as stats
 import pylab as plt
@@ -130,7 +130,7 @@ for feature_file_name in feature_file_name_list:
 
     clf = svm.SVC(C = C, gamma = gamma, kernel = kernel, probability=True)
 
-    selector = SelectFdr(score_func=SCORE_FUNC, alpha=ALPHA)
+    selector = SelectFwe(score_func=SCORE_FUNC, alpha=ALPHA)
     selector = selector.fit(X, y)
 
     selected_features = selector.get_support(indices=False)
