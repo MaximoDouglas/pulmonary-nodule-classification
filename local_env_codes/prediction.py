@@ -29,14 +29,8 @@ def remove_features(df, features):
     numpy.ndarray or pandas dataframe
         a dataframe/dataset with only selected features
     '''
-    non_selected = []
-    for i, (feature) in enumerate(features):
-        if feature == 0:
-            non_selected.append(i)
-    if type(df) is type(pd.DataFrame()):
-        return df.drop(df.columns[non_selected], axis=1) 
-    else:    
-        return np.delete(df, non_selected, 1)
+
+
 
 def predict_model(base, model, features=[], random_state=0, k_folds=10, n_repeats=1):
     ''' Train and test a prediction model with crossvalidation
@@ -72,23 +66,14 @@ def predict_model(base, model, features=[], random_state=0, k_folds=10, n_repeat
     # sampling = SMOTE(random_state=random)
     X, y = base
 
-    if type(X) is type(pd.DataFrame()):
-        feature_names = X.columns
-        X = remove_features(X, features)
-        removed_feature_names = X.columns
-        X = X.iloc[:,:].values
-    else:
-        feature_names = []
+    selected_features = [True if val == 1 else False for val in features]
+    X = X[:,selected_features]
 
-    if type(y) is type(pd.Series()):
-        y = y.iloc[:].values
     predictions_dict = {}
-    # predictions_dict['features'] = pd.DataFrame(features, feature_names)
     predictions_dict['kfolds'] = {}
     start_time = time.time()
     
     for i, (train, test) in enumerate(rskf.split(X, y)):
-        # X_train, y_train = sampling.fit_resample(X[train], y[train])
         X_train, y_train = (X[train], y[train])
         X_test, y_test = (X[test], y[test])
         model.fit(X_train, y_train)

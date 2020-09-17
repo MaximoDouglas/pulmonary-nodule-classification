@@ -188,7 +188,8 @@ class GeneticSelection:
         fitness : float
         '''
         try:
-            fitness = self.individual_fitness_map[str(individual)]
+            features = self.encodeThreshold(individual)
+            fitness = self.individual_fitness_map[str(features)]
         except:
             raise Exception('Fitness not calculated')
         return fitness
@@ -213,11 +214,12 @@ class GeneticSelection:
         -------
         individual : list
         '''
-        if str(individual) in self.individual_fitness_map.keys():
-            fitness = self.individual_fitness_map[str(individual)]
+        features = self.encodeThreshold(individual)
+        if str(features) in self.individual_fitness_map.keys():
+            fitness = self.individual_fitness_map[str(features)]
         else:
-            fitness = self.evaluate(base, model, individual)
-            self.individual_fitness_map[str(individual)] = fitness
+            fitness = self.evaluate(base, model, features)
+            self.individual_fitness_map[str(features)] = fitness
         return individual
 
     def encodeThreshold(self, features):
@@ -239,7 +241,6 @@ class GeneticSelection:
         -------
         score : float
         '''
-        features = self.encodeThreshold(features)
         predictions = predict_model(base, model, features=features)
         score = metrics_by_model(predictions)[self.scoring].mean()
         return score
