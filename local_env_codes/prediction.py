@@ -1,6 +1,3 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import average_precision_score
@@ -10,29 +7,9 @@ import time
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import RepeatedStratifiedKFold
-# from imblearn.over_sampling import SMOTE, ADASYN
-# from imblearn.under_sampling import RandomUnderSampler
-from utilities import binarize, mkdir_p
-
-def remove_features(df, features):
-    ''' Remove columns features from a dataset/dataframe
-    
-    Parameters
-    ----------
-    df : Pandas dataframe or list dataset
-    features : list
-        A binary list of features 1 refers to presence of a feature, 0 refers to
-        it's absense
-
-    Returns
-    -------
-    numpy.ndarray or pandas dataframe
-        a dataframe/dataset with only selected features
-    '''
 
 
-
-def predict_model(base, model, features=[], random_state=0, k_folds=10, n_repeats=1):
+def predict_model(base, model, features=None, random_state=0, k_folds=10, n_repeats=5):
     ''' Train and test a prediction model with crossvalidation
     
     Parameters
@@ -61,31 +38,26 @@ def predict_model(base, model, features=[], random_state=0, k_folds=10, n_repeat
                 Gini importance of features for each kfold
  
     '''
+
     random = np.random.RandomState(random_state) if random_state is int() else random_state
     rskf = RepeatedStratifiedKFold(n_splits=k_folds, random_state=random, n_repeats=n_repeats)
     # sampling = SMOTE(random_state=random)
     X, y = base
-
+    if features is None:
+        features = [1 for val in X[0]]
     selected_features = [True if val == 1 else False for val in features]
-    X = X[:,selected_features]
-
-    predictions_dict = {}
-    predictions_dict['kfolds'] = {}
+    X = X[:, selected_features]
+    predictions_dict = {'kfolds': {}}
     start_time = time.time()
-    
+
     for i, (train, test) in enumerate(rskf.split(X, y)):
         X_train, y_train = (X[train], y[train])
         X_test, y_test = (X[test], y[test])
         model.fit(X_train, y_train)
-        try:
-            feature_importances = model.feature_importances_
-        except:
-            feature_importances = []
-        y_pred = model.predict_proba(X_test)
-        predictions_dict['kfolds']['rep%dkf%d'%(i//n_repeats,i)] = {
-            'y_true':y_test,
-            'y_pred':y_pred[:, 1]
-            # 'importances': pd.DataFrame(feature_importances, removed_feature_names)
+        y_pred = model.predict_proba(X_test)[:, 1]
+        predictions_dict['kfolds']['rep%dkf%d' % (i // n_repeats, i)] = {
+            'y_true': y_test,
+            'y_pred': y_pred
         }
 
     classification_time = time.time() - start_time
@@ -109,7 +81,7 @@ def metrics_by_prediction(y_true, y_pred):
         a dict of int, float, list, representing each calculated metric
     '''
     metrics = {}
-    y_bin = binarize(y_pred, threshold=0.5)
+    y_bin = [1 if feature >= 0.5 else 0 for feature in y_pred]
 
     accuracy = accuracy_score(y_true, y_bin)
     average_precision = average_precision_score(y_true, y_pred)
@@ -127,16 +99,17 @@ def metrics_by_prediction(y_true, y_pred):
     metrics['fn'] = fn
     metrics['tp'] = tp
     metrics['tn'] = tn
-    metrics['ppv'] = tp/(tp+fp)
-    metrics['tpr'] = tp/(tp+fn)
-    metrics['tnr'] = tn/(tn+fp)
+    metrics['ppv'] = tp / (tp + fp)
+    metrics['tpr'] = tp / (tp + fn)
+    metrics['tnr'] = tn / (tn + fp)
     metrics['fpr_roc'] = fpr_roc
     metrics['tpr_roc'] = tpr_roc
     metrics['roc_auc'] = roc_auc
-    
+
     return metrics
 
-def metrics_by_model(model_pred, write=False, path='', file_name=''):
+
+def metrics_by_model(model_pred):
     ''' Organizes the metrics for each kfold and saves it in a file
 
     Parameters
@@ -152,22 +125,16 @@ def metrics_by_model(model_pred, write=False, path='', file_name=''):
     '''
     metrics_dict = {}
     kfolds_pred = model_pred['kfolds']
-    
+
     for kfold in kfolds_pred:
-        metrics = metrics_by_prediction(kfolds_pred[kfold]['y_true'], 
+        metrics = metrics_by_prediction(kfolds_pred[kfold]['y_true'],
                                         kfolds_pred[kfold]['y_pred'])
         for metric in metrics:
             value = metrics[metric]
             if isinstance(value, int) or isinstance(value, float):
-                if not metric in metrics_dict.keys():
-                    metrics_dict[metric] = []                  
+                if metric not in metrics_dict.keys():
+                    metrics_dict[metric] = []
                 metrics_dict[metric].append(value)
-    
+
     metrics_dataframe = pd.DataFrame.from_dict(metrics_dict)
-    
-    if write:
-        file_path = '%s/metrics'%path
-        mkdir_p(file_path)
-        file_path = '%s/%s.csv'%(file_path, file_name)
-        metrics_dataframe.to_csv(file_path, index=False)
     return metrics_dataframe

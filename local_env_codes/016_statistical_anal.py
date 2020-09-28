@@ -70,7 +70,10 @@ def sensitivity(y_true, y_predicted):
 
 # Setup ------------------------------------------------------------------------------
 features_folder_path   = args["features"]
-feature_file_name_list = os.listdir(features_folder_path)
+feature_file_name_list = ["dense1_all_features_set.csv",
+                          "dense1_shape_features.csv",
+                          "dense2_edge_sharpness_features.csv",
+                          "dense2_optimized_features.csv"]#os.listdir(features_folder_path)
 
 for feature_file_name in feature_file_name_list:
     features_file   = features_folder_path + feature_file_name
