@@ -1,20 +1,18 @@
-import pandas as pd
-import numpy as np
-from sklearn import svm
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold
-from sklearn.metrics import confusion_matrix, roc_curve, auc
-from sklearn.feature_selection import SelectPercentile, f_classif, chi2, mutual_info_classif
-from numpy import interp
-import scipy.stats as stats
-import pylab as plt
-import math
-import time
-import os
 import argparse
+import os
+import time
+
+import numpy as np
+import pandas as pd
+import scipy.stats as stats
 from brkga import GeneticSelection
 from prediction import predict_model, metrics_by_model
-from scipy.stats import mannwhitneyu 
+from scipy.stats import mannwhitneyu
+from sklearn import svm
+from sklearn.feature_selection import f_classif
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.preprocessing import MinMaxScaler
 
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument("-f", "--features", required=True, help="Features folder")
@@ -44,7 +42,7 @@ def getSelectedFeaturesAsIndexList(boolean_list):
   for i, boolean_value in enumerate(boolean_list):
     if (boolean_value):
       selected_features.append(i)
-  
+
   return (selected_features)
 
 def f1(y_true, y_predicted):
@@ -54,7 +52,7 @@ def f1(y_true, y_predicted):
 
     return 2*(true_positive)/(2*true_positive + false_positive + false_negative)
 
-def specificity(y_true, y_predicted): 
+def specificity(y_true, y_predicted):
     true_negative  = confusion_matrix(y_true, y_predicted)[0, 0]
     false_positive = confusion_matrix(y_true, y_predicted)[0, 1]
 
@@ -70,10 +68,7 @@ def sensitivity(y_true, y_predicted):
 
 # Setup ------------------------------------------------------------------------------
 features_folder_path   = args["features"]
-feature_file_name_list = ["dense1_all_features_set.csv",
-                          "dense1_shape_features.csv",
-                          "dense2_edge_sharpness_features.csv",
-                          "dense2_optimized_features.csv"]#os.listdir(features_folder_path)
+feature_file_name_list = os.listdir(features_folder_path)
 
 for feature_file_name in feature_file_name_list:
     features_file   = features_folder_path + feature_file_name
@@ -81,11 +76,11 @@ for feature_file_name in feature_file_name_list:
 
     print("EXPERIMENT: ", end='')
     print(experiment_name)
-    
+
     dataFrame = pd.read_csv(features_file)
 
     scaler = MinMaxScaler(copy=False)
-    
+
     X = scaler.fit_transform(dataFrame[dataFrame.columns[:-1]])
     y = dataFrame[dataFrame.columns[-1]]
 
@@ -100,14 +95,14 @@ for feature_file_name in feature_file_name_list:
 
         while(c < 0 or c > 500):
                 c = c_expon_gen.rvs()
-        
+
         c_space.append(c)
 
         g = gamma_expon_gen.rvs()
 
         while(g < 0 or g >= 1):
                 g = gamma_expon_gen.rvs()
-        
+
         gamma_space.append(g)
 
     param_dist = {'C': c_space, 'gamma': gamma_space,
@@ -136,9 +131,9 @@ for feature_file_name in feature_file_name_list:
     clf = svm.SVC(C = C, gamma = gamma, kernel = kernel, probability=True)
 
     selector = GeneticSelection()
-    
+
     population = selector.fit((X, y), clf)
-    
+
     best_individual = population[0]
     best_individual = [ True if feature >= 0.5 else False for feature in best_individual ]
 
