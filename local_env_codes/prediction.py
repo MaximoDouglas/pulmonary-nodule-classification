@@ -7,6 +7,10 @@ import time
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import RepeatedStratifiedKFold
+import matplotlib.pyplot as plt
+from errno import EEXIST
+from os import makedirs, path
+from scipy import interp
 
 
 def predict_model(base, model, features=None, random_state=0, k_folds=10, n_repeats=5):
@@ -138,3 +142,72 @@ def metrics_by_model(model_pred):
 
     metrics_dataframe = pd.DataFrame.from_dict(metrics_dict)
     return metrics_dataframe
+
+
+def plot_roc_auc(model_pred, label, path='', file_name=''):
+    ''' Plots the area under roc curve for each kfold and its mean then saves it in a file
+
+    Parameters
+    ----------
+    model_pred : dict
+        A dict that follows prediction[<FOLD>][<METRICS>] : int, float, list
+    label : str
+        Defines a identification label for the plot
+    path : str
+    file_name : str
+    features_to_show : int
+        Max number of features on the plot
+
+    The path of the file is <PATH>/importances_bar/<FILE_NAME>.png
+    '''
+    file_path = '%s/graphs' % path
+    mkdir_p(file_path)
+    file_path = '%s/%s.png' % (file_path, file_name)
+    tprs = []
+    aucs = []
+    mean_fpr = np.linspace(0, 1, 100)
+    kfolds_pred = model_pred['kfolds']
+
+    for i, kfold in enumerate(kfolds_pred):
+        metrics = metrics_by_prediction(kfolds_pred[kfold]['y_true'],
+                                        kfolds_pred[kfold]['y_pred'])
+        fpr, tpr = metrics['fpr_roc'], metrics['tpr_roc']
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = metrics['roc_auc']
+        aucs.append(roc_auc)
+        plt.plot(fpr, tpr, lw=1, alpha=0.3)
+
+    plt.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r',
+             label='Chance', alpha=.8)
+
+    mean_tpr = np.mean(tprs, axis=0)
+    mean_tpr[-1] = 1.0
+    mean_auc = np.mean(aucs)
+    std_auc = np.std(aucs)
+    plt.plot(mean_fpr, mean_tpr, color='b',
+             label=r'Mean ROC (AUC = %0.3f $\pm$ %0.3f)' % (mean_auc, std_auc),
+             lw=2, alpha=.8)
+
+    plt.xlim([-0.05, 1.05])
+    plt.ylim([-0.05, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('%s - ROC Curve' % label)
+    plt.legend(loc="lower right")
+    plt.savefig(file_path, dpi=250)
+    ## Destroy plot so that it wont be overlaid with the next plot
+    plt.close()
+    ## If you want to show the figure in a window:
+    # plt.show()
+
+
+def mkdir_p(mypath):
+    '''Creates a directory. equivalent to using mkdir -p on the command line'''
+    try:
+        makedirs(mypath)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == EEXIST and path.isdir(mypath):
+            pass
+        else:
+            raise
