@@ -87,6 +87,9 @@ for feature_file_name in feature_file_name_list:
     print("EXPERIMENT: ", end='')
     print(experiment_name)
 
+    if ('dense2' in experiment_name):
+        continue
+
     dataFrame = pd.read_csv(features_file)
 
     scaler = MinMaxScaler(copy=False)
@@ -162,7 +165,6 @@ for feature_file_name in feature_file_name_list:
     print("Optmized features: " + str(len(selected_features)))
 
     X_selected = X[:, selected_features]
-
     # End Features Optimization -----------------------------------------------------------
 
     # No selection
